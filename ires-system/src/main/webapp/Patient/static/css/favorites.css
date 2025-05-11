@@ -1,0 +1,107 @@
+body {
+  margin: 0;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 360px;
+  width: 200px;
+  background-color: lightgray;
+  padding: 20px;
+  left: 0;
+  border-radius: 10px;
+  }
+
+.leftmenu {
+  display: block;
+  padding: 15px 20px;
+  margin: 20px 0;
+  text-decoration: none;
+  text-align: center;
+  color: #000000;
+  background-color: #ffffff;
+  border-radius: 10px;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: large;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+.leftmenu:hover {
+  background-color: gray;
+  color: white;
+}
+
+/*主要內容*/
+.div1{
+  color: #000000;  
+  text-align: left;
+  font-size: 20px;
+  font-weight: 800;
+  position: absolute;
+  left: 224px;
+  top: -30px;
+}
+
+#clinic-list {
+  position:absolute;
+  max-width: 800px;
+  margin:0;
+  left: 220px;
+  width: 50%;
+}
+
+.clinic-row {
+  position:relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  height: 150px;
+  width: 100%;
+
+}
+
+.clinic-image img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+.clinic-info {
+  flex-grow: 1;
+}
+
+.clinic-info p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.details-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.delete-button:hover {
+  background-color: black;
+}

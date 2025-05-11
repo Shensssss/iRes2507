@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>I-RES</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <!-- Fonts  -->
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/simple-line-icons.css">
+    <!-- CSS Animate -->
+    <link rel="stylesheet" href="static/css/animate.css">
+    <!-- Daterange Picker -->
+    <link rel="stylesheet" href="static/css/daterangepicker-bs3.css">
+    <!-- Switchery -->
+    <link rel="stylesheet" href="static/css/switchery.min.css">
+    <!-- Custom styles for this theme -->
+    <link rel="stylesheet" href="static/css/main.css">
+    <!-- bell -->
+    <link rel="stylesheet" href="static/css/bell.css">
+
+    <!-- history-account-updatepsd.css -->
+    <link rel="stylesheet" href="static/css/history-account-updatepsd.css">
+
+
+    <!-- Feature detection -->
+    <script src="static/js/modernizr-2.6.2.min.js"></script>
+</head>
+
+<body>
+    <section id="main-wrapper" class="theme-default">
+        <header id="header">
+            <!--logo start-->
+            <div class="brand">
+                <a href="" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
+                    <span>OO</span>耳鼻喉科診所</a>
+            </div>
+            <img src="static/picture/ires.png"
+                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <div class="notification-wrapper">
+                <div class="notification-icon" id="bell">
+                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                    <span class="badge"></span>
+                </div>
+                <div class="notification-dropdown" id="dropdown">
+                    <p>📬 您有新通知</p>
+                    <ul>
+                        <li>✅ 報到通知</li>
+                        <li>💬 評價通知</li>
+                        <li>⚠️ 系統通知</li>
+                    </ul>
+                </div>
+            </div>
+            <!--logo end-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="toggle-navigation toggle-left">
+                    <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
+                        <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
+                    </button>
+                </li>
+            </ul>
+        </header>
+        <!--sidebar left start-->
+        <aside class="sidebar sidebar-left">
+            <nav>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="nav-dropdown">
+                        <a href="#" title="Appointment">
+                            <i class="fa  fa-fw fa-cogs"></i> 預約及報到
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="#" title="AppointmentAndCheckin">
+                                    預約及報到
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="NewAppointment">
+                                    新增預約
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="PatientInfo">
+                            <i class="fa  fa-fw fa-edit"></i> 病患資料
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="CallNumber">
+                            <i class="fa  fa-fw fa-th-list"></i> 診間叫號
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="FeedbackManagement">
+                            <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="AccountManagement">
+                            <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="#" title="ClinicInfo">
+                                    診所資料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="DocInfo">
+                                    醫生資料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="Feedback">
+                                    意見回饋
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="Password">
+                                    修改密碼
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="Logout">
+                            <i class="fa  fa-fw fa-file-text"></i> 登出
+                        </a>
+                </ul>
+            </nav>
+        </aside>
+
+
+
+
+        <!--main content start-->
+        <section class="main-content-wrapper">
+            <section id="main-content" class="animated fadeInUp">
+                <!--<在此填入主要內容helen-->
+                <!-- Main content area -->
+                <div class="main-content">
+
+                    <div class="password-panel">
+                        <h2>修改密碼</h2>
+                        <form id="change-password-form">
+                            <div class="form-group">
+                                <label for="current-password"><span class="required">*</span>舊密碼</label>
+                                <input type="password" id="current-password" name="current-password" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password"><span class="required">*</span>新密碼</label>
+                                <input type="password" id="new-password" name="new-password" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password"><span class="required">*</span>確認新密碼</label>
+                                <input type="password" id="confirm-password" name="confirm-password" required />
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit">變更</button>
+                                <button type="button" onclick="cancelChange()">取消</button>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+
+
+            </section>
+        </section>
+    </section>
+    <!--/Config demo-->
+    <!--Global JS-->
+    <script src="static/js/jquery-1.11.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/jquery.navgoco.min.js"></script>
+    <script src="static/js/pace.min.js"></script>
+    <script src="static/js/jquery.fullscreen-min.js"></script>
+    <script src="static/js/app.js"></script>
+    <!--Page Level JS-->
+    <script src="static/js/jquery.countTo.js"></script>
+    <script src="static/js/skycons.js"></script>
+    <script src="static/js/moment.min.js"></script>
+    <script src="static/js/daterangepicker.js"></script>
+    <!-- ChartJS  -->
+    <script src="static/js/Chart.min.js"></script>
+    <!-- Morris  -->
+    <script src="static/js/morris.min.js"></script>
+    <!--<script src="static/js/raphael.2.1.0.min.js"></script>-->
+    <!-- Vector Map  -->
+    <script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- Gauge  -->
+    <!--<script src="static/js/gauge.min.js"></script>
+    <script src="static/js/gauge-demo.js"></script>-->
+    <!-- Calendar  -->
+    <script src="static/js/clndr.js"></script>
+    <script src="static/js/clndr-demo.js"></script>
+    <script src="static/js/underscore-min.js"></script>
+    <!-- Switch -->
+    <script src="static/js/switchery.min.js"></script>
+    <!--Load these page level functions-->
+    <script src="static/js/bell.js"></script>
+    <!--<script>
+    $(document).ready(function() {
+        app.dateRangePicker();
+        app.chartJs();
+        app.weather();
+        app.spinStart();
+        app.spinStop();
+    });
+    </script>-->
+
+</body>
+
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta
+      name="keywords"
+      content="HTML5 Template Artech Multi-Purpose themeforest"
+    />
+    <meta name="description" content="Artech - Multi-Purpose HTML5 Template" />
+    <meta name="author" content="" />
+    <title>i-res | 即時預約・智能回應・追蹤修復</title>
+
+    <link rel="icon" href="static/img/favi.png" title="Favicon" sizes="32x32" />
+    <link rel="stylesheet" href="static/css/bootstrap.min.css" />
+
+    <!-- 語言 -->
+    <link href="static/css/css.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="static/css/all.min.css" />
+    <link rel="stylesheet" href="static/css/animate.css" />
+    <link rel="stylesheet" href="static/css/jquery.fancybox.css" />
+    <link rel="stylesheet" href="static/css/lity.css" />
+    <link rel="stylesheet" href="static/css/swiper8.min.css" />
+    <link rel="stylesheet" href="static/css/common_style.css" />
+
+    <!-- home style -->
+    <link rel="stylesheet" href="static/css/home_style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+
+    <link rel="stylesheet" href="static/css/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="static/css/room-suites-single-room.css" />
+  </head>
+
+  <body class="home-st7">
+    <!--  滑鼠效果  -->
+    <div class="mouse-cursor cursor-outer"></div>
+    <div class="mouse-cursor cursor-inner"></div>
+
+    <!-- ====== Loading ====== -->
+
+    <div class="loader-wrap">
+      <svg viewbox="0 0 1000 1000" preserveaspectratio="none">
+        <path id="svg" d="M0,1005S175,995,500,995s500,5,500,5V0H0Z"></path>
+      </svg>
+
+      <div class="loader-wrap-heading">
+        <div class="load-text">
+          <span>L</span>
+          <span>o</span>
+          <span>a</span>
+          <span>d</span>
+          <span>i</span>
+          <span>n</span>
+          <span>g</span>
+        </div>
+      </div>
+    </div>
+
+    <!--  菜單頁面  -->
+    <div class="side_overlay"></div>
+    <div class="side_menu">
+      <div class="content">
+        <div class="row">
+          <div class="main_links">
+            <ul>
+              <li>
+                <a href="#" class="main_link">
+                  <i class="fas fa-home"></i> 主頁
+                </a>
+              </li>
+              <li>
+                <a href="#" class="main_link">
+                  <i class="fas fa-calendar-check"></i> 預約紀錄
+                </a>
+              </li>
+              <li>
+                <a href="#" class="main_link">
+                  <i class="fas fa-heart"></i> 我的收藏
+                </a>
+              </li>
+              <li>
+                <a href="#" class="main_link">
+                  <i class="fas fa-bell"></i> 通知消息
+                </a>
+              </li>
+              <li>
+                <a href="#" class="main_link">
+                  <i class="fas fa-user-cog"></i> 帳戶設定
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <span class="clss"> <i class="fal fa-times"></i> </span>
+    </div>
+    <!--  菜單結束  -->
+
+    <div id="scrollsmoother-container">
+      <!--  Appbar  -->
+      <nav class="navbar navbar-expand-lg navbar-light sub-font tc-navbar-st7">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="static/img/logo.png" alt="" class="logo" />
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a href="#" id="user-location" class="nav-link">
+                  <i class="fas fa-map-marker-alt"></i> 獲取位置
+                </a>
+              </li>
+            </ul>
+            <ul class="navbar-nav">
+              <li>
+                <a class="nav-link" href="./login.html">
+                  Login <i class="fas fa-sign-in-alt"></i>
+                </a>
+              </li>
+              <!-- <li class="nav-item menu-item d-none d-lg-block">
+                            <a class="nav-link side_menu_btn" href="#"> Menu </a>
+                        </li> -->
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!--  AppBar結束  -->
+
+      <header class="tc-header-st7">
+        <div class="container">
+          <div class="booking-wrapper">
+            <div class="booking-form-container">
+              <form id="bookingForm" class="booking-form" action="#">
+                <div class="booking-form-row">
+                  <div class="booking-form-item">
+                    <label>預約日期</label>
+                    <br />
+                    <input
+                      name="check_in_time"
+                      id="datepicks1"
+                      class="datepicker form-control"
+                      placeholder="mm / dd / yyyy"
+                      type="text"
+                    />
+                  </div>
+                  <span>|</span>
+                  <div class="booking-form-time">
+                    <label>預約時段</label>
+                    <br />
+                    <div class="parent" style="display: flex; gap: 10px">
+                      <div>
+                        <input
+                          id="timepicker_start"
+                          type="text"
+                          placeholder="00:00"
+                        />
+                      </div>
+                      <div>
+                        <input
+                          id="timepicker_end"
+                          type="text"
+                          placeholder="24:00"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <span>|</span>
+                  <div class="booking-form-item">
+                    <label>診所類別</label> <br />
+                    <div class="parent">
+                      <div class="custom-select">
+                        <select name="category">
+                          <option value="all" selected="">全部</option>
+                          <option value="pec">小兒科</option>
+                          <option value="dc">牙科</option>
+                          <option value="oc">眼科</option>
+                          <option value="ob">婦產科</option>
+                          <option value="dermc">皮膚科</option>
+                          <option value="ent">耳鼻喉科</option>
+                          <option value="psychc">身心科</option>
+                          <option value="tcm">中醫</option>
+                          <option value="nutc">營養科</option>
+                          <option value="ptc">物理治療</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span>|</span>
+                <div class="booking-form-row">
+                  <div class="booking-form-item">
+                    <label>距離</label> <br />
+                    <div class="parent">
+                      <div class="custom-select">
+                        <select name="distance">
+                          <option value="01" selected="">1公里</option>
+                          <option value="02">3公里</option>
+                          <option value="03">5公里</option>
+                          <option value="04">7公里</option>
+                          <option value="05">9公里</option>
+                          <option value="06">不限制</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="booking-form-row full-width">
+                  <div class="booking-form-item full-width">
+                    <button type="submit" class="book-now-btn">立即搜尋</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content">
+        <section id="rooms-suites">
+          <div class="container">
+            <div class="service-heading">
+              <div class="header">
+                <h3>附近診所</h3>
+              </div>
+              <div class="filter-btn-wrapper">
+                <button type="button" class="filter">
+                  篩選
+                  <svg
+                    width="18"
+                    height="16"
+                    viewbox="0 0 18 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 14C12.5523 14 13 14.4477 13 15C13 15.5523 12.5523 16 12 16H3C2.44772 16 2 15.5523 2 15C2 14.4477 2.44772 14 3 14H12ZM17 7C17.5523 7 18 7.44772 18 8C18 8.55229 17.5523 9 17 9H1C0.447716 9 0 8.55229 0 8C0 7.44772 0.447715 7 1 7H17ZM15 0C15.5523 0 16 0.447715 16 1C16 1.55228 15.5523 2 15 2H6C5.44771 2 5 1.55228 5 1C5 0.447715 5.44772 0 6 0H15Z"
+                      fill="white"
+                    ></path>
+                  </svg>
+                </button>
+                <div class="view-all">
+                  <a href="hospital.html">查看所有診所</a>
+                </div>
+              </div>
+            </div>
+
+            <section class="recommended-rooms">
+              <div class="slider-wrapper">
+                <div class="swiper room-slider">
+                  <div class="swiper-wrapper">
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/1.jpeg" alt="" />
+                      </div>
+                      <div class="card-content">
+                        <span>
+                          <h3>小兒科診所</h3>
+                        </span>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          4.5 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 1
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">0.1<span>km</span></div>
+                          </div>
+                          <div
+                            style="
+                              vertical-align: bottom;
+                              display: flex;
+                              gap: 10px;
+                            "
+                          >
+                            <a href="" class="view-room-btn">上午</a>
+                            <a href="" class="view-room-btn">下午</a>
+                            <a href="" class="view-room-btn">晚上</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/2.jpeg" alt="" />
+                      </div>
+                      <div class="card-content">
+                        <h3>耳鼻喉科診所</h3>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          5.0 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 23
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">0.8 <span>km</span></div>
+                          </div>
+                          <div style="vertical-align: bottom">
+                            <div
+                              style="
+                                vertical-align: bottom;
+                                display: flex;
+                                gap: 10px;
+                              "
+                            >
+                              <a href="" class="view-room-btn">上午</a>
+                              <a href="" class="view-room-btn">下午</a>
+                              <a href="" class="view-room-btn">晚上</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/3.jpeg" alt="" />
+                      </div>
+                      <div class="card-content">
+                        <h3>骨科診所</h3>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          4.5 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 10
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">1 <span>km</span></div>
+                          </div>
+                          <div style="vertical-align: bottom">
+                            <div
+                              style="
+                                vertical-align: bottom;
+                                display: flex;
+                                gap: 10px;
+                              "
+                            >
+                              <a href="" class="view-room-btn">上午</a>
+                              <a href="" class="view-room-btn">下午</a>
+                              <a href="" class="view-room-btn">晚上</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/4.jpeg" alt="" />
+                      </div>
+                      <div class="card-content">
+                        <h3>精神科診所</h3>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          4.5 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 38
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">1.4 <span>km</span></div>
+                          </div>
+                          <div style="vertical-align: bottom">
+                            <div
+                              style="
+                                vertical-align: bottom;
+                                display: flex;
+                                gap: 10px;
+                              "
+                            >
+                              <a href="" class="view-room-btn">上午</a>
+                              <a href="" class="view-room-btn">下午</a>
+                              <a href="" class="view-room-btn">晚上</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/5.jpeg" alt="Deluxe Room" />
+                      </div>
+                      <div class="card-content">
+                        <h3>家醫科診所</h3>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          5.0 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 31
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">1.8 <span>km</span></div>
+                          </div>
+                          <div style="vertical-align: bottom">
+                            <div
+                              style="
+                                vertical-align: bottom;
+                                display: flex;
+                                gap: 10px;
+                              "
+                            >
+                              <a href="" class="view-room-btn">上午</a>
+                              <a href="" class="view-room-btn">下午</a>
+                              <a href="" class="view-room-btn">晚上</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swiper-slide card">
+                      <div class="card-img">
+                        <img src="static/img/6.jpeg" alt="" />
+                      </div>
+                      <div class="card-content">
+                        <h3>腸胃科診所</h3>
+                        <div class="rating">
+                          <i class="fa-solid fa-star" style="color: gold"></i>
+                          4.5 Rating |
+                          <div class="calender">
+                            <svg
+                              width="23"
+                              height="23"
+                              viewbox="0 0 32 32"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M21.3333 4C22.0697 4 22.6667 4.59696 22.6667 5.33333V8C22.6667 8.73637 22.0697 9.33333 21.3333 9.33333C20.5969 9.33333 20 8.73637 20 8V5.33333C20 4.59696 20.5969 4 21.3333 4Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 12.3333C12 13.0697 11.4031 13.6667 10.6667 13.6667C9.9303 13.6667 9.33334 13.0697 9.33334 12.3333C9.33334 11.597 9.9303 11 10.6667 11C11.4031 11 12 11.597 12 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M17.3333 12.3333C17.3333 13.0697 16.7364 13.6667 16 13.6667C15.2636 13.6667 14.6667 13.0697 14.6667 12.3333C14.6667 11.597 15.2636 11 16 11C16.7364 11 17.3333 11.597 17.3333 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M22.6667 12.3333C22.6667 13.0697 22.0697 13.6667 21.3333 13.6667C20.5969 13.6667 20 13.0697 20 12.3333C20 11.597 20.5969 11 21.3333 11C22.0697 11 22.6667 11.597 22.6667 12.3333Z"
+                                fill="black"
+                              ></path>
+                              <path
+                                d="M12 17.6666C12 18.403 11.4031 18.9999 10.6667 18.9999C9.9303 18.9999 9.33334 18.403 9.33334 17.6666C9.33334 16.9302 9.9303 16.3333 10.6667 16.3333C11.4031 16.3333 12 16.9302 12 17.6666Z"
+                                fill="black"
+                              ></path>
+                              <rect
+                                x="4.75"
+                                y="6.75"
+                                width="22.5"
+                                height="20.5"
+                                rx="3.25"
+                                stroke="black"
+                                stroke-width="1.5"
+                              ></rect>
+                            </svg>
+                          </div>
+                          目前號碼: 12
+                        </div>
+                        <div class="price-and-button">
+                          <div>
+                            <div class="price">2.5 <span>km</span></div>
+                          </div>
+                          <div style="vertical-align: bottom">
+                            <div
+                              style="
+                                vertical-align: bottom;
+                                display: flex;
+                                gap: 10px;
+                              "
+                            >
+                              <a href="" class="view-room-btn">上午</a>
+                              <a href="" class="view-room-btn">下午</a>
+                              <a href="" class="view-room-btn">晚上</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-button-prev"></div>
+                  <div class="swiper-button-next"></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="tc-footer-st7"></footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="static/js/jquery-3.7.1.min.js"></script>
+    <script src="static/js/jquery-migrate-3.0.0.min.js"></script>
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/wow.min.js"></script>
+    <script src="static/js/jquery.fancybox.js"></script>
+    <script src="static/js/lity.js"></script>
+    <script src="static/js/swiper8-bundle.min.js"></script>
+    <script src="static/js/jquery.waypoints.min.js"></script>
+    <script src="static/js/jquery.counterup.js"></script>
+    <script src="static/js/parallaxie.js"></script>
+    <!-- === Gsap === -->
+    <script src="static/js/gsap.min.js"></script>
+    <script src="static/js/ScrollSmoother.min.js"></script>
+    <script src="static/js/ScrollTrigger.min.js"></script>
+    <script src="static/js/SplitText.min.js"></script>
+
+    <script src="static/js/common_js.js"></script>
+
+    <!-- ===== home scripts ===== -->
+    <script src="static/js/home_scripts.js"></script>
+    <!-- <script src="static/js/room-overview-slider.js"></script> -->
+    <script src="static/js/facilities-slider.js"></script>
+
+    <script src="static/js/hero-input-dropdown.js"></script>
+    <script src="static/js/bootstrap-datepicker.js"></script>
+    <script src="static/js/datepicker.js"></script>
+
+    <!-- rooms -->
+    <script src="static/js/rooms-and-suites-slider.js"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgRkDJeajEe4nbQgupP7yvSBayWSoIQAg&callback=initMap"
+    async defer></script> -->
+
+    <script src="static/js/gps.js"></script>
+  </body>
+</html>
