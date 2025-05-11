@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>I-RES</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <!-- Fonts  -->
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/simple-line-icons.css">
+    <!-- CSS Animate -->
+    <link rel="stylesheet" href="static/css/animate.css">
+    <!-- Daterange Picker -->
+    <link rel="stylesheet" href="static/css/daterangepicker-bs3.css">
+    <!-- Switchery -->
+    <link rel="stylesheet" href="static/css/switchery.min.css">
+    <!-- Custom styles for this theme -->
+    <link rel="stylesheet" href="static/css/main.css">
+    <!-- bell -->
+    <link rel="stylesheet" href="static/css/bell.css">
+    <!-- Feature detection -->
+    <script src="static/js/modernizr-2.6.2.min.js"></script>
+
+    <style>
+        .time-buttons,
+        .notify-button {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .room-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+        }
+
+        .room-card {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            min-width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .room-card-header {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem;
+            font-weight: bold;
+        }
+
+        .room-card-body {
+            padding: 0.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.5rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 0.4rem;
+            text-align: center;
+        }
+
+        .status-arrived {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-not-arrived {
+            color: red;
+            font-weight: bold;
+        }
+
+        .status-cancelled {
+            color: gray;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .action-buttons button {
+            width: 90px;
+            height: 90px;
+            font-size: 0.8rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .modal-content canvas {
+            margin: 1rem 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 100px;
+            /* 固定寬度或 max-width */
+            white-space: normal;
+            /* 允許文字換行 */
+            word-wrap: break-word;
+            /* 長字切斷（保險用） */
+            text-align: center;
+            /* 文字置中 */
+            padding: 0.5rem;
+        }
+
+        .qr-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .qr-btn:hover {
+            background-color: #43a047;
+            transform: scale(1.05);
+        }
+
+        .call-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .call-btn:hover {
+            background-color: #1e88e5;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <section id="main-wrapper" class="theme-default">
+        <header id="header">
+            <!--logo start-->
+            <div class="brand">
+                <a href="" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
+                    <span>OO</span>耳鼻喉科診所</a>
+            </div>
+            <img src="static/picture/ires.png"
+                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <div class="notification-wrapper">
+                <div class="notification-icon" id="bell">
+                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                    <span class="badge"></span>
+                </div>
+                <div class="notification-dropdown" id="dropdown">
+                    <p>📬 您有新通知</p>
+                    <ul>
+                        <li>✅ 報到通知</li>
+                        <li>💬 評價通知</li>
+                        <li>⚠️ 系統通知</li>
+                    </ul>
+                </div>
+            </div>
+            <!--logo end-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="toggle-navigation toggle-left">
+                    <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
+                        <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
+                    </button>
+                </li>
+            </ul>
+        </header>
+        <!--sidebar left start-->
+        <aside class="sidebar sidebar-left">
+            <nav>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="nav-dropdown">
+                        <a href="#" title="Appointment">
+                            <i class="fa  fa-fw fa-cogs"></i> 預約及報到
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="#" title="AppointmentAndCheckin">
+                                    預約及報到
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="NewAppointment">
+                                    新增預約
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="PatientInfo">
+                            <i class="fa  fa-fw fa-edit"></i> 病患資料
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="CallNumber">
+                            <i class="fa  fa-fw fa-th-list"></i> 診間叫號
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="FeedbackManagement">
+                            <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="AccountManagement">
+                            <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="#" title="ClinicInfo">
+                                    診所資料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="DocInfo">
+                                    醫生資料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="Feedback">
+                                    意見回饋
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" title="Password">
+                                    修改密碼
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="Logout">
+                            <i class="fa  fa-fw fa-file-text"></i> 登出
+                        </a>
+                </ul>
+            </nav>
+        </aside>
+        <!--main content start-->
+        <section class="main-content-wrapper">
+            <div class="pageheader">
+                <h1>今日預約</h1>
+            </div>
+
+            <section id="main-content" class="animated fadeInUp">
+                <div class="time-buttons">
+                    <div>
+                        <button class="btn btn-primary" onclick="selectTime('morning')">上午</button>
+                        <button class="btn btn-primary" onclick="selectTime('afternoon')">下午</button>
+                        <button class="btn btn-primary" onclick="selectTime('evening')">晚上</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
+                    </div>
+                </div>
+
+                <div class="search-box" style="display: none;">
+                    <input type="text" placeholder="搜尋病人（姓名或號碼）" id="searchInput" onkeyup="filterPatients()">
+                </div>
+
+
+                <div id="clinic-info"></div>
+
+                <div id="qrcodeModal" class="modal">
+                    <div class="modal-content">
+                        <h3>報到 QR Code</h3>
+                        <div id="qrcodeContainer"></div>
+                        <div>
+                            <button class="btn" onclick="downloadQRCode()">下載</button>
+                            <button class="btn" onclick="printQRCode()">列印</button>
+                            <button class="btn" onclick="closeModal()">關閉</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </section>
+    <!--/Config demo-->
+    <!--Global JS-->
+    <script src="static/js/jquery-1.11.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/jquery.navgoco.min.js"></script>
+    <script src="static/js/pace.min.js"></script>
+    <script src="static/js/jquery.fullscreen-min.js"></script>
+    <script src="static/js/app.js"></script>
+    <!--Page Level JS-->
+    <script src="static/js/jquery.countTo.js"></script>
+    <script src="static/js/skycons.js"></script>
+    <script src="static/js/moment.min.js"></script>
+    <script src="static/js/daterangepicker.js"></script>
+    <!-- ChartJS  -->
+    <script src="static/js/Chart.min.js"></script>
+    <!-- Morris  -->
+    <script src="static/js/morris.min.js"></script>
+    <!--<script src="static/js/raphael.2.1.0.min.js"></script>-->
+    <!-- Vector Map  -->
+    <script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- Gauge  -->
+    <!--<script src="static/js/gauge.min.js"></script>
+    <script src="static/js/gauge-demo.js"></script>-->
+    <!-- Calendar  -->
+    <script src="static/js/clndr.js"></script>
+    <script src="static/js/clndr-demo.js"></script>
+    <script src="static/js/underscore-min.js"></script>
+    <!-- Switch -->
+    <script src="static/js/switchery.min.js"></script>
+    <!--Load these page level functions-->
+    <script src="static/js/bell.js"></script>
+    <!--<script>
+    $(document).ready(function() {
+        app.dateRangePicker();
+        app.chartJs();
+        app.weather();
+        app.spinStart();
+        app.spinStop();
+    });
+    </script>-->
+
+    <script>
+        let currentTime = "";
+        let allData = {};
+        const statuses = ["已報到", "未報到", "已取消"];
+        const names = ["王小明", "李小華", "張大中", "林小英", "吳佩琪", "黃志明"];
+
+        function mockPatients(startId = 1, count = 20) {
+            const patients = [];
+            for (let i = 0; i < count; i++) {
+                const name = names[Math.floor(Math.random() * names.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const number = (startId + i).toString().padStart(2, '0');
+                patients.push({ number, name, status });
+            }
+            return patients;
+        }
+
+        async function fetchData(time) {
+            const count = { morning: 3, afternoon: 2, evening: 2 }[time] || 2;
+            const data = [];
+            for (let i = 1; i <= count; i++) {
+                const patientCount = Math.floor(Math.random() * 11) + 10;
+                data.push({
+                    doctor: `${time === 'morning' ? '張' : time === 'afternoon' ? '陳' : '林'}醫師 ${i}`,
+                    patients: mockPatients(i * 100, patientCount)
+                });
+            }
+            return data;
+        }
+
+        async function selectTime(time) {
+            currentTime = time;
+            document.getElementById("searchInput").value = "";
+            const clinicInfo = document.getElementById("clinic-info");
+            clinicInfo.innerHTML = "<p>載入中...</p>";
+            const data = await fetchData(time);
+            allData = data;
+            renderData(data);
+        }
+
+        function getStatusClass(status) {
+            return status === '已報到' ? 'status-arrived' : status === '未報到' ? 'status-not-arrived' : 'status-cancelled';
+        }
+
+        function renderData(data) {
+            const clinicInfo = document.getElementById("clinic-info");
+            clinicInfo.innerHTML = "";
+            const wrapper = document.createElement("div");
+            wrapper.className = "room-container";
+
+            data.forEach((room, idx) => {
+                const card = document.createElement("div");
+                card.className = "room-card";
+                card.innerHTML = `
+                                    <div class="room-card-header">診間 ${idx + 1} - 醫師：${room.doctor}</div>
+                                    <div class="room-card-body">
+                                    <div style="overflow-y: auto; max-height: 300px;">
+                                        <table>
+                                        <thead><tr><th>看診號碼</th><th>姓名</th><th>狀態</th></tr></thead>
+                                        <tbody>
+                                            ${room.patients.map(p => `
+                                            <tr><td>${p.number}</td><td>${p.name}</td><td><span class="${getStatusClass(p.status)}">${p.status}</span></td></tr>
+                                            `).join('')}
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn" onclick="showQRCode('${room.doctor}')">產生 QRCode</button>
+                                        <button class="btn" onclick="callNext('${room.doctor}')">診間叫號</button>
+                                    </div>
+                                    </div>`;
+                wrapper.appendChild(card);
+            });
+            clinicInfo.appendChild(wrapper);
+        }
+
+        function filterPatients() {
+            const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            if (!keyword) return renderData(allData);
+            const filtered = allData.map(room => ({
+                ...room,
+                patients: room.patients.filter(p => p.name.toLowerCase().includes(keyword) || p.number.includes(keyword))
+            })).filter(room => room.patients.length > 0);
+            renderData(filtered);
+        }
+
+        function showQRCode(doctorName) {
+            const match = doctorName.match(/\d+/);
+            const roomNumber = match ? match[0].padStart(3, '0') : "000";
+
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const qrValue = `${yyyy}${mm}${dd}${roomNumber}`;
+
+            localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
+            window.open("qrcode.html", "_blank");
+        }
+
+        function closeModal() {
+            document.getElementById("qrcodeModal").style.display = "none";
+        }
+
+        function downloadQRCode() {
+            const canvas = document.querySelector("#qrcodeContainer canvas");
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function printQRCode() {
+            const canvas = document.querySelector("#qrcodeContainer canvas");
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<img src="${canvas.toDataURL()}" style="display:block;margin:auto;">`);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function callNext(doctorName) {
+            const room = allData.find(r => r.doctor === doctorName);
+            if (!room) return alert("找不到該診間資料");
+            localStorage.setItem("callRoom", JSON.stringify(room));
+            window.location.href = "call_room.html";
+        }
+
+        function goToNotifyPage() {
+            const patients = [];
+            allData.forEach((room, index) => {
+                room.patients.forEach(p => {
+                    if (p.status === '未報到') {
+                        patients.push({
+                            date: new Date().toISOString().slice(0, 10),
+                            room: `診間 ${index + 1}`,
+                            number: p.number,
+                            name: p.name,
+                            doctor: room.doctor
+                        });
+                    }
+                });
+            });
+            if (patients.length === 0) return alert("沒有未報到病人可通知！");
+            localStorage.setItem("notifyPatients", JSON.stringify(patients));
+            window.location.href = "notify.html";
+        }
+    </script>
+
+</body>
+
+</html>
