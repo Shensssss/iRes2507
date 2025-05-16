@@ -7,8 +7,10 @@ import core.util.HibernateUtil;
 import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class AppointmentDAOImpl implements AppointmentDAO {
 
@@ -89,7 +91,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     @Override
     public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // System.out.println("DAO using SessionFactory: " + HibernateUtil.getSessionFactory());
+            System.out.println("DAO using SessionFactory: " + HibernateUtil.getSessionFactory());
 
             String hql = "SELECT a FROM Appointment a WHERE a.appointmentDate = :date AND a.timePeriod = :period";
             List<Appointment> list = session.createQuery(hql, Appointment.class)

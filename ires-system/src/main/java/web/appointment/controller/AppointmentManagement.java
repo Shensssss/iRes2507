@@ -3,8 +3,6 @@ package web.appointment.controller;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
 import web.appointment.service.impl.AppointmentServiceImpl;
-// import web.clinic.entity.Clinic;
-// import web.patient.entity.Patient;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -1,27 +1,22 @@
 package web.appointment.entity;
 
 import jakarta.persistence.*;
-import web.patient.entity.Patient;
-import web.clinic.entity.Clinic;
-
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Date;
 
-@Entity(name = "Appointment")
+@Entity
 @Table(name = "appointment")
 public class Appointment {
 
     @Id
-    @Column(name = "appointment_id", length = 36, nullable = false)
+    @Column(name = "appointment_id", nullable = false, length = 36)
     private String appointmentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
+    @Column(name = "patient_id", nullable = false)
+    private Integer patientId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clinic_id", nullable = false)
-    private Clinic clinic;
+    @Column(name = "clinic_id", nullable = false)
+    private Integer clinicId;
 
     @Column(name = "doctor_id", nullable = false)
     private Integer doctorId;
@@ -29,7 +24,6 @@ public class Appointment {
     @Column(name = "reserve_no", nullable = false)
     private Integer reserveNo;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "appointment_date", nullable = false)
     private Date appointmentDate;
 
@@ -42,16 +36,16 @@ public class Appointment {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "create_time", nullable = false, insertable = false, updatable = false)
+    @Column(name = "create_time", nullable = false, updatable = false, insertable = false)
     private Timestamp createTime;
 
-    @Column(name = "update_time", insertable = false, updatable = false)
+    @Column(name = "update_time", insertable = false)
     private Timestamp updateTime;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    
+    // Getters and Setters
 
     public String getAppointmentId() {
         return appointmentId;
@@ -61,20 +55,20 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public Patient getPatient() {
-        return patient;
+    public Integer getPatientId() {
+        return patientId;
     }
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
-    public Clinic getClinic() {
-        return clinic;
+    public Integer getClinicId() {
+        return clinicId;
     }
 
-    public void setClinic(Clinic clinic) {
-        this.clinic = clinic;
+    public void setClinicId(Integer clinicId) {
+        this.clinicId = clinicId;
     }
 
     public Integer getDoctorId() {
@@ -129,16 +123,8 @@ public class Appointment {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
     public Timestamp getUpdateTime() {
         return updateTime;
-    }
-
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
     }
 
     public String getNotes() {
