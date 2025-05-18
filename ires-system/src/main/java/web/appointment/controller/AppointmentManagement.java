@@ -4,9 +4,9 @@ import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
 import web.appointment.service.impl.AppointmentServiceImpl;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import com.google.gson.Gson;
 

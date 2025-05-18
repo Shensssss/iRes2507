@@ -1,8 +1,12 @@
 package web.appointment.entity;
 
-import jakarta.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "appointment")
