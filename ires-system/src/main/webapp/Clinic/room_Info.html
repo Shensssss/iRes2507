@@ -359,31 +359,69 @@
     <script>
         let currentTime = "";
         let allData = {};
-        const statuses = ["已報到", "未報到", "已取消"];
-        const names = ["王小明", "李小華", "張大中", "林小英", "吳佩琪", "黃志明"];
+        // const statuses = ["已報到", "未報到", "已取消"];
+        // const names = ["王小明", "李小華", "張大中", "林小英", "吳佩琪", "黃志明"];
 
-        function mockPatients(startId = 1, count = 20) {
-            const patients = [];
-            for (let i = 0; i < count; i++) {
-                const name = names[Math.floor(Math.random() * names.length)];
-                const status = statuses[Math.floor(Math.random() * statuses.length)];
-                const number = (startId + i).toString().padStart(2, '0');
-                patients.push({ number, name, status });
-            }
-            return patients;
+        // function mockPatients(startId = 1, count = 20) {
+        //     const patients = [];
+        //     for (let i = 0; i < count; i++) {
+        //         const name = names[Math.floor(Math.random() * names.length)];
+        //         const status = statuses[Math.floor(Math.random() * statuses.length)];
+        //         const number = (startId + i).toString().padStart(2, '0');
+        //         patients.push({ number, name, status });
+        //     }
+        //     return patients;
+        // }
+
+        // async function fetchData(time) {
+        //     const count = { morning: 3, afternoon: 2, evening: 2 }[time] || 2;
+        //     const data = [];
+        //     for (let i = 1; i <= count; i++) {
+        //         const patientCount = Math.floor(Math.random() * 11) + 10;
+        //         data.push({
+        //             doctor: `${time === 'morning' ? '張' : time === 'afternoon' ? '陳' : '林'}醫師 ${i}`,
+        //             patients: mockPatients(i * 100, patientCount)
+        //         });
+        //     }
+        //     return data;
+        // }
+
+        function fetchData(time) {
+            //return fetch(`${window.location.origin}/ires-system/appointment?action=apiToday&period=${time}`)
+            return fetch(`/ires-system/appointment?action=apiToday&period=${time}`)
+            .then(response => response.json())
+            .then(appointments => {
+                const grouped = {};
+
+                appointments.forEach(app => {
+                    const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
+
+                    if (!grouped[doctorName]) {
+                        grouped[doctorName] = [];
+                    }
+
+                    grouped[doctorName].push({
+                        number: String(app.reserveNo ?? "--").padStart(2, '0'),
+                        name: app.patient?.name ?? "匿名",
+                        status: translateStatus(app.status)
+                    });
+                });
+
+                return Object.entries(grouped).map(([doctor, patients]) => ({
+                    doctor,
+                    patients
+                }));
+            });
         }
 
-        async function fetchData(time) {
-            const count = { morning: 3, afternoon: 2, evening: 2 }[time] || 2;
-            const data = [];
-            for (let i = 1; i <= count; i++) {
-                const patientCount = Math.floor(Math.random() * 11) + 10;
-                data.push({
-                    doctor: `${time === 'morning' ? '張' : time === 'afternoon' ? '陳' : '林'}醫師 ${i}`,
-                    patients: mockPatients(i * 100, patientCount)
-                });
+        function translateStatus(statusCode) {
+            switch (statusCode) {
+                case 1: return "已報到";
+                case 0: return "未報到";
+                case 2: return "已完成";
+                case 3: return "已取消";
+                default: return "未知狀態";
             }
-            return data;
         }
 
         async function selectTime(time) {
@@ -410,7 +448,7 @@
                 const card = document.createElement("div");
                 card.className = "room-card";
                 card.innerHTML = `
-                                    <div class="room-card-header">診間 ${idx + 1} - 醫師：${room.doctor}</div>
+                                    <div class="room-card-header">診間 ${idx + 1} - ${room.doctor}</div>
                                     <div class="room-card-body">
                                     <div style="overflow-y: auto; max-height: 300px;">
                                         <table>
@@ -423,7 +461,7 @@
                                         </table>
                                     </div>
                                     <div class="action-buttons">
-                                        <button class="btn" onclick="showQRCode('${room.doctor}')">產生 QRCode</button>
+                                        <button class="btn" onclick="showQRCode('${room.doctor}')">產生報到 QRCode</button>
                                         <button class="btn" onclick="callNext('${room.doctor}')">診間叫號</button>
                                     </div>
                                     </div>`;

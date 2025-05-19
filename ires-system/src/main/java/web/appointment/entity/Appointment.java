@@ -5,137 +5,180 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import web.clinic.entity.Clinic;
+import web.clinic.entity.Doctor;
+import web.patient.entity.Patient;
 
 @Entity
 @Table(name = "appointment")
 public class Appointment {
 
-    @Id
-    @Column(name = "appointment_id", nullable = false, length = 36)
-    private String appointmentId;
+	@Id
+	@Column(name = "appointment_id", nullable = false, length = 36)
+	private String appointmentId;
 
-    @Column(name = "patient_id", nullable = false)
-    private Integer patientId;
+//    @Column(name = "patient_id", nullable = false)
+//    private Integer patientId;
+//
+//    @Column(name = "clinic_id", nullable = false)
+//    private Integer clinicId;
+//
+//    @Column(name = "doctor_id", nullable = false)
+//    private Integer doctorId;
 
-    @Column(name = "clinic_id", nullable = false)
-    private Integer clinicId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "clinic_id", insertable = false, updatable = false)
+	private Clinic clinic;
 
-    @Column(name = "doctor_id", nullable = false)
-    private Integer doctorId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+	private Doctor doctor;
 
-    @Column(name = "reserve_no", nullable = false)
-    private Integer reserveNo;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "patient_id", insertable = false, updatable = false)
+	private Patient patient;
 
-    @Column(name = "appointment_date", nullable = false)
-    private Date appointmentDate;
+	@Column(name = "reserve_no", nullable = false)
+	private Integer reserveNo;
 
-    @Column(name = "time_period", nullable = false)
-    private Integer timePeriod;
+	@Column(name = "appointment_date", nullable = false)
+	private Date appointmentDate;
 
-    @Column(name = "first_visit", nullable = false)
-    private Boolean firstVisit;
+	@Column(name = "time_period", nullable = false)
+	private Integer timePeriod;
 
-    @Column(name = "status", nullable = false)
-    private Integer status;
+	@Column(name = "first_visit", nullable = false)
+	private Boolean firstVisit;
 
-    @Column(name = "create_time", nullable = false, updatable = false, insertable = false)
-    private Timestamp createTime;
+	@Column(name = "status", nullable = false)
+	private Integer status;
 
-    @Column(name = "update_time", insertable = false)
-    private Timestamp updateTime;
+	@Column(name = "create_time", nullable = false, updatable = false, insertable = false)
+	private Timestamp createTime;
 
-    @Column(name = "notes", columnDefinition = "TEXT")
-    private String notes;
+	@Column(name = "update_time", insertable = false)
+	private Timestamp updateTime;
 
-    // Getters and Setters
+	@Column(name = "notes", columnDefinition = "TEXT")
+	private String notes;
 
-    public String getAppointmentId() {
-        return appointmentId;
-    }
+	// Getters and Setters
 
-    public void setAppointmentId(String appointmentId) {
-        this.appointmentId = appointmentId;
-    }
+	public String getAppointmentId() {
+		return appointmentId;
+	}
 
-    public Integer getPatientId() {
-        return patientId;
-    }
+	public void setAppointmentId(String appointmentId) {
+		this.appointmentId = appointmentId;
+	}
 
-    public void setPatientId(Integer patientId) {
-        this.patientId = patientId;
-    }
+//    public Integer getPatientId() {
+//        return patientId;
+//    }
+//
+//    public void setPatientId(Integer patientId) {
+//        this.patientId = patientId;
+//    }
+//
+//    public Integer getClinicId() {
+//        return clinicId;
+//    }
+//
+//    public void setClinicId(Integer clinicId) {
+//        this.clinicId = clinicId;
+//    }
+//
+//    public Integer getDoctorId() {
+//        return doctorId;
+//    }
+//
+//    public void setDoctorId(Integer doctorId) {
+//        this.doctorId = doctorId;
+//    }
 
-    public Integer getClinicId() {
-        return clinicId;
-    }
+	public Clinic getClinic() {
+		return clinic;
+	}
 
-    public void setClinicId(Integer clinicId) {
-        this.clinicId = clinicId;
-    }
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
 
-    public Integer getDoctorId() {
-        return doctorId;
-    }
+	public Doctor getDoctor() {
+		return doctor;
+	}
 
-    public void setDoctorId(Integer doctorId) {
-        this.doctorId = doctorId;
-    }
+	public void setDoctor(Doctor doctor) {
+		this.doctor = doctor;
+	}
 
-    public Integer getReserveNo() {
-        return reserveNo;
-    }
+	public Patient getPatient() {
+		return patient;
+	}
 
-    public void setReserveNo(Integer reserveNo) {
-        this.reserveNo = reserveNo;
-    }
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
 
-    public Date getAppointmentDate() {
-        return appointmentDate;
-    }
+	public Integer getReserveNo() {
+		return reserveNo;
+	}
 
-    public void setAppointmentDate(Date appointmentDate) {
-        this.appointmentDate = appointmentDate;
-    }
+	public void setReserveNo(Integer reserveNo) {
+		this.reserveNo = reserveNo;
+	}
 
-    public Integer getTimePeriod() {
-        return timePeriod;
-    }
+	public Date getAppointmentDate() {
+		return appointmentDate;
+	}
 
-    public void setTimePeriod(Integer timePeriod) {
-        this.timePeriod = timePeriod;
-    }
+	public void setAppointmentDate(Date appointmentDate) {
+		this.appointmentDate = appointmentDate;
+	}
 
-    public Boolean getFirstVisit() {
-        return firstVisit;
-    }
+	public Integer getTimePeriod() {
+		return timePeriod;
+	}
 
-    public void setFirstVisit(Boolean firstVisit) {
-        this.firstVisit = firstVisit;
-    }
+	public void setTimePeriod(Integer timePeriod) {
+		this.timePeriod = timePeriod;
+	}
 
-    public Integer getStatus() {
-        return status;
-    }
+	public Boolean getFirstVisit() {
+		return firstVisit;
+	}
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+	public void setFirstVisit(Boolean firstVisit) {
+		this.firstVisit = firstVisit;
+	}
 
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
+	public Integer getStatus() {
+		return status;
+	}
 
-    public Timestamp getUpdateTime() {
-        return updateTime;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    public String getNotes() {
-        return notes;
-    }
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
 }

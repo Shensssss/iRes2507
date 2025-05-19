@@ -79,7 +79,7 @@ public class AppointmentManagement extends HttpServlet {
 
             PrintWriter out = resp.getWriter();
             out.print(new Gson().toJson(list));
-            out.flush();
+            // out.flush();
         }
     }
 

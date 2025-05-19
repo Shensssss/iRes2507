@@ -59,6 +59,7 @@
             margin-bottom: 2rem;
         }
 
+        /*
         .bottom-bar {
             position: fixed;
             bottom: 0;
@@ -72,7 +73,20 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             z-index: 1000;
-            /* 確保浮在上層 */
+        }
+        */
+
+        .bottom-bar {
+            position: relative;
+            width: 100%;
+            background-color: white;
+            border-top: 1px solid #ccc;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem; /* 加這行讓它有距離 */
         }
 
         .btn {
@@ -431,7 +445,11 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.onload = loadNotifyData;
+        //window.onload = loadNotifyData;
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            loadNotifyData();
+        });
     </script>
 
 </body>
