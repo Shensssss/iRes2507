@@ -8,7 +8,12 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.google.gson.Gson;
+
+import core.util.CommonUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +23,13 @@ import java.util.*;
 @WebServlet("/appointment")
 public class AppointmentManagement extends HttpServlet {
 
-    private final AppointmentService appointmentService = new AppointmentServiceImpl();
+//    private final AppointmentService appointmentService = new AppointmentServiceImpl();
+	private AppointmentService service;
+	
+	@Override
+    public void init() throws ServletException {
+		service = CommonUtil.getBean(getServletContext(), AppointmentService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -72,7 +83,7 @@ public class AppointmentManagement extends HttpServlet {
                 timePeriod = 3;
             }
 
-            List<Appointment> list = appointmentService.getAppointmentsByDateAndPeriod(today, timePeriod);
+            List<Appointment> list = service.getAppointmentsByDateAndPeriod(today, timePeriod);
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");

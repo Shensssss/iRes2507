@@ -8,9 +8,17 @@ import web.appointment.service.AppointmentService;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
-    private final AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+//    private final AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+	@Autowired
+    private AppointmentDAO appointmentDAO;
 
     @Override
     public void saveOrUpdate(Appointment appointment) {
