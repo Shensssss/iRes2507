@@ -17,8 +17,8 @@ public interface CoreDao<P, I> {
 
     List<P> selectAll();
 
-    default Session getSession() {
-        return HibernateUtil.getSessionFactory().openSession();
-    }
+//    default Session getSession() {
+//        return HibernateUtil.getSessionFactory().openSession();
+//    }
 
 }
