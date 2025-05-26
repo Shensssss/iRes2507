@@ -2,6 +2,7 @@ package web.appointment.dao.impl;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import core.util.HibernateUtil;
 import web.appointment.dao.AppointmentDAO;
@@ -10,7 +11,12 @@ import web.appointment.entity.Appointment;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.PersistenceContext;
+
+@Repository
 public class AppointmentDAOImpl implements AppointmentDAO {
+	@PersistenceContext
+	private Session session;
 
     @Override
     public int insert(Appointment appointment) {
@@ -86,8 +92,28 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         }
     }
 
+//    @Override
+//    public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//            String hql = "SELECT a FROM Appointment a\r\n"
+//	            	   + " JOIN FETCH a.doctor d\r\n"
+//	            	   + " JOIN FETCH a.clinic c\r\n"
+//	            	   + " JOIN FETCH a.patient p\r\n"
+//	            	   + " WHERE a.appointmentDate = :date\r\n"
+//	            	   + "  AND a.timePeriod = :period\r\n"
+//	            	   + " ORDER BY a.reserveNo ASC";
+//            List<Appointment> list = session.createQuery(hql, Appointment.class)
+//                .setParameter("date", date)
+//                .setParameter("period", timePeriod)
+//                .getResultList();
+//
+//            return list;
+//        }
+//    }
+    
     @Override
     public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
+<<<<<<< Updated upstream
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT a FROM Appointment a\r\n"
 	            	   + " JOIN FETCH a.doctor d\r\n"
@@ -98,11 +124,19 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 	            	   + " ORDER BY a.reserveNo ASC";
 //        	String hql = "FROM Appointment a WHERE a.appointmentDate = :date AND a.timePeriod = :period ORDER BY a.reserveNo ASC";
             List<Appointment> list = session.createQuery(hql, Appointment.class)
+=======
+        String hql = "SELECT a FROM Appointment a\n"
+                   + " JOIN FETCH a.doctor d\n"
+                   + " JOIN FETCH a.clinic c\n"
+                   + " JOIN FETCH a.patient p\n"
+                   + " WHERE a.appointmentDate = :date\n"
+                   + "  AND a.timePeriod = :period\n"
+                   + " ORDER BY a.reserveNo ASC";
+
+        return session.createQuery(hql, Appointment.class)
+>>>>>>> Stashed changes
                 .setParameter("date", date)
                 .setParameter("period", timePeriod)
                 .getResultList();
-
-            return list;
-        }
     }
 }
