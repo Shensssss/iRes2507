@@ -437,8 +437,40 @@
         }
 
         function sendNotifications() {
-            const selected = document.querySelectorAll(".row-check:checked");
-            alert(`✅ 已發送 ${selected.length} 筆通知！`);
+            const selectedRows = document.querySelectorAll(".row-check:checked");
+            if (selectedRows.length === 0) {
+                alert("請先選擇要通知的病人");
+                return;
+            }
+
+            const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
+
+            selectedRows.forEach((checkbox, index) => {
+                const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
+                const patient = data[rowIndex];
+
+                const formData = new URLSearchParams();
+                formData.append("patient_id", patient.patientId);
+                formData.append("appointment_id", patient.appointmentId);
+                formData.append("message", "您於今日有預約，請於看診時段內至診所報到");
+                formData.append("notification_type", "今日預約通知");
+
+                fetch("/notification", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        console.log(`通知發送成功: 病人 ${patient.name}`);
+                    } else {
+                        console.error(`通知發送失敗: ${patient.name}`);
+                    }
+                });
+            });
+
+            alert(`已發送 ${selectedRows.length} 筆通知！`);
         }
 
         function scrollToTop() {
