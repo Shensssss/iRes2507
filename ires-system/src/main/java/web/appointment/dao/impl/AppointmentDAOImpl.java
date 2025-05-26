@@ -113,18 +113,6 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     
     @Override
     public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
-<<<<<<< Updated upstream
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT a FROM Appointment a\r\n"
-	            	   + " JOIN FETCH a.doctor d\r\n"
-	            	   + " JOIN FETCH a.clinic c\r\n"
-	            	   + " JOIN FETCH a.patient p\r\n"
-	            	   + " WHERE a.appointmentDate = :date\r\n"
-	            	   + "  AND a.timePeriod = :period\r\n"
-	            	   + " ORDER BY a.reserveNo ASC";
-//        	String hql = "FROM Appointment a WHERE a.appointmentDate = :date AND a.timePeriod = :period ORDER BY a.reserveNo ASC";
-            List<Appointment> list = session.createQuery(hql, Appointment.class)
-=======
         String hql = "SELECT a FROM Appointment a\n"
                    + " JOIN FETCH a.doctor d\n"
                    + " JOIN FETCH a.clinic c\n"
@@ -132,9 +120,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                    + " WHERE a.appointmentDate = :date\n"
                    + "  AND a.timePeriod = :period\n"
                    + " ORDER BY a.reserveNo ASC";
-
         return session.createQuery(hql, Appointment.class)
->>>>>>> Stashed changes
                 .setParameter("date", date)
                 .setParameter("period", timePeriod)
                 .getResultList();
