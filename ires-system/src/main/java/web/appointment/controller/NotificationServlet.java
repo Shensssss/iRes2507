@@ -26,14 +26,14 @@ import web.patient.entity.Patient;
 public class NotificationServlet extends HttpServlet {
 
     private NotificationService notificationService;
-    private PatientDao patientDao;
-    private AppointmentDAO appointmentDao;
+    private PatientService patientService;
+    private AppointmentService appointmentService;
 
     @Override
     public void init() throws ServletException {
         notificationService = CommonUtil.getBean(getServletContext(), NotificationService.class);
-        patientDao          = CommonUtil.getBean(getServletContext(), PatientDao.class);
-        appointmentDao      = CommonUtil.getBean(getServletContext(), AppointmentDAO.class);
+        patientService      = CommonUtil.getBean(getServletContext(), PatientService.class);
+        appointmentService  = CommonUtil.getBean(getServletContext(), AppointmentService.class);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class NotificationServlet extends HttpServlet {
         }
 
         int patientId = Integer.parseInt(patientIdStr);
-        Patient patient = patientDao.findById(patientId);
-        Appointment appointment = appointmentDao.selectById(appointmentId);
+        Patient patient = patientService.findById(patientId);
+        Appointment appointment = appointmentService.findById(appointmentId);
 
         if (patient == null || appointment == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "找不到對應的病人或預約");
