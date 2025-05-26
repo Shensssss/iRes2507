@@ -1,7 +1,6 @@
 package web.appointment.service.impl;
 
 import web.appointment.dao.AppointmentDAO;
-import web.appointment.dao.impl.AppointmentDAOImpl;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
 
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
-//    private final AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
 	@Autowired
     private AppointmentDAO appointmentDAO;
 
