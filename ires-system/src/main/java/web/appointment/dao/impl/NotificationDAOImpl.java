@@ -2,9 +2,9 @@ package web.appointment.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import web.appointment.dao.NotificationDAO;
@@ -14,29 +14,29 @@ import web.appointment.entity.Notification;
 public class NotificationDAOImpl implements NotificationDAO {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private Session session;
 
     @Override
     public void save(Notification notification) {
-        entityManager.persist(notification);
+        session.persist(notification);
     }
 
     @Override
     public Notification findById(String id) {
-        return entityManager.find(Notification.class, id);
+        return session.find(Notification.class, id);
     }
 
     @Override
     public List<Notification> findByPatientId(int patientId) {
-        String jpql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid ORDER BY n.sentDatetime DESC";
-        return entityManager.createQuery(jpql, Notification.class)
+        String hql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid ORDER BY n.sentDatetime DESC";
+        return session.createQuery(hql, Notification.class)
                 .setParameter("pid", patientId)
                 .getResultList();
     }
 
     @Override
     public void update(Notification notification) {
-        entityManager.merge(notification);
+        session.merge(notification);
     }
 }
 
