@@ -9,5 +9,6 @@ public interface NotificationDAO {
     Notification findById(String id);
     List<Notification> findByPatientId(int patientId);
     void update(Notification notification);
+    boolean existsByTypeAndAppointment(String type, String appointmentId);
 }
 

@@ -38,5 +38,16 @@ public class NotificationDAOImpl implements NotificationDAO {
     public void update(Notification notification) {
         session.merge(notification);
     }
+
+    @Override
+    public boolean existsByTypeAndAppointment(String type, String appointmentId) {
+        String hql = "SELECT COUNT(n) FROM Notification n " +
+                      "WHERE n.notificationType = :type AND n.appointment.appointmentId = :appointmentId";
+        Long count = session.createQuery(hql, Long.class)
+                .setParameter("type", type)
+                .setParameter("appointmentId", appointmentId)
+                .getSingleResult();
+        return count > 0;
+    }
 }
 
