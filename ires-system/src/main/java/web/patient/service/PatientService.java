@@ -7,4 +7,6 @@ public interface PatientService {
 	String register(Patient patient);
 	
 	Patient login(Patient patient);
+	
+	Patient findById(int patientId); 
 }

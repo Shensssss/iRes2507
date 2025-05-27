@@ -7,4 +7,6 @@ public interface PatientDAO extends CoreDao<Patient, Integer> {
 	Patient selectByEmailPassword(String email);
 
 	Patient selectForLogin(String email, String password);
+	
+	Patient findById(int patientId);
 }

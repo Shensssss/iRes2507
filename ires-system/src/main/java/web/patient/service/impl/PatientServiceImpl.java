@@ -47,4 +47,9 @@ public class PatientServiceImpl implements PatientService {
 		return null;
 	}
 
+	@Override
+	public Patient findById(int patientId) {
+		return  patientDAO.findById(patientId);
+	}
+
 }
