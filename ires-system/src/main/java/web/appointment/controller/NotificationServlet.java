@@ -29,9 +29,8 @@ import web.appointment.entity.Notification;
 import web.appointment.service.AppointmentService;
 import web.appointment.service.NotificationService;
 import web.appointment.dao.AppointmentDAO;
-import web.appointment.dto.NotificationDTO;
-import web.appointment.dto.NotificationResult;
 import web.patient.entity.Patient;
+import web.patient.service.PatientService;
 
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
