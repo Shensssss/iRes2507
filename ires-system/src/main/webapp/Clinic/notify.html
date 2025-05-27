@@ -59,6 +59,7 @@
             margin-bottom: 2rem;
         }
 
+        /*
         .bottom-bar {
             position: fixed;
             bottom: 0;
@@ -72,7 +73,20 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             z-index: 1000;
-            /* 確保浮在上層 */
+        }
+        */
+
+        .bottom-bar {
+            position: relative;
+            width: 100%;
+            background-color: white;
+            border-top: 1px solid #ccc;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem; /* 加這行讓它有距離 */
         }
 
         .btn {
@@ -423,15 +437,51 @@
         }
 
         function sendNotifications() {
-            const selected = document.querySelectorAll(".row-check:checked");
-            alert(`✅ 已發送 ${selected.length} 筆通知！`);
+            const selectedRows = document.querySelectorAll(".row-check:checked");
+            if (selectedRows.length === 0) {
+                alert("請先選擇要通知的病人");
+                return;
+            }
+
+            const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
+
+            selectedRows.forEach((checkbox, index) => {
+                const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
+                const patient = data[rowIndex];
+
+                const formData = new URLSearchParams();
+                formData.append("patient_id", patient.patientId);
+                formData.append("appointment_id", patient.appointmentId);
+                formData.append("message", "您於今日有預約，請於看診時段內至診所報到");
+                formData.append("notification_type", "今日預約通知");
+
+                fetch("/notification", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        console.log(`通知發送成功: 病人 ${patient.name}`);
+                    } else {
+                        console.error(`通知發送失敗: ${patient.name}`);
+                    }
+                });
+            });
+
+            alert(`已發送 ${selectedRows.length} 筆通知！`);
         }
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.onload = loadNotifyData;
+        //window.onload = loadNotifyData;
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            loadNotifyData();
+        });
     </script>
 
 </body>
