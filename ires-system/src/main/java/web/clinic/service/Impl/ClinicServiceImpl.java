@@ -1,4 +1,4 @@
-package web.clinic.service.Impl;
+package web.clinic.service.impl;
 
 import javax.transaction.Transactional;
 

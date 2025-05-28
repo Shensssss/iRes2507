@@ -1,4 +1,4 @@
-package web.clinic.dao.Impl;
+package web.clinic.dao.impl;
 
 import javax.persistence.PersistenceContext;
 
