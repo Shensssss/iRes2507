@@ -1,12 +1,17 @@
 package web.patient.service.impl;
 
 import javax.naming.NamingException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import web.patient.dao.PatientDAO;
 import web.patient.dao.impl.PatientDAOImpl;
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
-
+@Service
 public class PatientServiceImpl implements PatientService {
+	@Autowired
 	private PatientDAO patientDAO;
 	
 	public PatientServiceImpl() throws NamingException {

@@ -34,13 +34,9 @@ import web.patient.service.PatientService;
 
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
-    @Autowired
+    
     private NotificationService notificationService;
-
-    @Autowired
     private PatientService patientService;
-
-    @Autowired
     private AppointmentService appointmentService;
 
     @Override

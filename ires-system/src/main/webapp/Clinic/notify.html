@@ -436,6 +436,43 @@
             allChecks.forEach(chk => chk.checked = selectAllBox.checked);
         }
 
+        // function sendNotifications() {
+        //     const selectedRows = document.querySelectorAll(".row-check:checked");
+        //     if (selectedRows.length === 0) {
+        //         alert("請先選擇要通知的病人");
+        //         return;
+        //     }
+
+        //     const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
+
+        //     selectedRows.forEach((checkbox, index) => {
+        //         const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
+        //         const patient = data[rowIndex];
+
+        //         const formData = new URLSearchParams();
+        //         formData.append("patient_id", patient.patientId);
+        //         formData.append("appointment_id", patient.appointmentId);
+        //         formData.append("message", "您於今日有預約，請於看診時段內至診所報到");
+        //         formData.append("notification_type", "今日預約通知");
+
+        //         fetch("/notification", {
+        //             method: "POST",
+        //             headers: {
+        //                 "Content-Type": "application/x-www-form-urlencoded"
+        //             },
+        //             body: formData
+        //         }).then(response => {
+        //             if (response.ok) {
+        //                 console.log(`通知發送成功: 病人 ${patient.name}`);
+        //             } else {
+        //                 console.error(`通知發送失敗: ${patient.name}`);
+        //             }
+        //         });
+        //     });
+
+        //     alert(`已發送 ${selectedRows.length} 筆通知！`);
+        // }
+
         function sendNotifications() {
             const selectedRows = document.querySelectorAll(".row-check:checked");
             if (selectedRows.length === 0) {
@@ -444,33 +481,36 @@
             }
 
             const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
+            const payload = [];
 
-            selectedRows.forEach((checkbox, index) => {
+            selectedRows.forEach((checkbox) => {
                 const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
                 const patient = data[rowIndex];
 
-                const formData = new URLSearchParams();
-                formData.append("patient_id", patient.patientId);
-                formData.append("appointment_id", patient.appointmentId);
-                formData.append("message", "您於今日有預約，請於看診時段內至診所報到");
-                formData.append("notification_type", "今日預約通知");
-
-                fetch("/notification", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: formData
-                }).then(response => {
-                    if (response.ok) {
-                        console.log(`通知發送成功: 病人 ${patient.name}`);
-                    } else {
-                        console.error(`通知發送失敗: ${patient.name}`);
-                    }
+                payload.push({
+                    patientId: patient.patientId,
+                    appointmentId: patient.appointmentId,
+                    message: "您於今日有預約，請於看診時段內至診所報到",
+                    notificationType: "今日預約通知"
                 });
             });
 
-            alert(`已發送 ${selectedRows.length} 筆通知！`);
+            fetch("/notification", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload) // 傳送 JSON 陣列
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log("通知結果：", result);
+                alert(`已發送 ${selectedRows.length} 筆通知！`);
+            })
+            .catch(error => {
+                console.error("發送通知時發生錯誤", error);
+                alert("發送失敗，請查看 console log");
+            });
         }
 
         function scrollToTop() {
