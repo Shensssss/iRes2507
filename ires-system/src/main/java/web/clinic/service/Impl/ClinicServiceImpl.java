@@ -5,7 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import web.clinic.dao.ClinicDao;
+import web.clinic.dao.ClinicDAO;
 import web.clinic.entity.Clinic;
 import web.clinic.service.ClinicService;
 
@@ -13,11 +13,11 @@ import web.clinic.service.ClinicService;
 @Transactional
 public class ClinicServiceImpl implements ClinicService{
 	@Autowired
-	private ClinicDao clinicDao;
+	private ClinicDAO clinicDAO;
 	
 	@Override
 	public void editPsd(Clinic clinic) {
-		clinicDao.update(clinic);
+		clinicDAO.update(clinic);
 		
 	}
 
