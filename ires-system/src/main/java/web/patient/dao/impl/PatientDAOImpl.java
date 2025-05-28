@@ -1,8 +1,5 @@
 package web.patient.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;

@@ -9,4 +9,6 @@ public interface PatientService {
 	Patient login(Patient patient);
 	
 	Patient findById(int patientId); 
+
+	void updatePatient(Patient patient);
 }

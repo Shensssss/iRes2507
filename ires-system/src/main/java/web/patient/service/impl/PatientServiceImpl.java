@@ -34,8 +34,6 @@ public class PatientServiceImpl implements PatientService {
 		return count < 1 ? "系統錯誤" : null;
 	}
 
-
-
 	@Override
 	public Patient login(Patient patient) {
 		if(patient.getEmail() == null || patient.getEmail().isEmpty()) {
@@ -52,4 +50,8 @@ public class PatientServiceImpl implements PatientService {
 		return  patientDAO.findById(patientId);
 	}
 
+	@Override
+    public void updatePatient(Patient patient) {
+        patientDAO.update(patient); // 呼叫 DAO 層方法更新資料
+    }
 }
