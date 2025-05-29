@@ -38,11 +38,11 @@ public class NotificationServiceImpl implements NotificationService {
         boolean exists = notificationDAO.existsByTypeAndAppointment(type, appointmentId);
 
         if (exists) {
-            return "Appointment " + appointmentId + " already reminded for " + type;
+            return "已發送過通知";
+        } else {
+            notificationDAO.save(notification);
+            return "通知已發送";
         }
-
-        notificationDAO.save(notification);
-        return "Appointment " + appointmentId + " reminder created.";
     }
 
     @Override
