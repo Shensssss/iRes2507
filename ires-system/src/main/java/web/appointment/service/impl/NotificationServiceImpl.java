@@ -2,7 +2,6 @@ package web.appointment.service.impl;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,17 +20,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public String createNotification(Notification notification) {
-
-        if (notification.getNotificationId() == null) {
-            notification.setNotificationId(UUID.randomUUID().toString());
-        }
-        if (notification.getSentDatetime() == null) {
-            notification.setSentDatetime(new Timestamp(System.currentTimeMillis()));
-        }
-        if (notification.getReadStatus() == null) {
-            notification.setReadStatus(false);
-        }
-        
         String type = notification.getNotificationType();
         String appointmentId = notification.getAppointment().getAppointmentId();
 

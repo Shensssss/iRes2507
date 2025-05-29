@@ -2,9 +2,11 @@ package web.appointment.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -60,9 +62,12 @@ public class NotificationServlet extends HttpServlet {
                 Appointment appointment = appointmentService.findById(appointmentId);
 
                 Notification n = new Notification();
+                n.setNotificationId(UUID.randomUUID().toString());
                 n.setPatient(patient);
                 n.setAppointment(appointment);
                 n.setMessage(message);
+                n.setSentDatetime(new Timestamp(System.currentTimeMillis()));
+                n.setReadStatus(false);
                 n.setNotificationType(notificationType);
 
                 String result = notificationService.createNotification(n);
