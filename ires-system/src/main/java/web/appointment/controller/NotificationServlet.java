@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,13 +25,9 @@ import web.patient.service.PatientService;
 
 @WebServlet("/notification")
 public class NotificationServlet extends HttpServlet {
-    @Autowired
+    
     private NotificationService notificationService;
-
-    @Autowired
     private PatientService patientService;
-
-    @Autowired
     private AppointmentService appointmentService;
 
     @Override
