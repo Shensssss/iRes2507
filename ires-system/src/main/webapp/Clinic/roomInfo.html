@@ -521,7 +521,7 @@
             const room = allData.find(r => r.doctor === doctorName);
             if (!room) return alert("找不到該診間資料");
             localStorage.setItem("callRoom", JSON.stringify(room));
-            window.location.href = "call_room.html";
+            window.location.href = "callRoom.html";
         }
 
         function goToNotifyPage() {

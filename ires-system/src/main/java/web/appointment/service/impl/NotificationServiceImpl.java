@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import web.appointment.dao.NotificationDAO;
 import web.appointment.entity.Notification;
@@ -18,6 +19,7 @@ public class NotificationServiceImpl implements NotificationService {
     private NotificationDAO notificationDAO;
 
     @Override
+    @Transactional
     public String createNotification(Notification notification) {
 
         if (notification.getNotificationId() == null) {
