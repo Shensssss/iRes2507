@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import web.clinic.entity.Clinic;
-import web.clinic.entity.Doctor;
+import web.doctor.entity.Doctor;
 import web.patient.entity.Patient;
 
 @Entity
