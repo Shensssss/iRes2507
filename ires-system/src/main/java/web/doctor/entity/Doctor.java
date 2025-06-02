@@ -40,13 +40,13 @@ public class Doctor implements Serializable{
 	private String memo;
 	
 	@Column(name = "create_id")
-	private Integer createId;
+	private String createId;
 	
 	@Column(name = "create_time")
 	private Timestamp createTime;
 	
 	@Column(name = "update_id")
-	private Integer updateId;
+	private String updateId;
 
 	@Column(name = "update_time")
 	private Timestamp updateTime;
@@ -58,7 +58,7 @@ public class Doctor implements Serializable{
 	}
 
 	public Doctor(int doctorId, String doctorName, Integer clinicId, String education, String experience,
-			String memo, Integer createId, Timestamp createTime, Integer updateId, Timestamp updateTime) {
+			String memo, String createId, Timestamp createTime, String updateId, Timestamp updateTime) {
 		super();
 		this.doctorId = doctorId;
 		this.doctorName = doctorName;
@@ -119,11 +119,11 @@ public class Doctor implements Serializable{
 		this.memo = memo;
 	}
 
-	public Integer getCreateId() {
+	public String getCreateId() {
 		return createId;
 	}
 
-	public void setCreateId(Integer createId) {
+	public void setCreateId(String createId) {
 		this.createId = createId;
 	}
 
@@ -135,11 +135,11 @@ public class Doctor implements Serializable{
 		this.createTime = createTime;
 	}
 
-	public Integer getUpdateId() {
+	public String getUpdateId() {
 		return updateId;
 	}
 
-	public void setUpdateId(Integer updateId) {
+	public void setUpdateId(String updateId) {
 		this.updateId = updateId;
 	}
 
