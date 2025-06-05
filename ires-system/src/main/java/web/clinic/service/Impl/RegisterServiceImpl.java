@@ -2,6 +2,9 @@ package web.clinic.service.impl;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import core.util.HibernateUtil;
 import web.clinic.dao.RegisterDao;
@@ -9,9 +12,14 @@ import web.clinic.dao.impl.RegisterDaoImpl;
 import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 
+@Service
+@Transactional
 public class RegisterServiceImpl implements RegisterService{
 	
-	public RegisterDao dao = new RegisterDaoImpl();
+	
+	@Autowired
+	private RegisterDao dao;
+	//public RegisterDao dao = new RegisterDaoImpl();
 
 	
 	@Override
