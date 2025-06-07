@@ -162,15 +162,12 @@
                                 <input type="password" id="confirm-password" name="confirm-password" required />
                             </div>
                             <div class="form-buttons">
-                                <button type="submit">變更</button>
-                                <button type="button" onclick="cancelChange()">取消</button>
+                                <button id="btn-submit" type="submit">變更</button>
+                                <button id="btn-cancel" type="cancel" onclick="cancelChange()">取消</button>
                             </div>
+                            <div id="msg" class="error"></div>
                         </form>
                     </div>
-
-
-
-
 
             </section>
         </section>
@@ -216,6 +213,7 @@
         app.spinStop();
     });
     </script>-->
+    <script src="static/js/accountupdatepsd.js"></script>
 
 </body>
 

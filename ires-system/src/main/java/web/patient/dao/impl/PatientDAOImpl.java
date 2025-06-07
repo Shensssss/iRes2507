@@ -1,8 +1,5 @@
 package web.patient.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;
@@ -13,11 +10,12 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 
 import core.util.HibernateUtil;
 import web.patient.dao.PatientDAO;
 import web.patient.entity.Patient;
-
+@Repository
 public class PatientDAOImpl implements PatientDAO {
 	
 	@PersistenceContext

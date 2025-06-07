@@ -1,0 +1,34 @@
+div.container{
+    display: flex;
+}
+
+div.box{
+    width: 50%;
+    padding: 10px;
+    margin: 20px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);                
+}
+
+div.record{
+    width: 90%;
+    padding: 10px;
+    margin: 20px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+p.item{
+    margin: 8px;
+}
+
+p.detail{
+    margin: 2px;
+    font-size: 14px;
+}
+
+.-none{
+    display: none;
+}
