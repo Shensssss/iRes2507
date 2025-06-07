@@ -71,7 +71,7 @@ public class Doctor implements Serializable{
 		this.updateTime = updateTime;
 	}
 
-	public int getDoctorId() {
+	public Integer getDoctorId() {
 		return doctorId;
 	}
 
