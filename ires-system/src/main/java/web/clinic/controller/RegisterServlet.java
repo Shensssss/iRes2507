@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import core.util.CommonUtil;
 import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 import web.clinic.service.impl.RegisterServiceImpl;
@@ -22,11 +23,12 @@ public class RegisterServlet extends HttpServlet{
 	
 	@Override
 	public void init() throws ServletException {
-		try {
-			registerService = new RegisterServiceImpl();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		registerService = CommonUtil.getBean(getServletContext(), RegisterService.class);
+		//		try {
+//			registerService = new RegisterServiceImpl();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
