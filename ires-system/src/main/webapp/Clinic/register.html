@@ -181,10 +181,10 @@
     <button type="button" class="verification-button">發送驗證碼</button>
 </div>-->
 
-<div class="remember-me-group">
+<!--<div class="remember-me-group">
     <input type="checkbox" id="remember-me" name="remember_me">
     <label for="remember-me">保持登入</label>
-</div>
+</div>-->
 
   <!-- 送出按鈕 -->
   <button type="submit" class="submit-btn">註冊</button>
@@ -292,6 +292,7 @@ document.querySelector('form').addEventListener('submit', (event) => {
   .then(body => {
     console.log(body);
     alert("註冊完成，請等待審核");
+    location.href = 'http://localhost:8080/ires-system/Clinic/login.html';
   });
 });
 
