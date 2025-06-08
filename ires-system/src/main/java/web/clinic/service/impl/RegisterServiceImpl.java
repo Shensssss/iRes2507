@@ -2,6 +2,9 @@ package web.clinic.service.impl;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import core.util.HibernateUtil;
 import web.clinic.dao.RegisterDao;
@@ -9,9 +12,16 @@ import web.clinic.dao.impl.RegisterDaoImpl;
 import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 
+
+@Service
+@Transactional
 public class RegisterServiceImpl implements RegisterService{
 	
-	public RegisterDao dao = new RegisterDaoImpl();
+
+	
+	@Autowired
+	private RegisterDao dao;
+	//public RegisterDao dao = new RegisterDaoImpl();
 
 	
 	@Override
@@ -87,4 +97,39 @@ public class RegisterServiceImpl implements RegisterService{
 
 	}
 
+
+	@Override
+	public String login(Clinic clinic) {
+	
+		
+		String account = clinic.getAccount();
+		if (account == null || account.isBlank()) {
+			return "帳號未輸入";
+		}
+		
+		String password = clinic.getPassword();
+		if (password == null || password.isBlank()) {
+			return "密碼未輸入";
+		}
+	
+	
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	
+	try {
+		
+		Transaction tx = session.beginTransaction();
+		Clinic result = dao.selectForLogin(account, password);
+		tx.commit();
+		if(result == null) {
+			return "使用者名稱或密碼錯誤";	
+
+		} 
+		return null;
+	} catch (Exception e){
+			session.getTransaction().rollback();
+			e.printStackTrace();
+			return "系統錯誤，請稍後再試";
+	}
+
+}
 }

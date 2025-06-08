@@ -6,4 +6,7 @@ import web.clinic.entity.Clinic;
 public interface RegisterDao extends CoreDao<Clinic, String>{
 	int insert(Clinic clinic);
 	Clinic selectbyAccount(String account);
+	
+	Clinic selectForLogin(String account, String password);
+	
 }

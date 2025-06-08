@@ -16,8 +16,8 @@ import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 import web.clinic.service.impl.RegisterServiceImpl;
 
-@WebServlet("/clinic/register")
-public class RegisterServlet extends HttpServlet{
+@WebServlet("/clinic/login")
+public class LoginServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private RegisterService registerService;
 	
@@ -37,7 +37,7 @@ public class RegisterServlet extends HttpServlet{
 		
 		JsonObject respBody = new JsonObject();
 		if(clinic != null) {
-			String errMsg = registerService.register(clinic);
+			String errMsg = registerService.login(clinic);
 			respBody.addProperty("success", errMsg == null);
 			if (errMsg != null) {
 				respBody.addProperty("errMsg", errMsg);
@@ -48,7 +48,7 @@ public class RegisterServlet extends HttpServlet{
 			respBody.addProperty("errMsg", "無會員資料");
 		}
 		resp.setContentType("application/json");
-	    //resp.setCharacterEncoding("UTF-8");
+	    resp.setCharacterEncoding("UTF-8");
 		resp.getWriter().write(respBody.toString());
 		}
 	}
