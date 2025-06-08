@@ -78,6 +78,15 @@ public class RegisterDaoImpl implements RegisterDao{
 //		cQuery.where(cBuilder.equal(root.get("account"), account));
 //		return session.createQuery(cQuery).uniqueResult;
 	}
+@Override
+public Clinic selectForLogin(String account, String password) {
+		String hql = "FROM Clinic where account = :account and password = :password";
+		return getSession()
+				.createQuery(hql, Clinic.class)
+				.setParameter("account", account)
+				.setParameter("password", password)
+				.uniqueResult();
+}
 
 
 

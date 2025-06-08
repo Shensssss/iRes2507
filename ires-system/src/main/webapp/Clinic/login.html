@@ -85,10 +85,10 @@
         <input type="password" id="password" name="password" placeholder="請輸入密碼" required>
     </div>
 
-    <div class="remember-me-group">
+<!--<div class="remember-me-group">
         <input type="checkbox" id="remember-me" name="remember_me">
         <label for="remember-me">保持登入</label>
-    </div>
+    </div>-->
 
     <button type="submit" class="submit-btn">登入</button>
 
@@ -98,7 +98,49 @@
 </form>
 
 <script>
+const account = document.getElementById('email');
+const password = document.getElementById('password');
+
+
+document.querySelector('form').addEventListener('submit', (event) => {
+event.preventDefault();
+
+
+if (!account.value) {
+  alert('帳號未輸入');
+  return;
+}
+
+if (!password.value) {
+  alert('密碼未輸入');
+  return;
+}
+
+
+// 送出資料
+fetch('http://localhost:8080/ires-system/clinic/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    account: account.value,
+    password: password.value
+  })
+})
+.then(resp => resp.json())
+.then(body => {
+  if(body.success){
+	  alert("登入成功");
+	  location.href = 'http://localhost:8080/ires-system/Clinic/appointment.html';
+  }else{
+	 alert("登入失敗：" + body.errMsg);
+  }
+}); 
+});
+
+
 </script>
 
-</body>
+
 </html>
