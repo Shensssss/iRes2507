@@ -86,7 +86,7 @@
         }
 
         th {
-            background-color: #dfefff;
+            background-color: #e6f2ff;
             color: #333;
             font-weight: bold;
         }
@@ -129,11 +129,70 @@
             padding: 2px 6px;
             cursor: pointer;
         }
+
+        .doctor-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            z-index: 99;
+            min-width: 200px;
+            max-height: 200px;
+            overflow: auto;
+        }
+
+        .popup-body tr:hover {
+            background-color: #f0f8ff;
+            cursor: pointer;
+        }
+
+        .popup-body td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #appointmentTable {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        #appointmentTable td,
+        #appointmentTable th {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        td .view,
+        td .edit {
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #appointmentTable .btnSave,
+        #appointmentTable .btnCancel,
+        #appointmentTable .btnEdit,
+        #appointmentTable .btnDelete {
+            min-width: 55px;
+            margin: 2px;
+            font-size: 12px;
+        }
     </style>
 </head>
 
 <body>
-    <h1>診所預約系統</h1>
+    <h1></h1>
 
     <div class="form-container">
         <div class="form-group">
@@ -199,6 +258,13 @@
     </div>
 
     <table id="appointmentTable">
+        <colgroup>
+            <col style="width: 180px;"> <!-- 預約日期 -->
+            <col style="width: 120px;"> <!-- 時段 -->
+            <col style="width: 180px;"> <!-- 醫師 -->
+            <col style="width: 100px;"> <!-- 看診號碼 -->
+            <col style="width: 260px;"> <!-- 操作 -->
+        </colgroup>
         <thead>
             <tr>
                 <th>日期</th>
