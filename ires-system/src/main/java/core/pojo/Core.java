@@ -11,4 +11,5 @@ public class Core implements Serializable {
 	private boolean successful;
 	private String message;
 	private List<?> data;
+	private int statusCode;
 }
