@@ -1,6 +1,6 @@
 package web.clinic.entity;
 
-
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -86,13 +86,23 @@ public class Clinic {
     private String createId;
 
     @Column(name = "create_time")
-    private Timestamp createTime = new Timestamp(System.currentTimeMillis());;
+    private Timestamp createTime = new Timestamp(System.currentTimeMillis());
 
     @Column(name = "update_id", insertable = false)
     private String updateId;
 
     @Column(name = "update_time")
-    private Timestamp updateTime = new Timestamp(System.currentTimeMillis());;
+    private Timestamp updateTime = new Timestamp(System.currentTimeMillis());
+
+    @Column(name = "latitude")
+    private BigDecimal latitude;
+
+    @Column(name = "longitude")
+    private BigDecimal longitude;
+
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
 
     // Getters and Setters
 
@@ -270,5 +280,29 @@ public class Clinic {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
