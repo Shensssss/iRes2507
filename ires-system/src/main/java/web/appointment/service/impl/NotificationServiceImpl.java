@@ -44,6 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
     public void markAsRead(String notificationId) {
         Notification n = notificationDAO.findById(notificationId);
         if (n != null && !Boolean.TRUE.equals(n.getReadStatus())) {
