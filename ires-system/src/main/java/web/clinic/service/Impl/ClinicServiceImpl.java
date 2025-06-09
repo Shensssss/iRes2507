@@ -1,4 +1,4 @@
-package web.clinic.service.Impl;
+package web.clinic.service.impl;
 
 import javax.transaction.Transactional;
 
@@ -11,14 +11,27 @@ import web.clinic.service.ClinicService;
 
 @Service
 @Transactional
-public class ClinicServiceImpl implements ClinicService{
+public class ClinicServiceImpl implements ClinicService {
 	@Autowired
 	private ClinicDao clinicDao;
-	
+
+//	@Override
+//	public void editPsd(Clinic clinic) {
+//		//helen debug
+//		//clinicDao.update(clinic);
+//		
+//		
+//	}
+
+	@Autowired
 	@Override
-	public void editPsd(Clinic clinic) {
-		clinicDao.update(clinic);
-		
+	public Clinic editPsd(Clinic clinic) {
+		final Clinic oClinic = clinicDao.selectbyClinic(clinic.getClinicId().toString());
+		clinic.setPassword(oClinic.getPassword());
+		final int resultCount = clinicDao.update(clinic);
+//		clinic.setSuccessful(resultCount > 0);
+//		clinic.setMessage(resultCount > 0 ? "修改成功" : "修改失敗");
+		 return clinic;
 	}
 
 }
