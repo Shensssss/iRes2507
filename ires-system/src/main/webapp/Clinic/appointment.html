@@ -104,6 +104,10 @@
             padding: 8px;
             border: 1px solid #ccc;
             text-align: left;
+            position: relative;
+            /* 讓 popup 定位不受 table 限制 */
+            overflow: visible !important;
+            /* 關鍵：允許 popup 顯示超出範圍 */
         }
 
         th {
@@ -123,6 +127,8 @@
             z-index: 10;
             padding: 10px;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .popup-table-container input {
@@ -163,6 +169,13 @@
             min-width: 200px;
             max-height: 200px;
             overflow: auto;
+        }
+
+        .doctor-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+            /* 確保 popup 在上層 */
         }
 
         .popup-body tr:hover {
@@ -219,11 +232,11 @@
         <header id="header">
             <!--logo start-->
             <div class="brand">
-                <a href="" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                    <span>OO</span>耳鼻喉科診所</a>
+                <a href="" class="logo"
+                    style="font-size: 24px; margin-left: 10px; margin-top: 5px; display: inline-block;">
+                    <span>OO</span>耳鼻喉科診所
+                </a>
             </div>
-            <img src="static/picture/ires.png"
-                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div class="notification-wrapper">
                 <div class="notification-icon" id="bell">
@@ -240,11 +253,14 @@
                 </div>
             </div>
             <!--logo end-->
-            <ul class="nav navbar-nav navbar-left">
+            <ul class="nav navbar-nav navbar-left" style="display: flex; align-items: center;">
                 <li class="toggle-navigation toggle-left">
-                    <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
-                        <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
+                    <button class="sidebar-toggle" id="toggle-left" style="padding: 8px 12px; font-size: 18px;">
+                        <i class="fa fa-bars"></i>
                     </button>
+                </li>
+                <li>
+                    <img src="static/picture/ires.png" style="width: 3cm; height: auto; margin-left: 12px;" />
                 </li>
             </ul>
         </header>
@@ -341,9 +357,6 @@
                                 <tbody id="patientTableBody"></tbody>
                             </table>
 
-                            <script src="reservation_logic.js"></script>
-
-                            </table>
                             <div id="pagination"></div>
                         </div>
                     </div>
@@ -410,6 +423,15 @@
             </section>
         </section>
     </section>
+
+    <div id="doctorPopup" class="doctor-popup">
+        <input type="text" class="popup-search" placeholder="搜尋醫師..." style="width:100%;margin-bottom:6px;">
+        <table>
+            <tbody class="popup-body"></tbody>
+        </table>
+        <div class="popup-footer" style="text-align:center; margin-top: 4px;"></div>
+    </div>
+
     <!--/Config demo-->
     <!--Global JS-->
     <script src="static/js/jquery-1.11.1.min.js"></script>

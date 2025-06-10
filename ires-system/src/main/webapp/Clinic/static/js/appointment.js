@@ -125,14 +125,6 @@ function registerEventHandlers() {
 			<td>
 				<span class="view">${doctor}</span>
 				<input class="edit doctor-edit" type="text" value="${doctor}" style="display:none" readonly data-uid="${uid}">
-				<div class="doctor-popup" id="popup-${uid}" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;padding:6px;z-index:99;">
-				<input type="text" class="popup-search" placeholder="搜尋醫師..." style="width:100%;margin-bottom:6px;">
-				<table>
-					<tbody class="popup-body"></tbody>
-				</table>
-				<div class="popup-footer" style="text-align:center; margin-top: 4px;"></div>
-				</div>
-
 			</td>
 			<td>${visitNumberCounter.current++}</td>
 			<td>未報到</td>
@@ -213,14 +205,21 @@ function registerEventHandlers() {
 		}
 	});
 
-	document.addEventListener("click", e => {
+	document.addEventListener("click", (e) => {
+		const popup = document.getElementById("doctorPopup");
+
 		if (e.target.classList.contains("doctor-edit")) {
 			const input = e.target;
 			const uid = input.dataset.uid;
-			const popup = document.getElementById("popup-" + uid);
 			const tbody = popup.querySelector(".popup-body");
 			const search = popup.querySelector(".popup-search");
 			const footer = popup.querySelector(".popup-footer");
+
+			const rect = input.getBoundingClientRect();
+			popup.style.left = rect.left + window.scrollX + "px";
+			popup.style.top = rect.bottom + window.scrollY + "px";
+			popup.style.display = "block";
+			popup.dataset.uid = uid;
 
 			const render = (keyword = "", page = 1) => {
 				const perPage = 4;
@@ -234,9 +233,9 @@ function registerEventHandlers() {
 					const tr = document.createElement("tr");
 					tr.innerHTML = `<td>${name}</td>`;
 					tr.addEventListener("dblclick", () => {
-						const input = document.querySelector(`.doctor-edit[data-uid="${uid}"]`);
-						if (input) {
-							input.value = name;
+						const targetInput = document.querySelector(`.doctor-edit[data-uid="${uid}"]`);
+						if (targetInput) {
+							targetInput.value = name;
 							popup.style.display = "none";
 						}
 					});
@@ -252,18 +251,12 @@ function registerEventHandlers() {
 				}
 			};
 
+			search.value = "";
 			search.oninput = () => render(search.value.trim());
-
-			const rect = input.getBoundingClientRect();
-			popup.style.left = rect.left + window.scrollX + "px";
-			popup.style.top = rect.bottom + window.scrollY + "px";
-			popup.dataset.uid = uid;
-			popup.style.display = "block";
-
 			render();
-			e.stopPropagation();
-		} else {
-			document.querySelectorAll(".doctor-popup").forEach(p => p.style.display = "none");
+		}
+		else if (!popup.contains(e.target)) {
+			popup.style.display = "none";
 		}
 	});
 };
