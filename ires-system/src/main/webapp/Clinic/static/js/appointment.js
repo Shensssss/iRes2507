@@ -75,11 +75,13 @@ function renderDoctors(page = 1, keyword = "") {
 function registerEventHandlers() {
 	document.getElementById("patient").addEventListener("click", () => {
 		document.getElementById("patientTableContainer").style.display = "block";
+		document.getElementById("doctorTableContainer").style.display = "none";
 		renderPatients();
 	});
 
 	document.getElementById("doctorInput").addEventListener("click", () => {
 		document.getElementById("doctorTableContainer").style.display = "block";
+		document.getElementById("patientTableContainer").style.display = "none";
 		renderDoctors();
 	});
 
@@ -111,12 +113,28 @@ function registerEventHandlers() {
 		const now = new Date().toISOString().replace("T", " ").substring(0, 19);
 
 		dates.forEach(date => {
+			// 檢查是否已存在相同日期
+			const isDuplicate = Array.from(tbody.querySelectorAll("tr")).some(tr => {
+				const existingDate = tr.querySelector("td:nth-child(1) .view")?.textContent;
+				return existingDate === date;
+			});
+
+			if (isDuplicate) {
+				console.log(`略過重複的日期：${date}`);
+				return; // 略過這筆資料
+			}
+
 			const uid = Math.random().toString(36).slice(2);
 			const tr = document.createElement("tr");
+			const appointmentDate = new Date(date);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0); // 只比對日期，不含時間
+			const isPast = appointmentDate < today;
+
 			tr.innerHTML = `
-			<td><span class="view">${date}</span><input class="edit" type="date" value="${date}" style="display:none"></td>
+			<td><span class="view">${date}</span><input class="edit edit-date" type="date" value="${date}" style="display:none"></td>
 			<td><span class="view">${timeslot}</span>
-				<select class="edit" style="display:none">
+				<select class="edit period-edit" style="display:none">
 					<option ${timeslot === '早上' ? 'selected' : ''}>早上</option>
 					<option ${timeslot === '下午' ? 'selected' : ''}>下午</option>
 					<option ${timeslot === '晚上' ? 'selected' : ''}>晚上</option>
@@ -131,16 +149,36 @@ function registerEventHandlers() {
 			<td>${now}</td>
 			<td class="modified"></td>
 			<td>
-				<button class="editBtn">修改</button>
+				<button class="editBtn" ${isPast ? 'disabled' : ''}>修改</button>
 				<button class="saveBtn" disabled>儲存</button>
 				<button class="cancelBtn" disabled>取消</button>
 				<button class="deleteBtn">刪除</button>
 			</td>
 			`;
-			tbody.appendChild(tr);
+
+			// tbody.appendChild(tr);
+
+			// 尋找插入點：找到第一個日期比當前 date 晚的 tr
+			const allRows = Array.from(tbody.querySelectorAll("tr"));
+			let inserted = false;
+
+			for (let existingRow of allRows) {
+				const existingDateText = existingRow.querySelector("td:nth-child(1) .view")?.textContent;
+				if (!existingDateText) continue;
+
+				const existingDate = new Date(existingDateText);
+				if (appointmentDate < existingDate) {
+					tbody.insertBefore(tr, existingRow); // 插入在前面
+					inserted = true;
+					break;
+				}
+			}
+
+			if (!inserted) {
+				tbody.appendChild(tr); // 若沒有更晚的日期，就加在最後
+			}
 		});
 	});
-
 
 	document.getElementById("appointmentList").addEventListener("click", (e) => {
 		const tr = e.target.closest("tr");
@@ -152,6 +190,15 @@ function registerEventHandlers() {
 		const deleteBtn = tr.querySelector(".deleteBtn");
 
 		if (e.target.classList.contains("editBtn")) {
+			const dateInput = tr.querySelector('input[type="date"]');
+			const appointmentDate = new Date(dateInput.value);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			if (appointmentDate < today) {
+				alert("無法修改已過期的預約日期！");
+				return;
+			}
 			tr.querySelectorAll(".view").forEach(el => el.style.display = "none");
 			tr.querySelectorAll(".edit").forEach(el => el.style.display = "inline-block");
 			editBtn.disabled = true;
