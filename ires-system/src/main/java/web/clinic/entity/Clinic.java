@@ -57,7 +57,7 @@ public class Clinic {
     @Column(name = "address_road")
     private String addressRoad;
 
-    @Column(name = "web", insertable = false)
+    @Column(name = "web")
     private String web;
 
     @Column(name = "morning")
@@ -81,20 +81,30 @@ public class Clinic {
     @Column(name = "registration_fee")
     private Integer registrationFee;
 
-    @Column(name = "memo", insertable = false)
+    @Column(name = "memo")
     private String memo;
 
-    @Column(name = "create_id", insertable = false)
+    @Column(name = "create_id")
     private String createId;
 
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)
     private Timestamp createTime;
 
-    @Column(name = "update_id", insertable = false)
+    @Column(name = "update_id")
     private String updateId;
 
     @UpdateTimestamp
     @Column(name = "update_time")
     private Timestamp updateTime;
+
+    @Column(name = "latitude")
+    private BigDecimal latitude;
+
+    @Column(name = "longitude")
+    private BigDecimal longitude;
+
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
 }
