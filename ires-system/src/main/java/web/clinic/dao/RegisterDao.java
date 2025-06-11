@@ -9,4 +9,7 @@ public interface RegisterDao extends CoreDao<Clinic, String>{
 	
 	Clinic selectForLogin(String account, String password);
 	
+	Clinic selectForPassword(String agencyId, String account);
+	
+	int updatePassword(String account, String password);
 }
