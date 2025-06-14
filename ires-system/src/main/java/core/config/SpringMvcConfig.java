@@ -9,11 +9,19 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan({ "web.*.controller" })
 public class SpringMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+                .addResourceHandler("/**")         // 攔截所有靜態請求
+                .addResourceLocations("/");        // 從 webapp 根目錄找資源
+    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
