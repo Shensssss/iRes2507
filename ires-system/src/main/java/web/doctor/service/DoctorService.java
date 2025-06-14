@@ -6,14 +6,14 @@ import web.doctor.entity.Doctor;
 
 public interface DoctorService{
 	
-	int addDoctor(Doctor doctor);
+	int insert(Doctor doctor);
 
-    int deleteDoctor(Integer doctorId);
+    int deleteById(Integer doctorId);
 
-    int editDoctor(Doctor doctor);
+    int update(Doctor doctor);
 
-    List<Doctor> showAllDoctors(Integer clinicId);
+    List<Doctor> selectAllByClinicId(Integer clinicId);
 
-    List<Doctor> showSearchedByName(Integer clinicId, String doctorName);
+    List<Doctor> selectByClinicIdAndDoctorName(Integer clinicId, String doctorName);
 
 }
