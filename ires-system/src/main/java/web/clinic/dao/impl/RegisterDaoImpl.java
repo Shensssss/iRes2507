@@ -2,6 +2,8 @@ package web.clinic.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -14,9 +16,13 @@ import web.clinic.entity.Clinic;
 
 @Repository
 public class RegisterDaoImpl implements RegisterDao{
-	public Session getSession() {
-		return HibernateUtil.getSessionFactory().getCurrentSession();
-	}
+
+	@PersistenceContext
+	private Session session;
+	
+//	public Session getSession() {
+//		return HibernateUtil.getSessionFactory().getCurrentSession();
+//	}
 	//SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
 	@Override
@@ -45,7 +51,7 @@ public class RegisterDaoImpl implements RegisterDao{
 
 	@Override
 	public int insert(Clinic clinic) {
-		getSession().persist(clinic);
+		session.persist(clinic);
 		return 1;
 	}
 //		Session session = sessionFactory.openSession();
@@ -64,7 +70,7 @@ public class RegisterDaoImpl implements RegisterDao{
 	@Override
 	public Clinic selectbyAccount(String account) {
 		String hql = "FROM Clinic WHERE account = :account";
-		return getSession()
+		return session
 				.createQuery(hql, Clinic.class)
 				.setParameter("account", account)
 				.uniqueResult();
@@ -81,11 +87,31 @@ public class RegisterDaoImpl implements RegisterDao{
 @Override
 public Clinic selectForLogin(String account, String password) {
 		String hql = "FROM Clinic where account = :account and password = :password";
-		return getSession()
+		return session
 				.createQuery(hql, Clinic.class)
 				.setParameter("account", account)
 				.setParameter("password", password)
 				.uniqueResult();
+}
+
+@Override
+public Clinic selectForPassword(String agencyId, String account) {
+	String hql = "FROM Clinic where agencyId = :agencyId and account = :account";
+	return session
+			.createQuery(hql, Clinic.class)
+			.setParameter("agencyId", agencyId)
+			.setParameter("account", account)
+			.uniqueResult();
+}
+
+@Override
+public int updatePassword(String account, String password) {
+	String hql = "UPDATE Clinic SET password = :password WHERE account = :account";
+	return session
+			.createQuery(hql)
+			.setParameter("account", account)
+			.setParameter("password", password)
+			.executeUpdate();
 }
 
 
