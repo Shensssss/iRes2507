@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import web.clinic.entity.Clinic;
-import web.clinic.entity.Doctor;
+import web.doctor.entity.Doctor;
 import web.patient.entity.Patient;
 
 @Entity
@@ -22,15 +22,6 @@ public class Appointment {
 	@Id
 	@Column(name = "appointment_id", nullable = false, length = 36)
 	private String appointmentId;
-
-//    @Column(name = "patient_id", nullable = false)
-//    private Integer patientId;
-//
-//    @Column(name = "clinic_id", nullable = false)
-//    private Integer clinicId;
-//
-//    @Column(name = "doctor_id", nullable = false)
-//    private Integer doctorId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clinic_id", insertable = false, updatable = false)
@@ -77,30 +68,6 @@ public class Appointment {
 	public void setAppointmentId(String appointmentId) {
 		this.appointmentId = appointmentId;
 	}
-
-//    public Integer getPatientId() {
-//        return patientId;
-//    }
-//
-//    public void setPatientId(Integer patientId) {
-//        this.patientId = patientId;
-//    }
-//
-//    public Integer getClinicId() {
-//        return clinicId;
-//    }
-//
-//    public void setClinicId(Integer clinicId) {
-//        this.clinicId = clinicId;
-//    }
-//
-//    public Integer getDoctorId() {
-//        return doctorId;
-//    }
-//
-//    public void setDoctorId(Integer doctorId) {
-//        this.doctorId = doctorId;
-//    }
 
 	public Clinic getClinic() {
 		return clinic;
