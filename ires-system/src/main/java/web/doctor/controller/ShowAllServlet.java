@@ -1,19 +1,24 @@
 package web.doctor.controller;
 
+import static core.util.CommonUtil.writePojo2Json;
+
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import core.pojo.Core;
 import core.util.CommonUtil;
+import web.clinic.entity.Clinic;
 import web.doctor.service.DoctorService;
 
-@WebServlet("/doctorInfo")
-public class SearchServlet extends HttpServlet{
-	
+@WebServlet("/doctor/showAll")
+public class ShowAllServlet extends HttpServlet{
+
 	private static final long serialVersionUID = 1L;
-	
 	private DoctorService doctorService;
 	
 	@Override
@@ -23,14 +28,16 @@ public class SearchServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO 待登入成功完成後，回頭修改(登入成功若有setAttribute則可以取到物件getClinicId)
-		Integer clinicId = 1;
-		doctorService.selectAllByClinicId(clinicId);
-		
-		
-		resp.setContentType("application/json");
-		resp.setCharacterEncoding("UTF-8");
-		
+		final Core core = new Core();
+		Clinic loggedInClinic = (Clinic) req.getSession().getAttribute("loggedInClinic");
+		if (loggedInClinic == null) {
+			core.setSuccessful(false);
+			core.setMessage("診所尚未登入");
+		}else {
+			core.setSuccessful(true);
+			core.setMessage("載入成功");
+			core.setData(doctorService.showAllDoctors(loggedInClinic.getClinicId()));
+		}
+		writePojo2Json(resp, core);
 	}
-
 }
