@@ -71,24 +71,33 @@ public class RegisterServiceImpl implements RegisterService{
 		
 		
 		
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		
 		try {
-			Transaction tx = session.beginTransaction();
+	//		Transaction tx = session.beginTransaction();
 			if(dao.selectbyAccount(account) != null) {
 				return "此email已被註冊";	
 			}
-				
+			if (clinic.getMorning() == null) { clinic.setMorning("");}
+			if (clinic.getAfternoon() == null) { clinic.setAfternoon("");}
+			if (clinic.getNight() == null) {clinic.setNight("");}
+			if (clinic.getWeekMorning() == null) {clinic.setWeekMorning("");}
+			if (clinic.getWeekAfternoon() == null) {clinic.setWeekAfternoon("");}
+			if (clinic.getWeekNight() == null) {clinic.setWeekNight("");}
+			if (clinic.getRegistrationFee() == null) {clinic.setRegistrationFee(0);}
+
+			
+			
 			int count = dao.insert(clinic);
 			if (count < 1) {
-				tx.rollback();
+		//		tx.rollback();
 				return "系統錯誤，請聯絡管理員";
 			} 
 			//session.persist(clinic);
-			tx.commit();
+		//	tx.commit();
 			return null;
 		} catch (Exception e){
-				session.getTransaction().rollback();
+		//		session.getTransaction().rollback();
 				e.printStackTrace();
 				return null;
 		}
@@ -113,23 +122,96 @@ public class RegisterServiceImpl implements RegisterService{
 		}
 	
 	
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+//		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 	
 	try {
 		
-		Transaction tx = session.beginTransaction();
+	//	Transaction tx = session.beginTransaction();
 		Clinic result = dao.selectForLogin(account, password);
-		tx.commit();
+	//	tx.commit();
 		if(result == null) {
 			return "使用者名稱或密碼錯誤";	
 
 		} 
 		return null;
 	} catch (Exception e){
-			session.getTransaction().rollback();
+//			session.getTransaction().rollback();
 			e.printStackTrace();
 			return "系統錯誤，請稍後再試";
 	}
 
+}
+
+
+	@Override
+	public String findPassword(Clinic clinic) {
+		
+		String agencyId = clinic.getAgencyId();
+		if (agencyId == null || agencyId.isBlank()) {
+			return "密碼未輸入";
+		}
+		
+		String account = clinic.getAccount();
+		if (account == null || account.isBlank()) {
+			return "帳號未輸入";
+		}
+		
+		
+	
+	
+//		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	
+	try {
+		
+//		Transaction tx = session.beginTransaction();
+		Clinic result = dao.selectForPassword(agencyId, account);
+//		tx.commit();
+		if(result == null) {
+			return "機構代碼或註冊信箱錯誤";	
+
+		} 
+		return null;
+	} catch (Exception e){
+//			session.getTransaction().rollback();
+			e.printStackTrace();
+			return "系統錯誤，請稍後再試";
+	}
+
+}
+
+
+	@Override
+	public String resetPassword(Clinic clinic) {
+		String account = clinic.getAccount();
+		if (account == null || account.isBlank()) {
+			return "信箱地址未輸入";
+		}
+		
+		String password = clinic.getPassword();
+		if (password == null || password.isBlank()) {
+			return "密碼未輸入";
+		}
+		
+		
+		
+	
+	
+//		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+	
+	try {
+		
+//		Transaction tx = session.beginTransaction();
+		int result = dao.updatePassword(account, password);
+//		tx.commit();
+		if(result == 0) {
+			return "電子郵件錯誤，重設密碼失敗";	
+
+		} 
+		return null;
+	} catch (Exception e){
+//			session.getTransaction().rollback();
+			e.printStackTrace();
+			return "系統錯誤，請稍後再試";
+	}
 }
 }
