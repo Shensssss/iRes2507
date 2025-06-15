@@ -59,8 +59,23 @@ public class Clinic {
     @Column(name = "web")
     private String web;
 
-    @Column(name = "business_hours", columnDefinition = "json")
-    private String businessHoursJson;
+    @Column(name = "morning")
+    private String morning;
+
+    @Column(name = "afternoon")
+    private String afternoon;
+
+    @Column(name = "night")
+    private String night;
+
+    @Column(name = "week_morning")
+    private String weekMorning;
+
+    @Column(name = "week_afternoon")
+    private String weekAfternoon;
+
+    @Column(name = "week_night")
+    private String weekNight;
 
     @Column(name = "registration_fee")
     private Integer registrationFee;
