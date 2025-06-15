@@ -1,0 +1,26 @@
+div.clinicInfo{
+    width: 80%;
+    padding: 10px;
+    margin: 20px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+.form-popup {
+    /* display: none; */
+    box-sizing: border-box;
+    height: 70%;
+    overflow-y: auto;
+    width: 80%;
+    max-width: 600px;
+    bottom: 30px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

@@ -4,9 +4,11 @@ import web.patient.entity.Patient;
 
 public interface PatientService {
 	
-	String register(Patient patient);
+	Patient register(Patient patient);
 	
 	Patient login(Patient patient);
 	
 	Patient findById(int patientId); 
+
+	void updatePatient(Patient patient);
 }

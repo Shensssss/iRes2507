@@ -5,10 +5,14 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
+
 import core.util.HibernateUtil;
 import web.clinic.dao.RegisterDao;
 import web.clinic.entity.Clinic;
 
+
+@Repository
 public class RegisterDaoImpl implements RegisterDao{
 	public Session getSession() {
 		return HibernateUtil.getSessionFactory().getCurrentSession();
@@ -74,6 +78,15 @@ public class RegisterDaoImpl implements RegisterDao{
 //		cQuery.where(cBuilder.equal(root.get("account"), account));
 //		return session.createQuery(cQuery).uniqueResult;
 	}
+@Override
+public Clinic selectForLogin(String account, String password) {
+		String hql = "FROM Clinic where account = :account and password = :password";
+		return getSession()
+				.createQuery(hql, Clinic.class)
+				.setParameter("account", account)
+				.setParameter("password", password)
+				.uniqueResult();
+}
 
 
 

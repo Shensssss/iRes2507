@@ -597,13 +597,13 @@ Reset Default CSS End
 /* Related room Start */
 #rooms-suites {
   width: 100%;
-  padding-top: 80px;
-  padding-bottom: 60px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 #rooms-suites .service-heading {
   display: flex;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 #rooms-suites .header h3 {

@@ -1,0 +1,97 @@
+    div.card {
+        position: relative;
+        width: 80%;
+        padding: 10px;
+        margin: 20px;
+        border: 1px solid grey;
+        border-radius: 10px;
+        box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-popup {
+        display: none;
+        box-sizing: border-box;
+        height: auto;
+        max-height: 80vh;
+        overflow-y: auto;
+        width: 80%;
+        max-width: 600px;
+        bottom: 30px;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-popup input {
+        box-sizing: border-box;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+  
+    .form-popup button {
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        flex: 0 1 100px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .topBar {
+        margin: 20px;
+    }
+
+    .topBar input {
+        padding: 8px;
+    }
+
+    .topBar button {
+        padding: 8px;
+        margin-left: 10px;
+    }
+
+    .label {
+        font-weight: bold;
+    }
+
+    .deleteBtn, .editBtn {
+        position: absolute;
+        z-index: 10;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .editBtn {
+        background-color: #4CAF50;
+        top: 10px;
+        right: 70px;
+    }
+
+    .deleteBtn {
+        background-color: #f44336;
+        top: 10px;
+        right: 10px;
+    }
+
+    .deleteBtn:hover, .editBtn:hover {
+        opacity: 0.7;
+    }
+
+    span.name {
+        font-size: 18px;
+        font-weight: bold;
+
+    }
+
+    span.label {
+        color: black;
+    }

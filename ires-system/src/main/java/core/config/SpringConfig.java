@@ -19,7 +19,7 @@ import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan({ "web.*.*.impl", "core.aop" })
+@ComponentScan({ "web.*.*.impl" })
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 public class SpringConfig {
