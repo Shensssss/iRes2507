@@ -8,7 +8,7 @@
 <link href="static/css/css2.css" rel="stylesheet">
 
 <link href="static/css/bootstrap.min.css" rel="stylesheet">
-<link href="static/css/all.css" rel="stylesheet">
+<link href="static/css/all.min.css" rel="stylesheet">
 <link href="static/css/select2.min.css" rel="stylesheet">
 <link href="static/css/select2-bootstrap-5-theme.min.css"
 	rel="stylesheet">
@@ -86,13 +86,18 @@
 						</a></li>
 					</ul>
 					<ul class="navbar-nav">
-						<!-- <li>
-							<a class="nav-link" href="./login.html">
-								Login <i class="fas fa-sign-in-alt"></i>
+						<li class="nav-item">
+							<a class="nav-link" href="javascript:void(0);" id="notificationBell">
+								<div class="notification-wrapper" style="position: relative;">
+									<i class="fas fa-bell"></i>
+									<span class="badge bg-danger" id="notificationCount" hidden>0</span>
+								</div>
 							</a>
-						</li> -->
-						<li class="nav-item menu-item d-none d-lg-block"><a
-							class="nav-link side_menu_btn" href="#"> Menu </a></li>
+						</li>
+						<li class="nav-item menu-item d-none d-lg-block">
+							<a class="nav-link side_menu_btn" href="#"> Menu </a>
+						</li>
+
 					</ul>
 				</div>
 			</div>
@@ -110,24 +115,101 @@
 					<a href="account.html" class="leftmenu">帳戶資訊</a>
 				</div>
 			
-
 				<!-- 中間資訊 -->
-			
-				<div class="rectangle-33"></div>
-				<div class="div1">一般資料</div>
-				<div class="div2"><span class="red">*</span>姓名</div>
-				<div class="div3"><span class="red">*</span>電話</div>
-				<div class="div4">Email</div>
-				<div class="div5">生日</div>
-				<button class="div6" id="changeBtn">變更</button>
-				<button class="div7" id="cancelBtn">取消</button>
-				<div class="group">
-					<input type="text" id="name" name="name" placeholder="請輸入姓名">
-					<input type="tel" id="phone" name="phone" placeholder="請輸入電話號碼">
-					<input type="email" id="email" name="email" placeholder="請輸入電子郵件信箱">
-					<input type="text" id="birthday" name="birthday" placeholder="請輸入西元出生年月日 ex:1911/01/01">
-				</div>				
+			<div class="form-container">
+			<h2>一般資料</h2>
+			<form id="infoForm">
+				<div class="form-group">
+					<label for="profilePicture">上傳大頭照</label>
+					<input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+					<img id="preview" src="" alt="預覽圖片" class="preview-img" hidden>
+				</div>
+
+				<div class="form-group">
+					<label for="name"><span class="required">＊</span>姓名 </label>
+					<input type="text" id="name" name="name" required>
+				</div>
+
+				<div class="form-group">
+					<label for="gender"><span class="required">＊</span>性別 </label>
+					<select id="gender" name="gender" required>
+						<option value="">請選擇</option>
+						<option value="男">男性</option>
+						<option value="女">女性</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="birthday"><span class="required">＊</span>生日 </label>
+					<input type="date" id="birthday" name="birthday" required>
+				</div>
+
+				<div class="form-group">
+					<label for="phone">電話</label>
+					<input type="tel" id="phone" name="phone">
+				</div>
+
+				<div class="form-group">
+					<label for="address">地址</label>
+					<input type="text" id="address" name="address">
+				</div>
+
+				<div class="form-group">
+					<label for="email"><span class="required">＊</span>Email </label>
+					<input type="email" id="email" name="email" required>
+				</div>
+
+				<div class="form-group">
+					<label for="emergencyContent">緊急聯絡人電話</label>
+					<input type="tel" id="emergencyContent" name="emergencyContent">
+				</div>
+
+				<div class="form-group">
+					<label for="emergencyName">緊急聯絡人姓名</label>
+					<input type="text" id="emergencyName" name="emergencyName">
+				</div>
+
+				<div class="form-group">
+					<label for="relation">關係</label>
+					<select id="relation" name="relation">
+						<option value="">請選擇</option>
+						<option value="配偶">配偶</option>
+						<option value="父母">父母</option>
+						<option value="子女">子女</option>
+						<option value="祖父母">祖父母</option>
+						<option value="孫子女">孫子女</option>
+						<option value="外祖父母">外祖父母</option>
+						<option value="外孫子女">外孫子女</option>
+						<option value="曾祖父母">曾祖父母</option>
+						<option value="外曾祖父母">外曾祖父母</option>
+						<option value="兄弟">兄弟</option>
+						<option value="姊妹">姊妹</option>
+						<option value="甥">甥</option>
+						<option value="姪">姪</option>
+						<option value="其他親屬">其他親屬</option>
+					</select>
+				</div>
+
+					<div class="form-group">
+						<label for="bloodType">血型</label>
+						<select id="bloodType" name="bloodType">
+							<option value="">請選擇</option>
+							<option value="A">A型</option>
+							<option value="B">B型</option>
+							<option value="AB">AB型</option>
+							<option value="O">O型</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label for="notes">備註</label>
+						<textarea id="notes" name="notes"></textarea>
+					</div>
+
+					<button type="submit">儲存變更</button>
+				</form>
 			</div>
+
 		</div>
 	</div>
 	
@@ -156,7 +238,33 @@
 	<script src="static/js/ScrollTrigger.min.js"></script>
 	<script src="static/js/SplitText.min.js"></script>
 	<script src="static/js/gps.js"></script>
-	<script src="./js/account.js"></script>
+	<script src="static/js/account.js"></script>
+	<script>
+    async function fetchPatients() {
+    try {
+        const response = await fetch('http://localhost:3000/patients'); // API 路徑
+        if (!response.ok) throw new Error(`HTTP 錯誤：${response.status}`);
+        const data = await response.json();
+        console.log('病患資料：', data); // 確認資料是否取得成功
+
+        const tableBody = document.getElementById('patientTable');
+        tableBody.innerHTML = ''; // 清空表格
+
+        data.forEach(patient => {
+            const row = `<tr>
+                <td>${patient.id}</td>
+                <td>${patient.name}</td>
+                <td>${patient.age}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    } catch (error) {
+        console.error('API 請求錯誤：', error);
+    }
+}
+
+fetchPatients();
+</script>
 </body>
 
 </html>

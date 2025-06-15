@@ -1,55 +1,87 @@
 package web.patient.service.impl;
 
-import javax.naming.NamingException;
-import web.patient.dao.PatientDAO;
-import web.patient.dao.impl.PatientDAOImpl;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import web.patient.dao.PatientDao;
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
-
+@Service
+@Transactional
 public class PatientServiceImpl implements PatientService {
-	private PatientDAO patientDAO;
-	
-	public PatientServiceImpl() throws NamingException {
-		patientDAO = new PatientDAOImpl();
-	}
+	@Autowired
+	private PatientDao dao;
 
 	@Override
-	public String register(Patient patient) {
-		if(patient.getEmail() == null || patient.getEmail().isEmpty()) {
-			return "使用者Email不得為空";
+	public Patient register(Patient patient) {
+		if(patient.getEmail() == null) {
+			patient.setMessage("使用者Email不得為空");
+			patient.setSuccessful(false);
+			return patient;
 		}
 		if(patient.getPassword()==null || patient.getPassword().length()<6){
-			return "密碼長度必須大於6"	;
+			patient.setMessage("密碼長度必須大於6");
+			patient.setSuccessful(false);
+			return patient;
 		}
-		if(patient.getName()==null|| patient.getName().isEmpty()){
-			return "使用者名稱不得為空"	;
+		if(patient.getName()==null){
+			patient.setMessage("使用者名稱不得為空");
+			patient.setSuccessful(false);
+			return patient;
 		}
 		if(patient.getGender()==0){
-			return "使用者性別不得為空"	;
+			patient.setMessage("使用者性別不得為空");
+			patient.setSuccessful(false);
+			return patient;
 		}
-		if(patient.getBirthday()==null|| patient.getBirthday().isEmpty()){
-			return "使用者生日不得為空"	;
+		if(patient.getBirthday()==null){
+			patient.setMessage("使用者生日不得為空");
+			patient.setSuccessful(false);
+			return patient;
 		}
-		int count = patientDAO.insert(patient);
-		return count < 1 ? "系統錯誤" : null;
+		dao.insert(patient);
+		patient.setMessage("成功註冊");
+		patient.setSuccessful(true);
+		return patient;
 	}
 
-
-
-	@Override
-	public Patient login(Patient patient) {
-		if(patient.getEmail() == null || patient.getEmail().isEmpty()) {
-			return null;
-		}
-		if(patient.getPassword() == null || patient.getPassword().isEmpty()) {
-			return null;
-		}
-		return null;
-	}
+    @Override
+    public Patient login(Patient patient) {
+    	String email = patient.getEmail();
+    	String password =patient.getPassword();
+    	if(email==null && password==null) {
+    	   patient.setMessage("使用者信箱或密碼不得為空");
+    	   patient.setSuccessful(false);
+    	   return patient;
+       }
+    	patient = dao.selectForLogin(email, password);
+    	if(patient==null) {
+    		Patient errorPatient = new Patient();
+	    	errorPatient.setMessage("信箱或密碼錯誤");
+	    	errorPatient.setSuccessful(false);
+	    	return errorPatient;
+    	}
+    	patient.setMessage("成功登入");
+    	patient.setSuccessful(true);
+    	return patient;
+    }
 
 	@Override
 	public Patient findById(int patientId) {
-		return  patientDAO.findById(patientId);
+		return  dao.findById(patientId);
 	}
 
+	@Override
+    public void updatePatient(Patient patient) {
+        dao.update(patient); 
+    }
+
+	@Override
+	public Patient edit(Patient patient) {
+		updatePatient(patient);
+		return findById(patient.getPatientId());
+	}
 }

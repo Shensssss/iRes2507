@@ -1,34 +1,50 @@
 package web.patient.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
-@Service //讓Spring管理
-@Controller
+
+@RestController //回傳JSON格式資料
 @RequestMapping("account")
 public class AccountController {
 
-    @Autowired//自動注入accountService
+    @Autowired//自動注入patientService
     private PatientService patientService;
 
-    // 顯示帳戶編輯頁面
-    @GetMapping("edit")//將資料映射到account物件
-    public String editAccountForm(@RequestParam Integer patientId, Model model) { // 接收patient_id作為參數
-        Patient patient= patientService.findById(patientId); // 依照patient_id 查詢帳戶資料
-        model.addAttribute("patient", patient); // 將查詢到的帳戶資料放入model供前端操作
-        return "Patient"; 
+ // 取得病患的帳戶資訊
+    @GetMapping
+    public Patient getInfo(@SessionAttribute(required = false) Patient patient) {
+    	if (patient == null) {
+            patient = new Patient();//沒有物件建立一個 
+            patient.setMessage("無病患資訊");//設定病患資訊提醒前端沒資料
+            patient.setSuccessful(false);//未登入所以沒有成功
+        }
+        return patient;//有資料回傳病患資料
     }
 
-    // 更新帳戶資料存到後端
-    @PostMapping("update")
-    public String updateAccount(@ModelAttribute Patient patient) {//接收前端傳送過來的account物件
-    	//將資料映射到account物件
-    	patientService.updatePatient(patient);//呼叫AccountService的updateAccount方法來處理
-        return "Patient"; 
+ // 確認密碼是否匹配
+    @GetMapping("/{password}")
+    public Boolean checkPassword(@PathVariable String password, @SessionAttribute(required = false) Patient patient) {
+        return patient != null && password.equals(patient.getPassword());
+        //資料存在比對密碼,符合回傳true,不符合或不存在回傳false
+    }
+
+ // 更新病患資料
+    @PutMapping("/update")
+    public Patient edit(@SessionAttribute Patient patient, @RequestBody Patient reqPatient) {
+        reqPatient.setPatientId(patient.getPatientId()); // 保持病患ID不變
+        return patientService.edit(reqPatient); // 直接返回更新後的資料
     }
 }
+
+
