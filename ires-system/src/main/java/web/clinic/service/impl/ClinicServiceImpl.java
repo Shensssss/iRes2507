@@ -16,9 +16,9 @@ public class ClinicServiceImpl implements ClinicService{
 	private ClinicDAO clinicDAO;
 	
 	@Override
-	public void editPsd(Clinic clinic) {
-		clinicDAO.update(clinic);
-		
+	public String editPsd(Clinic clinic) {
+		clinicDAO.updatePsd(clinic);
+	
+		return "密碼修改完成";
 	}
-
 }

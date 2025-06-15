@@ -23,7 +23,7 @@ public class DoctorDaoImpl implements DoctorDao{
 
 	@Override
 	public int deleteById(Integer doctorId) {
-		Doctor doctor = session.load(Doctor.class, doctorId);
+		Doctor doctor = session.load(Doctor.class, doctorId);		
 		session.remove(doctor);
 		return 1;
 	}
@@ -38,7 +38,6 @@ public class DoctorDaoImpl implements DoctorDao{
 		return 1;
 	}
 
-	//各診所會依clinicId去搜尋資料，似乎用不到此DAO方法
 	@Override
 	public Doctor selectById(Integer doctorId) {
 		return session.get(Doctor.class, doctorId);
@@ -50,20 +49,18 @@ public class DoctorDaoImpl implements DoctorDao{
 		return session.createQuery("FROM Doctor", Doctor.class).list();
 	}
 
-
 	@Override
 	public List<Doctor> selectAllByClinicId(Integer clinicId) {
-		return session.createQuery("FROM Doctor WHERE clinicId = :clinicId", Doctor.class)
+		return session.createQuery("FROM Doctor d WHERE d.clinic.clinicId = :clinicId", Doctor.class)
                 .setParameter("clinicId", clinicId)
                 .getResultList();
 	}
 
 	@Override
 	public List<Doctor> selectByClinicIdAndDoctorName(Integer clinicId, String doctorName) {
-		return session.createQuery("FROM Doctor WHERE clinicId = :clinicId AND doctorName LIKE :name", Doctor.class)
+		return session.createQuery("FROM Doctor d WHERE d.clinic.clinicId = :clinicId AND d.doctorName LIKE :name", Doctor.class)
 				.setParameter("clinicId", clinicId)
 				.setParameter("name",  "%" + doctorName + "%")
                 .getResultList();
 	}
-
 }

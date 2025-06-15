@@ -272,7 +272,7 @@ document.querySelector('form').addEventListener('submit', (event) => {
   }
 
   // 送出資料
-  fetch('/ires-system/clinic/register', {
+  fetch('http://localhost:8080/ires-system/clinic/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

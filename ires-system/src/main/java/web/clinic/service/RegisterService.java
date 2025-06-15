@@ -7,9 +7,5 @@ public interface RegisterService {
 	String register(Clinic clinic);
 	
 	String login(Clinic clinic);
-	
-	String findPassword(Clinic clinic);
-	
-	String resetPassword(Clinic clinic);
 
 }
