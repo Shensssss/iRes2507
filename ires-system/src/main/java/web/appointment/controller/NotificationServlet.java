@@ -43,6 +43,10 @@ public class NotificationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        req.setCharacterEncoding("UTF-8");
+
+        resp.setContentType("application/json;charset=UTF-8");
+
         BufferedReader reader = req.getReader();
         Gson gson = new Gson();
 
