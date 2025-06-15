@@ -1,46 +1,81 @@
 package web.clinic.dao.impl;
 
-import javax.persistence.PersistenceContext;
-
+import java.util.List;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
-
+import web.clinic.dao.ClinicDAO;
 import web.clinic.entity.Clinic;
 
-
 @Repository
-public class ClinicDaoImpl {
-	
-	@PersistenceContext
-	private Session session;
-	
-	public int updateObj(Clinic clinic) {
-		session.update(clinic);
-		return 1;
-	}
-	
-	public int updatePsd(Clinic clinic) {
-		final StringBuilder hql = new StringBuilder().append("UPDATE clinic SET ");
+public class ClinicDaoImpl implements ClinicDAO {
+    private final SessionFactory sessionFactory;
 
-		final String password = clinic.getPassword();
-		if (password != null && !password.isEmpty()) {
-			hql.append("password = :password,");
+    public ClinicDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
-		}
-		hql.append("nickname = :nickname,").append("pass = :pass,").append("roleId = :roleId,")
-				.append("updater = :updater,").append("lastUpdatedAt = NOW() ").append("WHERE username = :username");
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
-		Query<?> query = session.createQuery(hql.toString());
-		if (password != null && !password.isEmpty()) {
-			query.setParameter("password", password);
+    @Override
+    public int insert(Clinic pojo) {
+        getSession().save(pojo);
+        return 1;
+    }
 
-		}
-//		return query.setParameter("nickname", member.getNickname()).setParameter("pass", member.getPass())
-//				.setParameter("roleId", member.getRoleId()).setParameter("updater", member.getUpdater())
-//				.setParameter("username", member.getUsername()).executeUpdate();
-		return 1;
+    @Override
+    public int deleteById(String id) {
+        Clinic clinic = getSession().get(Clinic.class, id);
+        if (clinic != null) {
+            getSession().delete(clinic);
+            return 1;
+        }
+        return 0;
+    }
 
-	}
+    @Override
+    public int update(Clinic pojo) {
+        getSession().update(pojo);
+        return 1;
+    }
 
+    @Override
+    public Clinic selectById(String id) {
+        return getSession().get(Clinic.class, id);
+    }
+
+    @Override
+    public List<Clinic> selectAll() {
+        return getSession().createQuery("FROM Clinic", Clinic.class).list();
+    }
+
+    @Override
+    public int updatePsd(Clinic clinic) {
+        StringBuilder hql = new StringBuilder("UPDATE Clinic SET ");
+        boolean hasPassword = clinic.getPassword() != null && !clinic.getPassword().isEmpty();
+
+        if (hasPassword) {
+            hql.append("password = :password, ");
+        }
+
+        hql.append("clinicName = :clinicName, ")
+                .append("updateId = :updateId, ")
+                .append("updateTime = CURRENT_TIMESTAMP ")
+                .append("WHERE account = :account");
+
+        Query<?> query = getSession().createQuery(hql.toString());
+
+        if (hasPassword) {
+            query.setParameter("password", clinic.getPassword());
+        }
+
+        query.setParameter("clinicName", clinic.getClinicName())
+                .setParameter("updateId", clinic.getUpdateId())
+                .setParameter("account", clinic.getAccount());
+
+        return query.executeUpdate();
+    }
 }
