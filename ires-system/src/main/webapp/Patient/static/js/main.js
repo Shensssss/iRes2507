@@ -27,7 +27,7 @@
         data: JSON.stringify(formData),
         contentType: "application/json",
         success: function (response) {
-          if (response.success) {
+          if (response.successful) {
             alert("註冊成功！");
             window.location.href = "login.html";
           } else {
@@ -56,7 +56,8 @@
         data: JSON.stringify(formData),
         contentType: "application/json",
         success: function (response) {
-          if (response.success) {
+          console.log(response);
+          if (response.successful) {
             sessionStorage.setItem("patient", JSON.stringify(response));
             window.location.href = "index.html";
           } else {
