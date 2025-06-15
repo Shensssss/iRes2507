@@ -7,27 +7,40 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import core.pojo.Core;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "patient")
-public class Patient {
+public class Patient extends Core{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "patient_id", nullable = false)
+	@Column(name = "patient_id")
 	private Integer patientId;
 
-	@Column(name = "password", nullable = false)
+	@Column(name = "password")
 	private String password;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
-	@Column(name = "gender", nullable = false)
+	@Column(name = "gender")
 	private int gender;
 
-	@Column(name = "birthday", nullable = false)
+	@Column(name = "birthday")
 	private String birthday;
 
 	@Column(name = "phone")
@@ -36,7 +49,7 @@ public class Patient {
 	@Column(name = "address")
 	private String address;
 
-	@Column(name = "email", nullable = false)
+	@Column(name = "email")
 	private String email;
 
 	@Column(name = "emergency_content")
@@ -54,145 +67,16 @@ public class Patient {
 	@Column(name = "notes")
 	private String notes;
 
-	@Column(name = "profile_picture")
+	@Lob
+	@Column(name = "profile_picture", columnDefinition = "LONGTEXT")
 	private String profilePicture;
 
 	@Column(name = "status")
 	private int status;
 
-	@Column(name = "create_time", nullable = false, updatable = false, insertable = false)
+	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;
 	
 	@Column(name = "update_time",insertable = false)
 	private String updateTime;
-	
-    // Getters and Setters
-	
-    public Integer getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(Integer patientId) {
-        this.patientId = patientId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getEmergencyContent() {
-        return emergencyContent;
-    }
-
-    public void setEmergencyContent(String emergencyContent) {
-        this.emergencyContent = emergencyContent;
-    }
-
-    public String getEmergencyName() {
-        return emergencyName;
-    }
-
-    public void setEmergencyName(String emergencyName) {
-        this.emergencyName = emergencyName;
-    }
-
-    public int getRelation() {
-        return relation;
-    }
-
-    public void setRelation(int relation) {
-        this.relation = relation;
-    }
-
-    public int getBloodType() {
-        return bloodType;
-    }
-
-    public void setBloodType(int bloodType) {
-        this.bloodType = bloodType;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-    
-    public String getUpdateTime() {
-    	return updateTime;
-    }
 }
