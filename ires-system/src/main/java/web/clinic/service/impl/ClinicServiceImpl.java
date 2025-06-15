@@ -17,8 +17,6 @@ public class ClinicServiceImpl implements ClinicService{
 	
 	@Override
 	public void editPsd(Clinic clinic) {
-		clinicDAO.update(clinic);
-		
+		clinicDAO.updatePsd(clinic);
 	}
-
 }
