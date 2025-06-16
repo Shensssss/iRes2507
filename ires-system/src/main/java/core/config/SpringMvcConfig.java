@@ -23,11 +23,18 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("/");        // 從 webapp 根目錄找資源
     }
 
+//    @Override
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+//        messageConverter.setPrettyPrint(true);
+//        converters.add(messageConverter);
+//    }
+
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        messageConverter.setPrettyPrint(true);
-        converters.add(messageConverter);
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter();
+        jacksonConverter.setPrettyPrint(true);
+        converters.add(jacksonConverter);
     }
 
     @Override
