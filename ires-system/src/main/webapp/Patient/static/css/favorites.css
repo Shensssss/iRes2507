@@ -13,7 +13,31 @@ body {
   left: 0;
   border-radius: 10px;
   }
-
+/* 小螢幕時隱藏 Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+/* 顯示 Sidebar 的按鈕 */
+.toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+/* 小螢幕時顯示按鈕 */
+@media (max-width: 768px) {
+    .toggle-sidebar {
+        display: block;
+    }
+}
 .leftmenu {
   display: block;
   padding: 15px 20px;
@@ -47,7 +71,8 @@ body {
   position:absolute;
   max-width: 800px;
   margin:0;
-  left: 220px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 50%;
 }
 

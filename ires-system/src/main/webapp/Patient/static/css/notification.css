@@ -16,7 +16,31 @@ body {
   left: 0;
   border-radius: 10px;
   }
-
+/* 小螢幕時隱藏 Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+/* 顯示 Sidebar 的按鈕 */
+.toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+/* 小螢幕時顯示按鈕 */
+@media (max-width: 768px) {
+    .toggle-sidebar {
+        display: block;
+    }
+}
 .leftmenu {
   display: block;
   padding: 15px 20px;
@@ -34,9 +58,6 @@ body {
   background-color: gray;
   color: white;
 }
-body {
-  margin: 0;
-}
 
 /*主要內容*/
 .div2{
@@ -48,19 +69,13 @@ body {
   left: 224px;
   top: -30px;
 }
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
 
 /* 通知區塊容器 */
 .notification-container {
   position: absolute;
   top: 0;
-  left: 224px;
-  right: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 50%;
   display: flex;
   flex-direction: column;
@@ -74,9 +89,9 @@ body {
   font-size: large;
   padding: 15px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: translateX(20px);
-  animation: fadeIn 0.5s ease-in-out forwards;
+  opacity: 1;
+  transform: translateX(0);
+  
 }
 .delete-btn {
   position: absolute;
@@ -139,16 +154,3 @@ body {
   font-weight: bold;
   color: red;
 }
-
-/* 淡入動畫 */
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translateX(20px);
-  }
-  to {
-      opacity: 1;
-      transform: translateX(0);
-  }
-}
-
