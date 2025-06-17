@@ -78,4 +78,11 @@ public class PatientServiceImpl implements PatientService {
     public void updatePatient(Patient patient) {
         dao.update(patient); 
     }
+
+	@Override
+	public Patient edit(Patient patient) {
+		updatePatient(patient);
+		return findById(patient.getPatientId());
+	}
+
 }

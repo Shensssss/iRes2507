@@ -11,4 +11,7 @@ public interface PatientService {
 	Patient findById(int patientId); 
 
 	void updatePatient(Patient patient);
+	
+	Patient edit(Patient reqPatient);
+
 }
