@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import core.pojo.Core;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Clinic {
+public class Clinic extends Core{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
