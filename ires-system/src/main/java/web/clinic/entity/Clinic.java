@@ -107,6 +107,9 @@ public class Clinic extends Core{
     @Column(name = "rating")
     private BigDecimal rating;
 
+    @Column(name = "rating")
+    private BigDecimal rating;
+
     @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
