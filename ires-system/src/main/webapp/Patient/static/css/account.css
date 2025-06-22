@@ -72,12 +72,12 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 柔和陰影 */
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
 }
 
 .form-container h2 {
     color:black; /* 深灰色標題 */
-    left: 0;
+    text-align: center;
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 20px;
@@ -87,6 +87,7 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 12px;
+    
 }
 
 label {
@@ -98,8 +99,9 @@ label {
 }
 
 input, select, textarea {
-    flex: 2;
-    padding: 8px;
+    flex: 1;
+    padding: 6px;
+    width: auto;
     border: 1px solid #ccc; /* 淡灰邊框 */
     border-radius: 6px;
     background-color: #f0f0f0; /* 淡灰色輸入框背景 */
@@ -107,8 +109,10 @@ input, select, textarea {
 }
 
 input[type="file"] {
-    border: none;
-    color: #555;
+    flex: 1;
+    width: 0; 
+    max-width: 100%;
+
 }
 
 button {
