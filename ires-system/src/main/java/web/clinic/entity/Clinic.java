@@ -103,6 +103,9 @@ public class Clinic {
     @Column(name = "longitude")
     private BigDecimal longitude;
 
+    @Column(name = "rating")
+    private BigDecimal rating;
+
     @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
