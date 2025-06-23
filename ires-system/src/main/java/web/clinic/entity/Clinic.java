@@ -27,8 +27,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Clinic extends Core{
+	private static final long serialVersionUID = 1L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "clinic_id")
     private Integer clinicId;
@@ -104,9 +105,6 @@ public class Clinic extends Core{
     @Column(name = "longitude")
     private BigDecimal longitude;
     
-    @Column(name = "rating")
-    private BigDecimal rating;
-
     @Column(name = "rating")
     private BigDecimal rating;
 
