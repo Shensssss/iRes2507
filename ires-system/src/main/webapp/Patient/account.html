@@ -17,10 +17,10 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 <link rel="stylesheet" href="static/css/home_style.css">
-<link rel="stylesheet" href="./static/css/account.css">
+<link rel="stylesheet" href="static/css/account.css">
 
 <title>I-RES帳戶資訊</title>
-<link rel="icon" href="../src/img/fav.png" type="image/png" />
+<link rel="icon" href="static/img/fav.png" type="image/png" />
 </head>
 
 <body class="home-st7">
@@ -37,19 +37,19 @@
 			<div class="row">
 				<div class="main_links">
 					<ul>
-						<li><a href="#" class="main_link"> <i class="fas fa-home"></i>
+						<li><a href="index.html" class="main_link"> <i class="fas fa-home"></i>
 								主頁
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-calendar-check"></i> 預約清單
+						<li><a href="reservation.html" class="main_link"> <i
+								class="fas fa-calendar-check"></i> 預約紀錄
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-history"></i> 歷史紀錄
-						</a></li>
-						<li><a href="#" class="main_link"> <i class="fas fa-bell"></i>
+						<li><a href="favorites.html" class="main_link">
+							<i class="fas fa-heart"></i> 我的收藏</a>
+						</li>
+						<li><a href="notification.html" class="main_link"> <i class="fas fa-bell"></i>
 								通知消息
 						</a></li>
-						<li><a href="#" class="main_link"> <i
+						<li><a href="account.html" class="main_link"> <i
 								class="fas fa-user-cog"></i> 帳戶設定
 						</a></li>
 					</ul>
@@ -120,9 +120,9 @@
 			<h2>一般資料</h2>
 			<form id="infoForm">
 				<div class="form-group">
-					<label for="profilePicture">上傳大頭照</label>
+					<label for="profilePicture">大頭照</label>
 					<input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-					<img id="preview" src="" alt="預覽圖片" class="preview-img" hidden>
+					<img id="preview" src="" class="preview-img">
 				</div>
 
 				<div class="form-group">
@@ -133,9 +133,8 @@
 				<div class="form-group">
 					<label for="gender"><span class="required">＊</span>性別 </label>
 					<select id="gender" name="gender" required>
-						<option value="">請選擇</option>
-						<option value="男">男性</option>
-						<option value="女">女性</option>
+						<option value="1">女性</option>
+						<option value="2">男性</option>
 					</select>
 				</div>
 
@@ -172,32 +171,30 @@
 				<div class="form-group">
 					<label for="relation">關係</label>
 					<select id="relation" name="relation">
-						<option value="">請選擇</option>
-						<option value="配偶">配偶</option>
-						<option value="父母">父母</option>
-						<option value="子女">子女</option>
-						<option value="祖父母">祖父母</option>
-						<option value="孫子女">孫子女</option>
-						<option value="外祖父母">外祖父母</option>
-						<option value="外孫子女">外孫子女</option>
-						<option value="曾祖父母">曾祖父母</option>
-						<option value="外曾祖父母">外曾祖父母</option>
-						<option value="兄弟">兄弟</option>
-						<option value="姊妹">姊妹</option>
-						<option value="甥">甥</option>
-						<option value="姪">姪</option>
-						<option value="其他親屬">其他親屬</option>
+						<option value="1">配偶</option>
+						<option value="2">父母</option>
+						<option value="3">子女</option>
+						<option value="4">祖父母</option>
+						<option value="5">孫子女</option>
+						<option value="6">外祖父母</option>
+						<option value="7">外孫子女</option>
+						<option value="8">曾祖父母</option>
+						<option value="9">外曾祖父母</option>
+						<option value="10">兄弟</option>
+						<option value="11">姊妹</option>
+						<option value="12">甥</option>
+						<option value="13">姪</option>
+						<option value="14">其他親屬</option>
 					</select>
 				</div>
 
 					<div class="form-group">
 						<label for="bloodType">血型</label>
 						<select id="bloodType" name="bloodType">
-							<option value="">請選擇</option>
-							<option value="A">A型</option>
-							<option value="B">B型</option>
-							<option value="AB">AB型</option>
-							<option value="O">O型</option>
+							<option value="1">A型</option>
+							<option value="2">B型</option>
+							<option value="3">AB型</option>
+							<option value="4">O型</option>
 						</select>
 					</div>
 
@@ -229,7 +226,7 @@
 	<script src="static/js/jquery.counterup.min.js"></script>
 	<script src="static/js/aos.min.js"></script>
 	<script src="static/js/custom.js"></script>
-
+	<script src="static/js/alertBell.js"></script>
 	<script src="static/js/common_js.js"></script>
 
 	<!-- === Gsap === -->
@@ -239,32 +236,7 @@
 	<script src="static/js/SplitText.min.js"></script>
 	<script src="static/js/gps.js"></script>
 	<script src="static/js/account.js"></script>
-	<script>
-    async function fetchPatients() {
-    try {
-        const response = await fetch('http://localhost:3000/patients'); // API 路徑
-        if (!response.ok) throw new Error(`HTTP 錯誤：${response.status}`);
-        const data = await response.json();
-        console.log('病患資料：', data); // 確認資料是否取得成功
-
-        const tableBody = document.getElementById('patientTable');
-        tableBody.innerHTML = ''; // 清空表格
-
-        data.forEach(patient => {
-            const row = `<tr>
-                <td>${patient.id}</td>
-                <td>${patient.name}</td>
-                <td>${patient.age}</td>
-            </tr>`;
-            tableBody.innerHTML += row;
-        });
-    } catch (error) {
-        console.error('API 請求錯誤：', error);
-    }
-}
-
-fetchPatients();
-</script>
+	
 </body>
 
 </html>
