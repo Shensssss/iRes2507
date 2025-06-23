@@ -1,4 +1,4 @@
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -221,7 +221,7 @@
   const account = document.getElementById('email');
   const password = document.getElementById('password');
   const confirmPassword = document.getElementById('confirm-password');
-  const verification = document.getElementById('verification_code');
+ // const verification = document.getElementById('verification_code');
 
 document.querySelector('form').addEventListener('submit', (event) => {
   event.preventDefault();
@@ -272,7 +272,7 @@ document.querySelector('form').addEventListener('submit', (event) => {
   }
 
   // 送出資料
-  fetch('http://localhost:8080/ires-system/clinic/register', {
+  fetch('/ires-system/clinic/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
