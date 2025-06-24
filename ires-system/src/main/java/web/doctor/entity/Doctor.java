@@ -2,31 +2,19 @@ package web.doctor.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import core.util.ListToJsonConverter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import web.clinic.entity.Clinic;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
 @Table(name = "doctor")
 public class Doctor implements Serializable{
@@ -45,21 +33,11 @@ public class Doctor implements Serializable{
 	@JoinColumn(name = "clinic_id", nullable = false, updatable = false) //insertable不可以false因為我要手動填入?
 	private Clinic clinic;
 	
-	@Convert(converter = ListToJsonConverter.class)
-	@Column(name = "education", columnDefinition = "json")
-	private List<String> education = new ArrayList<>();
-
-	@Convert(converter = ListToJsonConverter.class)
-	@Column(name = "experience", columnDefinition = "json")
-	private List<String> experience = new ArrayList<>();
-
-	@Convert(converter = ListToJsonConverter.class)
-	@Column(name = "memo", columnDefinition = "json")
-	private List<String> memo = new ArrayList<>();
+	private String education;
 	
-	@Lob
-	@Column(name = "profile_picture")
-	private byte[] profilePicture;
+	private String experience;
+	
+	private String memo;
 	
 	@Column(name = "create_id")
 	private String createId;
@@ -72,5 +50,109 @@ public class Doctor implements Serializable{
 
 	@Column(name = "update_time")
 	private Timestamp updateTime;
+	
+	
 
+	public Doctor() {
+		
+	}
+
+	public Doctor(int doctorId, String doctorName, Integer clinicId, String education, String experience,
+			String memo, String createId, Timestamp createTime, String updateId, Timestamp updateTime) {
+		super();
+		this.doctorId = doctorId;
+		this.doctorName = doctorName;
+		this.education = education;
+		this.experience = experience;
+		this.memo = memo;
+		this.createId = createId;
+		this.createTime = createTime;
+		this.updateId = updateId;
+		this.updateTime = updateTime;
+	}
+
+	public int getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Integer doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	public String getDoctorName() {
+		return doctorName;
+	}
+
+	public void setDoctorName(String doctorName) {
+		this.doctorName = doctorName;
+	}
+	
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
+
+	public String getEducation() {
+		return education;
+	}
+
+	public void setEducation(String education) {
+		this.education = education;
+	}
+
+	public String getExperience() {
+		return experience;
+	}
+
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	public String getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(String createId) {
+		this.createId = createId;
+	}
+
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getUpdateId() {
+		return updateId;
+	}
+
+	public void setUpdateId(String updateId) {
+		this.updateId = updateId;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
 }

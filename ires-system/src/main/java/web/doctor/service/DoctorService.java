@@ -8,7 +8,7 @@ public interface DoctorService{
 	
 	int addDoctor(Doctor doctor);
 
-    int deleteDoctor(Integer doctorId, Integer clinicId);
+    int deleteDoctor(Integer doctorId);
 
     int editDoctor(Doctor doctor);
 
