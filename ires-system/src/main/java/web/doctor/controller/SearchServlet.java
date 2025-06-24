@@ -1,12 +1,16 @@
 package web.doctor.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import core.util.CommonUtil;
+import web.doctor.entity.Doctor;
 import web.doctor.service.DoctorService;
 
 @WebServlet("/doctorInfo")
@@ -27,9 +31,13 @@ public class SearchServlet extends HttpServlet{
 		Integer clinicId = 1;
 		doctorService.selectAllByClinicId(clinicId);
 		
-		
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
+
+		List<Doctor> doctors = doctorService.selectAllByClinicId(clinicId);
+	    PrintWriter writer = resp.getWriter();
+		String json = new com.google.gson.Gson().toJson(doctors);
+		writer.print(json);
 		
 	}
 
