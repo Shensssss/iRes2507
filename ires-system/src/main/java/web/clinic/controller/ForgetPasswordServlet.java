@@ -14,10 +14,9 @@
 //import core.util.CommonUtil;
 //import web.clinic.entity.Clinic;
 //import web.clinic.service.RegisterService;
-//import web.clinic.service.impl.RegisterServiceImpl;
 //
-//@WebServlet("/clinic/register")
-//public class RegisterServlet extends HttpServlet{
+//@WebServlet("/clinic/forgetPassword")
+//public class ForgetPasswordServlet extends HttpServlet{
 //	private static final long serialVersionUID = 1L;
 //	private RegisterService registerService;
 //	
@@ -37,7 +36,7 @@
 //		
 //		JsonObject respBody = new JsonObject();
 //		if(clinic != null) {
-//			String errMsg = registerService.register(clinic);
+//			String errMsg = registerService.findPassword(clinic);
 //			respBody.addProperty("success", errMsg == null);
 //			if (errMsg != null) {
 //				respBody.addProperty("errMsg", errMsg);

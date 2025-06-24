@@ -177,7 +177,7 @@
             <!--logo start-->
             <div class="brand">
                 <a href="" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                    <span>OO</span>耳鼻喉科診所</a>
+                     <span id="clinicName"></span></a>
             </div>
             <img src="static/picture/ires.png"
                 style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
@@ -510,6 +510,17 @@
             localStorage.setItem("notifyPatients", JSON.stringify(patients));
             window.location.href = "notify.html";
         }
+         document.addEventListener("DOMContentLoaded", function () {
+            const name = sessionStorage.getItem("clinicName");
+            if (name) {
+              document.getElementById("clinicName").textContent = name;
+             } else {
+           // 未登入或資料遺失，導回登入頁
+               alert("尚未登入");
+              location.href = "/ires-system/Clinic/login.html";
+           }
+        });
+
     </script>
 
 </body>

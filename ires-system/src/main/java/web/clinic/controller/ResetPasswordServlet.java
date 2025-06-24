@@ -16,8 +16,8 @@
 //import web.clinic.service.RegisterService;
 //import web.clinic.service.impl.RegisterServiceImpl;
 //
-//@WebServlet("/clinic/register")
-//public class RegisterServlet extends HttpServlet{
+//@WebServlet("/clinic/resetPassword")
+//public class ResetPasswordServlet extends HttpServlet{
 //	private static final long serialVersionUID = 1L;
 //	private RegisterService registerService;
 //	
@@ -37,7 +37,7 @@
 //		
 //		JsonObject respBody = new JsonObject();
 //		if(clinic != null) {
-//			String errMsg = registerService.register(clinic);
+//			String errMsg = registerService.resetPassword(clinic);
 //			respBody.addProperty("success", errMsg == null);
 //			if (errMsg != null) {
 //				respBody.addProperty("errMsg", errMsg);
