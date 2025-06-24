@@ -21,7 +21,7 @@ public class ClinicDaoImpl implements ClinicDAO {
 	}
 
 	@Override
-	public int deleteById(String id) {
+	public int deleteById(Integer id) {
 		return 0;
 	}
 
@@ -30,7 +30,7 @@ public class ClinicDaoImpl implements ClinicDAO {
 	}
 
 	@Override
-	public Clinic selectById(String id) {
+	public Clinic selectById(Integer id) {
 		return null;
 	}
 
