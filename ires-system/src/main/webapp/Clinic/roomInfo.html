@@ -346,49 +346,14 @@
     <script src="static/js/switchery.min.js"></script>
     <!--Load these page level functions-->
     <script src="static/js/bell.js"></script>
-    <!--<script>
-    $(document).ready(function() {
-        app.dateRangePicker();
-        app.chartJs();
-        app.weather();
-        app.spinStart();
-        app.spinStop();
-    });
-    </script>-->
 
     <script>
         let currentTime = "";
         let allData = {};
-        // const statuses = ["已報到", "未報到", "已取消"];
-        // const names = ["王小明", "李小華", "張大中", "林小英", "吳佩琪", "黃志明"];
-
-        // function mockPatients(startId = 1, count = 20) {
-        //     const patients = [];
-        //     for (let i = 0; i < count; i++) {
-        //         const name = names[Math.floor(Math.random() * names.length)];
-        //         const status = statuses[Math.floor(Math.random() * statuses.length)];
-        //         const number = (startId + i).toString().padStart(2, '0');
-        //         patients.push({ number, name, status });
-        //     }
-        //     return patients;
-        // }
-
-        // async function fetchData(time) {
-        //     const count = { morning: 3, afternoon: 2, evening: 2 }[time] || 2;
-        //     const data = [];
-        //     for (let i = 1; i <= count; i++) {
-        //         const patientCount = Math.floor(Math.random() * 11) + 10;
-        //         data.push({
-        //             doctor: `${time === 'morning' ? '張' : time === 'afternoon' ? '陳' : '林'}醫師 ${i}`,
-        //             patients: mockPatients(i * 100, patientCount)
-        //         });
-        //     }
-        //     return data;
-        // }
 
         function fetchData(time) {
             //return fetch(`${window.location.origin}/ires-system/appointment?action=apiToday&period=${time}`)
-            return fetch(`/ires-system/appointment?action=apiToday&period=${time}`)
+            return fetch(`/ires-system/appointment/apiToday?period=${time}`)
             .then(response => response.json())
             .then(appointments => {
                 const grouped = {};
