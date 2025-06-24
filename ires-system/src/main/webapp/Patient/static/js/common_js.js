@@ -247,3 +247,15 @@ $(function () {
     });
   });
 });
+
+$(document).ready(function () {
+  // 根據登入狀態切換 Menu 或 Login
+  const patient = sessionStorage.getItem("patient");
+  if (patient) {
+    $("#login-link").addClass("d-none");
+    $("#menu-link").removeClass("d-none");
+  } else {
+    $("#login-link").removeClass("d-none");
+    $("#menu-link").addClass("d-none");
+  }
+});

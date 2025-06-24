@@ -37,43 +37,7 @@
 
     <link rel="stylesheet" href="static/css/swiper-bundle.min.css" />
     <link rel="stylesheet" href="static/css/room-suites-single-room.css" />
-    <style>
-      .modern-slider {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 6px;
-        background: #444;
-        border-radius: 3px;
-        outline: none;
-        transition: background 0.3s;
-      }
-
-      .modern-slider:hover {
-        background: #333;
-      }
-
-      .modern-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #000;
-        cursor: pointer;
-        box-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
-        transition: background 0.3s;
-      }
-
-      .modern-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #000;
-        cursor: pointer;
-        box-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
-        transition: background 0.3s;
-      }
-    </style>
+    <style></style>
   </head>
 
   <body class="home-st7">
@@ -186,17 +150,21 @@
         <div class="container">
           <div class="booking-wrapper">
             <div class="booking-form-container">
-              <form id="bookingForm" class="booking-form" action="#">
+              <form
+                id="clinicFilterForm"
+                class="booking-form"
+                action="javascript:void(0)"
+              >
                 <div class="booking-form-row">
                   <div class="booking-form-item">
                     <label>預約日期</label>
                     <br />
                     <input
-                      name="check_in_time"
+                      name="date"
                       id="datepicks1"
                       class="datepicker form-control"
                       placeholder="mm / dd / yyyy"
-                      type="text"
+                      type="date"
                     />
                   </div>
                   <span>|</span>
@@ -207,16 +175,12 @@
                       <div>
                         <input
                           id="timepicker_start"
-                          type="text"
-                          placeholder="00:00"
+                          type="time"
+                          value="08:00"
                         />
                       </div>
                       <div>
-                        <input
-                          id="timepicker_end"
-                          type="text"
-                          placeholder="24:00"
-                        />
+                        <input id="timepicker_end" type="time" value="12:00" />
                       </div>
                     </div>
                   </div>
@@ -278,11 +242,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findAll">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="all_clinc">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -294,6 +257,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -302,11 +266,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="#" id="findPeds">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="peds">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -318,6 +281,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -326,11 +290,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findDds">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="dds">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -342,6 +305,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -350,11 +314,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findOph">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="oph">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -366,6 +329,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -374,11 +338,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findObgyn">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="obgyn">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -390,6 +353,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -398,11 +362,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findDerm">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="derm">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -414,6 +377,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -422,11 +386,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findEnt">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="ent">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -438,6 +401,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -446,11 +410,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findPsych">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="psych">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -462,6 +425,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -470,11 +434,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findTcm">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="tcm">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -486,6 +449,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -494,11 +458,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findNutrition">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="nutrition">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -510,6 +473,7 @@
             </section>
           </div>
         </section>
+
         <section id="rooms-suites">
           <div class="container">
             <div class="service-heading">
@@ -518,11 +482,10 @@
               </div>
               <div class="filter-btn-wrapper">
                 <div class="view-all">
-                  <a href="hospital.html">查看所有診所</a>
+                  <a href="hospital.html" id="findPt">查看所有診所</a>
                 </div>
               </div>
             </div>
-
             <section class="recommended-rooms" id="pt">
               <div class="slider-wrapper">
                 <div class="swiper room-slider">
@@ -565,7 +528,7 @@
 
     <script src="static/js/hero-input-dropdown.js"></script>
     <script src="static/js/bootstrap-datepicker.js"></script>
-    <script src="static/js/datepicker.js"></script>
+    <!-- <script src="static/js/datepicker.js"></script> -->
 
     <!-- rooms -->
     <script src="static/js/rooms-and-suites-slider.js"></script>

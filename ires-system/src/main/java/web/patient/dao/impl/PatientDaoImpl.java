@@ -79,8 +79,9 @@ public class PatientDaoImpl implements PatientDao {
 
 	@Override
 	public List<Patient> selectAll() {
-		final String hql = "FROM Patient ORDER BY patientId";
-		return session.createQuery(hql, Patient.class).getResultList();
+		final String hql = "from Patient order by patientId";
+		return session.createQuery(hql, Patient.class)
+				.getResultList();
 	}
 
 	public void saveOrUpdate(Patient patient) {

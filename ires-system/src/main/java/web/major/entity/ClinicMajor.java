@@ -1,6 +1,6 @@
 package web.major.entity;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +23,6 @@ import web.clinic.entity.Clinic;
 @NoArgsConstructor
 @Entity
 @Table(name = "clinicMajor")
-
 public class ClinicMajor {
 
     @Id

@@ -12,7 +12,7 @@ import web.major.entity.Major;
 import web.major.service.MajorService;
 
 @Controller
-@RequestMapping(value = "major", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "major")
 public class MajorController {
 	@Autowired
 	private MajorService service;
@@ -20,6 +20,6 @@ public class MajorController {
 	@GetMapping("list")
 	@ResponseBody
 	public List<Major> major() {
-		return  service.findAllMajor();
+		return service.findAllMajor();
 	}
 }
