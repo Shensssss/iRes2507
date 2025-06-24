@@ -13,13 +13,30 @@ body {
   left: 0;
   border-radius: 10px;
   }
-.theiaStickySidebar{
-  box-sizing: border-box;
-  /* border: 1px solid red; */
-  position:relative;
-  top: 0;
-  width: 100%;
-  font-weight: 800;
+/* 小螢幕時隱藏 Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+/* 顯示 Sidebar 的按鈕 */
+.toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+/* 小螢幕時顯示按鈕 */
+@media (max-width: 768px) {
+    .toggle-sidebar {
+        display: block;
+    }
 }
 .leftmenu {
   display: block;
@@ -39,124 +56,107 @@ body {
   color: white;
 }
 
-
-/*主要內容*/
-* {
-  box-sizing: border-box;
+/* 主要內容 */
+.preview-img {
+    margin-top: 10px;
+    max-width: 120px;
+    max-height: 120px;
+    display: block;
+}
+.form-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff; /* 白色主體 */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 柔和陰影 */
+    width: 100%;
+    max-width: 450px;
 }
 
-.rectangle-33 {
-  background-color: lightgray;
-  border-radius: 10px;
-  width: 72%;
-  height: 600px;
-  position: absolute;
-  left: 240px;
-  top: 0;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
-}
-.div1 {
-  color: #000000;
-  text-align: left;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 288px;
-  top: 20px;
-  font-weight: 800;
-}
-.div2 {
-  color: #000000;
-  text-align: left;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 326px;
-  top: 120px;
-}
-.red {
-  color: red; /* 設定星號的顏色為紅色 */
-  font-weight: bold; /* 可選，讓星號更突出 */
+.form-container h2 {
+    color:black; /* 深灰色標題 */
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 
-.div3 {
-  color: #000000;
-  text-align: left;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 326px;
-  top: 220px;
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    
 }
-.div4 {
-  color: #000000;
-  text-align: left;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 320px;
-  top: 320px;
+
+label {
+    flex: 1;
+    text-align: right;
+    margin-right: 10px;
+    color: black; /* 淡灰色標籤 */
+    font-weight: 500;
 }
-.div5 {
-  color: #000000;
-  text-align: left;
-  font-size: 24px;
-  font-weight: 400;
-  position: absolute;
-  left: 333px;
-  top: 420px;
+
+input, select, textarea {
+    flex: 1;
+    padding: 6px;
+    width: auto;
+    border: 1px solid #ccc; /* 淡灰邊框 */
+    border-radius: 6px;
+    background-color: #f0f0f0; /* 淡灰色輸入框背景 */
+    color: #333;
 }
-.group {
-  margin: 0;
-  width: 100%;
-  display: flex; /* 使用 Flexbox 進行布局 */
-  flex-direction: column; /* 子元素垂直排列 */
-  left: 410px;
-  gap: 40px; /* 增加上下元素的間距 */
-  position: absolute; /* 確保內部定位的子元素作用範圍正常 */
-  top: 110px;
+
+input[type="file"] {
+    flex: 1;
+    width: 0; 
+    max-width: 100%;
+
 }
-.group input {
-  height: 60px;
-  width: 50%; /* 保留寬度比例 */
-  font-size: 22px;
-  border-radius: 10px; /* 保留圓角 */
-  padding: 20px;
-  border: 1px solid #000000;
-  margin-bottom: 0; 
-  position: relative; /* 確保 input 元素不會重疊 */
+
+button {
+    background-color:rgb(38, 229, 38); 
+    color: white;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
 }
-.div6 {
-  color: #000000;
-  background-color: white;
-  text-align:center;
-  font-size: 24px;
-  font-weight: 800;
-  position: absolute;
-  left: calc(68% - 70px);
-  top: 520px;
-  width: 100px;
-  height: 60px;
-  border-radius: 10px;
+
+button:hover {
+    background-color: rgb(1, 163, 1); 
 }
-.div6:hover {
-  background: gray; /* 背景變成灰色 */
-  color: white; /* 文字變成白色 */
+
+.required {
+    color: #d32f2f; /* 深紅色必填欄位標示 */
 }
-.div7 {
-  color: #000000;
-  background-color: white;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 800;
-  position: absolute;
-  left: calc(68% + 70px);
-  top: 520px;
-  width: 100px;
-  height: 60px;
-  border-radius: 10px;
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
 }
-.div7:hover {
-  background: gray; /* 背景變成灰色 */
-  color: white; /*文字變成白色*/
+
+.notification-wrapper .badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    display: block; 
+}
+
+.notification-wrapper i.fas.fa-bell {
+    font-size: 24px;
+    color: #333;
+}
+
+.notification-wrapper i.fas.fa-bell:hover {
+    color: orange;
 }

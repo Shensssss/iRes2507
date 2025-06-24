@@ -93,7 +93,7 @@
     <button type="submit" class="submit-btn">登入</button>
 
     <div style="text-align: center; margin-top: 20px; font-size: 12px;">
-        <a href="/forgot-password">忘記密碼？</a> | <a href="/register">前往註冊</a>
+         <a href="http://localhost:8080/ires-system/Clinic/forgetPassword.html">忘記密碼？</a> | <a href="/ires-system/Clinic/register.html">前往註冊</a>
     </div>
 </form>
 
@@ -118,7 +118,7 @@ if (!password.value) {
 
 
 // 送出資料
-fetch('http://localhost:8080/ires-system/clinic/login', {
+fetch('/ires-system/clinic/login', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -130,11 +130,12 @@ fetch('http://localhost:8080/ires-system/clinic/login', {
 })
 .then(resp => resp.json())
 .then(body => {
-  if(body.success){
-	  alert("登入成功");
+  if(body.successful){
+	sessionStorage.setItem("clinicName", body.clinicName);
+      alert("登入成功");
 	  location.href = 'http://localhost:8080/ires-system/Clinic/roomInfo.html';
   }else{
-	 alert("登入失敗：" + body.errMsg);
+	 alert("登入失敗：" + body.message);
   }
 }); 
 });
