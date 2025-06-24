@@ -1,5 +1,6 @@
 package web.doctor.service.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +34,25 @@ public class DoctorServiceImpl implements DoctorService{
 
 	    //clinicId若是前端傳來的doctor物件參數之一需要驗證避免被攻擊?或是可以直接從servlet加上這個屬性?
 		
+		//一定要設定時間(不可為null)避免出錯
+		doctor.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		doctor.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		// 3. 執行insert
 		return doctorDao.insert(doctor);
 	}
 
 	@Override
-	public int deleteDoctor(Integer doctorId) {
+	public int deleteDoctor(Integer doctorId, Integer clinicId) {
 		if(doctorId == null) {
-			throw new IllegalArgumentException("查無此醫師ID");
+			return 0;
 		}
 		Doctor doctor = doctorDao.selectById(doctorId);
-		if (doctor == null) {
-			throw new IllegalArgumentException("醫師資料異常");
+		if (doctor == null || !doctor.getClinic().getClinicId().equals(clinicId)) {
+			return 0;
 		}
 		return doctorDao.deleteById(doctorId);
 	}
+
 
 	@Override
 	public int editDoctor(Doctor doctor) {
@@ -62,18 +67,20 @@ public class DoctorServiceImpl implements DoctorService{
 
 		boolean isDuplicate = false;
 		for (int i = 0; i < existed.size(); i++) {
-			Doctor d = existed.get(i);
-			if (d.getDoctorId()!= doctor.getDoctorId()) {
-				isDuplicate = true;
-			    break;
-			}
+		    Doctor d = existed.get(i);
+		    if (!d.getDoctorId().equals(doctor.getDoctorId()) 
+		        && d.getDoctorName().equals(doctor.getDoctorName())) {
+		        isDuplicate = true;
+		        break;
+		    }
 		}
 
 		if (isDuplicate) {
 		    throw new IllegalArgumentException("醫師姓名重複");
 		}else {
 		// 3. 執行update
-		return doctorDao.update(doctor);
+			doctor.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+			return doctorDao.update(doctor);
 		}
 	}
 
