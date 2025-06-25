@@ -15,9 +15,9 @@ public class MajorDaoImpl implements MajorDao{
 
 	@Override
 	public List<Major> selectAll() {
-	    String sql = "select major_id, major_name, create_id, create_time, update_id, update_time FROM major";
-	    return session
-	            .createNativeQuery(sql, Major.class)
-	            .getResultList();
+		String hql = "from Major";
+		return session
+		        .createQuery(hql, Major.class)
+		        .getResultList();
 	}
 }

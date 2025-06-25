@@ -2410,7 +2410,7 @@ progress {
 }
 
 .form-control {
-    display: block;
+    /* display: block; */
     width: 100%;
     padding: .375rem .75rem;
     font-size: 1rem;
