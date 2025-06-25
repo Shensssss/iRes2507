@@ -35,7 +35,7 @@ public class LoginController {
 			}
 			 final HttpSession session = request.getSession();
 			 session.setAttribute("loggedin", true);
-			 session.setAttribute("member", clinic);
+			 session.setAttribute("clinic", clinic);
 		}
 		return clinic;
 	}

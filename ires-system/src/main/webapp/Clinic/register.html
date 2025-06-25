@@ -175,6 +175,11 @@
     font-size: 16px;
   ">👁️‍🗨️</span>
 </div>
+<div>
+  <label for="image">診所照片: </label>
+  <input type="file" name="image" id="image">
+  <img id="img" style="max-width: 100%; margin-top: 10px;">
+</div>
 
 <!--<div class="verification-group">
     <input type="text" id="verification-code" name="verification_code" class="verification-input" placeholder="驗證碼" required>
@@ -188,7 +193,9 @@
 
   <!-- 送出按鈕 -->
   <button type="submit" class="submit-btn">註冊</button>
+  <div id="msg"></div>
   <h3 style="font-size: 10px; font-family:'Times New Roman', Times, serif;text-align: center; bottom: 10px;">待管理員審核後，使得登入使用</h3>
+  
 </form>
 <!-- 註冊表單結束 -->
 
@@ -199,17 +206,24 @@
   const confirmPasswordField = document.getElementById('confirm-password');
   const togglePassword = document.getElementById('toggle-password');
   const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+  
 
   togglePassword.addEventListener('click', function () {
     const isVisible = passwordField.type === 'text';
     passwordField.type = isVisible ? 'password' : 'text';
-    togglePassword.textContent = isVisible ? '👁️‍🗨️' : '👁️‍🗨️';
   });
 
   toggleConfirmPassword.addEventListener('click', function () {
     const isVisible = confirmPasswordField.type === 'text';
     confirmPasswordField.type = isVisible ? 'password' : 'text';
-    toggleConfirmPassword.textContent = isVisible ? '👁️‍🗨️' : '👁️‍🗨️';
+  });
+  const profilePicture = document.getElementById('image');
+
+  image.addEventListener('change', () => {
+    const file = image.files[0];
+    if (file) {
+      document.getElementById('img').src = URL.createObjectURL(file);
+    }
   });
 
   const clinicName = document.getElementById('name');
@@ -221,84 +235,108 @@
   const account = document.getElementById('email');
   const password = document.getElementById('password');
   const confirmPassword = document.getElementById('confirm-password');
- // const verification = document.getElementById('verification_code');
+  const form = document.querySelector('form');
+  const msg = document.getElementById('msg');
+  const btn1 = document.querySelector('.submit-btn');
+  const inputs = document.querySelectorAll('input');
+  
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    msg.textContent = '';
+    msg.className = '';
 
-document.querySelector('form').addEventListener('submit', (event) => {
-  event.preventDefault();
+    // 驗證資料
+    if (!clinicName.value || clinicName.value.length < 1 || clinicName.value.length > 20) {
+      alert('診所名字長度需介於 1~20 字元');
+      return;
+    }
+    if (!agencyId.value || agencyId.value.length !== 10) {
+      alert('機構代碼長度需為 10');
+      return;
+    }
+    if (!phone.value || phone.value.length !== 10) {
+      alert('電話長度需為 10');
+      return;
+    }
+    if (!addressCity.value || addressCity.value.length !== 3) {
+      alert('城市長度需為 3');
+      return;
+    }
+    if (!addressTown.value || addressTown.value.length < 2 || addressTown.value.length > 4) {
+      alert('鄉鎮長度需介於 2~4');
+      return;
+    }
+    if (!addressRoad.value || addressRoad.value.length < 1 || addressRoad.value.length > 50) {
+      alert('道路長度需介於 1~50');
+      return;
+    }
+    if (!account.value || account.value.length < 1 || account.value.length > 50) {
+      alert('Email 長度需介於 1~50');
+      return;
+    }
+    if (!password.value || password.value.length < 1 || password.value.length > 50) {
+      alert('密碼長度需介於 1~50');
+      return;
+    }
+    if (password.value !== confirmPassword.value) {
+      alert('密碼與確認密碼不一致');
+      return;
+    }
 
-  if (!clinicName.value || clinicName.value.length < 1 || clinicName.value.length > 20) {
-    alert('診所名字長度需介於 1~20 字元');
-    return;
-  }
+    // 提交資料函式
+    function submitForm(imageBase64) {
+      fetch('/ires-system/clinic/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          clinicName: clinicName.value,
+          agencyId: agencyId.value,
+          phone: phone.value,
+          addressCity: addressCity.value,
+          addressTown: addressTown.value,
+          addressRoad: addressRoad.value,
+          account: account.value,
+          password: password.value,
+          profilePicture: imageBase64
+        })
+      })
+        .then(resp => resp.json())
+        .then(body => {
+          const { successful, message } = body;
+          if (successful) {
+            inputs.forEach(input => input.disabled = true);
+            btn1.disabled = true;
+            msg.className = 'info';
+            alert('註冊成功，將導向登入頁');
+            setTimeout(() => {0
+              location.href = 'http://localhost:8080/ires-system/Clinic/login.html';
+            }, 1500);
+          } else {
+            msg.className = 'error';
+            msg.textContent = message || '註冊失敗';
+          }
+        })
+        .catch(error => {
+          msg.className = 'error';
+          msg.textContent = '連線失敗：' + error.message;
+        });
+    }
 
-  if (!agencyId.value || agencyId.value.length !== 10) {
-    alert('機構代碼長度需為 10');
-    return;
-  }
-
-  if (!phone.value || phone.value.length !== 10) {
-    alert('電話長度需為 10');
-    return;
-  }
-
-  if (!addressCity.value || addressCity.value.length !== 3) {
-    alert('城市長度需為 3');
-    return;
-  }
-
-  if (!addressTown.value || addressTown.value.length < 2 || addressTown.value.length > 4) {
-    alert('鄉鎮長度需介於 2~4');
-    return;
-  }
-
-  if (!addressRoad.value || addressRoad.value.length < 1 || addressRoad.value.length > 50) {
-    alert('道路長度需介於 1~50');
-    return;
-  }
-
-  if (!account.value || account.value.length < 1 || account.value.length > 50) {
-    alert('Email 長度需介於 1~50');
-    return;
-  }
-
-  if (!password.value || password.value.length < 1 || password.value.length > 50) {
-    alert('密碼長度需介於 1~50');
-    return;
-  }
-
-  if (password.value !== confirmPassword.value) {
-    alert('密碼與確認密碼不一致');
-    return;
-  }
-
-  // 送出資料
-  fetch('/ires-system/clinic/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      clinicName: clinicName.value,
-      agencyId: agencyId.value,
-      phone: phone.value,
-      addressCity: addressCity.value,
-      addressTown: addressTown.value,
-      addressRoad: addressRoad.value,
-      account: account.value,
-      password: password.value
-    })
-  })
-  .then(resp => resp.text())
-  .then(body => {
-    console.log(body);
-    alert("註冊完成，請等待審核");
-    location.href = 'http://localhost:8080/ires-system/Clinic/login.html';
+    // 圖片處理
+    if (image.files.length > 0) {
+      const file = image.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageBase64 = e.target.result.split(',')[1];
+        submitForm(imageBase64);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      submitForm('');
+    }
   });
-});
-
-
-
-
-
 </script>
-</html>
+  </html>
+  
