@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import core.pojo.Core;
 import web.clinic.entity.Clinic;
@@ -22,20 +21,22 @@ public class ResetPasswordController{
 	
 	@PostMapping("resetPassword")
 	@ResponseBody
-	public Core resetPassword(@SessionAttribute(required = false) Clinic clinic) {
-		Core core = new Core();
-		
-		
-		if(clinic != null) {
-			String errMsg = registerService.resetPassword(clinic);
-			core.setSuccessful(errMsg == null);
-			if (errMsg != null) {
-				core.setMessage(errMsg);
-			}
-		} else {
-			core.setSuccessful(false);
-			core.setMessage("無會員資料");
-		}
-		return core;
+	public Core resetPassword(HttpServletRequest request, @RequestBody Clinic reqClinic) {
+	    Core core = new Core();
+
+	    Clinic sessionClinic = (Clinic) request.getSession().getAttribute("clinic");
+	    if (sessionClinic == null) {
+	        core.setSuccessful(false);
+	        core.setMessage("Session 過期或未驗證");
+	        return core;
+	    }
+
+	    // 強制以 session 的帳號為準
+	    reqClinic.setAccount(sessionClinic.getAccount());
+
+	    String errMsg = registerService.resetPassword(reqClinic);
+	    core.setSuccessful(errMsg == null);
+	    core.setMessage(errMsg);
+	    return core;
 	}
 }
