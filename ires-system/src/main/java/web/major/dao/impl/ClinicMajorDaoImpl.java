@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import web.clinic.entity.Clinic;
 import web.major.dao.ClinicMajorDao;
+import web.major.entity.Major;
 
 @Repository
 public class ClinicMajorDaoImpl implements ClinicMajorDao{
@@ -16,16 +17,22 @@ public class ClinicMajorDaoImpl implements ClinicMajorDao{
 	private Session session;
 	  @Override
 	  public List<Clinic> findClinicsByMajorIdOrAll(Integer majorId) {
-		  System.out.println(majorId);
 		    if (majorId != null) {
-		        String hql = "select cm.clinic from ClinicMajor cm where cm.major.majorId = :majorId";
-		        return session.createQuery(hql, Clinic.class)
+				String hql = "select cm.clinic from ClinicMajor cm join cm.clinic join cm.major where cm.major.majorId = :majorId";
+				return session.createQuery(hql, Clinic.class)
 		                      .setParameter("majorId", majorId)
 		                      .getResultList();
 		    } else {
-		        String sql = "SELECT * FROM clinic";
-		        return session.createNativeQuery(sql, Clinic.class)
+		        String hql = "from Clinic";
+		        return session.createQuery(hql, Clinic.class)
 		                      .getResultList();
 		    }
+		}
+	  @Override
+		public List<Major> findMajorByClinicsId(Integer clinicId) {
+			 String hql = "select cm.major from ClinicMajor cm join cm.clinic join cm.major where cm.clinic.clinicId = :clinicId";
+		        return session.createQuery(hql, Major.class)
+		                      .setParameter("clinicId", clinicId)
+		                      .getResultList();
 		}
 }

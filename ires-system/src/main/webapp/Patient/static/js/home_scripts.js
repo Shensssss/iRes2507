@@ -1,11 +1,5 @@
+let date = "";
 $(function () {
-  // ------------ team images width same height -----------
-  // var images = $(".tc-team-style1 .team-card .img, .img_sm_h");
-  // images.each(function () {
-  //   var width = $(this).width();
-  //   $(this).height(width);
-  // });
-
   // --------- portfolio effect ---------
   $(".tc-portfolio-st7 .works .item").on("mouseenter", function () {
     $(this).siblings().removeClass("active");
@@ -32,70 +26,78 @@ $(document).ready(function () {
     loop: true,
   });
 
-  // ------------ tc-services-slider1 -----------
-  var swiper = new Swiper(".tc-services-st7 .services-slider", {
-    slidesPerView: 3,
-    spaceBetween: 20,
-    centeredSlides: true,
-    speed: 1500,
-    pagination: {
-      el: ".tc-services-st7 .swiper-pagination",
-      clickable: true,
-    },
-    navigation: false,
-    mousewheel: false,
-    keyboard: true,
-    autoplay: {
-      delay: 6000,
-    },
-    loop: true,
-    breakpoints: {
-      0: {
-        slidesPerView: 1,
-      },
-      480: {
-        slidesPerView: 2,
-      },
-      787: {
-        slidesPerView: 3,
-      },
-      991: {
-        slidesPerView: 3,
-      },
-      1200: {
-        slidesPerView: 3,
-      },
-    },
-  });
+  var userLocation = sessionStorage.getItem("userLocation");
 
-  // ------------ tc-testimonials-st7 -----------
-  var swiper = new Swiper(".tc-testimonials-st7 .testi-slider", {
-    slidesPerView: 1,
-    spaceBetween: 20,
-    // centeredSlides: true,
-    speed: 1500,
-    pagination: {
-      el: ".tc-testimonials-st7 .swiper-pagination",
-      clickable: true,
-    },
-    navigation: false,
-    mousewheel: false,
-    keyboard: true,
-    autoplay: {
-      delay: 5000,
-    },
-    loop: true,
-  });
-
-  // 根據登入狀態切換 Menu 或 Login
-  const patient = sessionStorage.getItem("patient");
-  if (patient) {
-    $("#login-link").addClass("d-none");
-    $("#menu-link").removeClass("d-none");
+  if (userLocation) {
+    $("#user-location").html(
+      '<i class="fas fa-map-marker-alt"></i> ' + userLocation
+    );
   } else {
-    $("#login-link").removeClass("d-none");
-    $("#menu-link").addClass("d-none");
+    $("#user-location").html(
+      '<i class="fas fa-map-marker-alt"></i> 獲取位置中...'
+    );
+    getCurrentLocation();
   }
+
+  // 取得 GPS 位置
+  function getCurrentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          var latitude = position.coords.latitude;
+          var longitude = position.coords.longitude;
+          getAddressFromCoords(latitude, longitude);
+        },
+        function (error) {
+          console.error("無法獲取位置", error);
+          $("#user-location").html(
+            '<i class="fas fa-map-marker-alt"></i> 無法獲取位置'
+          );
+        }
+      );
+    } else {
+      console.log("瀏覽器不支持地理位置 API");
+    }
+  }
+
+  // 透過 Google Geocoding API 取得地址
+  function getAddressFromCoords(lat, lng) {
+    var geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyBgRkDJeajEe4nbQgupP7yvSBayWSoIQAg`;
+
+    $.getJSON(geocodingApiUrl, function (data) {
+      if (data.status === "OK") {
+        var address = data.results[0].formatted_address;
+        sessionStorage.setItem("userLocation", address);
+        sessionStorage.setItem("userLat", lat);
+        sessionStorage.setItem("userLng", lng);
+        $("#user-location").html(
+          '<i class="fas fa-map-marker-alt"></i> ' + address
+        );
+        // 重新載入診所列表
+        loadClinics("#all_clinc");
+        loadClinics("#peds", 1);
+        loadClinics("#dds", 2);
+        loadClinics("#oph", 3);
+        loadClinics("#obgyn", 4);
+        loadClinics("#derm", 5);
+        loadClinics("#ent", 6);
+        loadClinics("#psych", 7);
+        loadClinics("#tcm", 8);
+        loadClinics("#nutrition", 9);
+        loadClinics("#pt", 10);
+      } else {
+        console.error("無法獲取地址");
+      }
+    }).fail(function (e) {
+      console.error(e);
+    });
+  }
+
+  // 讓使用者手動選擇 Google 地圖位置
+  $("#user-location").on("click", function () {
+    let mapsUrl = "https://www.google.com/maps/search/?api=1";
+    window.open(mapsUrl, "_blank");
+  });
 
   // 附近診所取得
   loadClinics("#all_clinc");
@@ -109,6 +111,68 @@ $(document).ready(function () {
   loadClinics("#tcm", 8);
   loadClinics("#nutrition", 9);
   loadClinics("#pt", 10);
+
+  $.ajax({
+    url: "/ires-system/major/list",
+    method: "GET",
+    success: function (data) {
+      if (Array.isArray(data)) {
+        const select = $("#major-select");
+        const ul = $(".custom-select-options ul");
+
+        select.empty();
+        ul.empty();
+
+        select.append('<option value="all" selected>全部</option>');
+        ul.append('<li data-value="all" class="is-highlighted">全部</li>');
+
+        data.forEach(function (item) {
+          const option = $("<option>", {
+            value: item.majorId,
+            text: item.majorName,
+          });
+          select.append(option);
+
+          const li = $("<li>", {
+            "data-value": item.majorId,
+            text: item.majorName,
+          });
+          ul.append(li);
+        });
+      }
+    },
+  });
+
+  $("#distance-range").on("input", function () {
+    $("#distance-value").text($(this).val());
+  });
+
+  $("#clinicFilterForm").on("submit", function (e) {
+    e.preventDefault();
+
+    const date = $("#datepicks1").val();
+    const startTime = $("#timepicker_start").val();
+    const endTime = $("#timepicker_end").val();
+    let majorId = $("#major-select").val();
+    const distance = $("#distance-range").val();
+
+    if (majorId === "all") {
+      majorId = "";
+    }
+
+    const query = new URLSearchParams({
+      date,
+      startTime,
+      endTime,
+      majorId,
+      distance,
+    });
+
+    window.location.href =
+      "/ires-system/Patient/hospital.html?" + query.toString();
+  });
+
+  clinicLinks();
 });
 
 // ------------ gsap scripts -----------
@@ -127,44 +191,21 @@ $(function () {
     //smoothTouch: 0.1,
   });
 });
-$(document).ready(function () {
-  $.ajax({
-    url: "/ires-system/major/list",
-    method: "GET",
-    success: function (data) {
-      console.log(data);
-      if (Array.isArray(data)) {
-        const $select = $("#major-select");
-        const $ul = $(".custom-select-options ul");
-
-        $select.empty();
-        $ul.empty();
-
-        $select.append('<option value="all" selected>全部</option>');
-        $ul.append('<li data-value="all" class="is-highlighted">全部</li>');
-
-        data.forEach(function (item) {
-          const option = $("<option>", {
-            value: item.majorId,
-            text: item.majorName,
-          });
-          $select.append(option);
-
-          const li = $("<li>", {
-            "data-value": item.majorId,
-            text: item.majorName,
-          });
-          $ul.append(li);
-        });
-      }
-    },
-  });
-  $("#distance-range").on("input", function () {
-    $("#distance-value").text($(this).val());
-  });
-});
 
 function loadClinics(selector, majorId = null) {
+  const rawLat =
+    sessionStorage.getItem("userLat") || localStorage.getItem("userLat");
+  const rawLng =
+    sessionStorage.getItem("userLng") || localStorage.getItem("userLng");
+
+  const userLat = rawLat && !isNaN(rawLat) ? parseFloat(rawLat) : null;
+  const userLng = rawLng && !isNaN(rawLng) ? parseFloat(rawLng) : null;
+
+  if (userLat === null || userLng === null) {
+    console.log("無使用者定位經緯度");
+  }
+
+  console.log("userLat:", userLat, "userLng:", userLng);
   const url = majorId
     ? `/ires-system/clinicMajor/list?majorId=${majorId}`
     : "/ires-system/clinicMajor/list";
@@ -176,15 +217,35 @@ function loadClinics(selector, majorId = null) {
       if (Array.isArray(clinics)) {
         const $wrapper = $(`${selector} .swiper-wrapper`);
         $wrapper.empty();
+        console.log(clinics);
 
         for (let i = 0; i < clinics.length; i += 3) {
           let groupHtml = "";
           for (let j = i; j < i + 3 && j < clinics.length; j++) {
             const clinic = clinics[j];
+            let distance = "你沒給位置啊";
+            if (
+              userLat !== null &&
+              userLng !== null &&
+              clinic.latitude !== null &&
+              clinic.longitude !== null
+            ) {
+              distance = getDistanceFromLatLonInKm(
+                userLat,
+                userLng,
+                clinic.latitude,
+                clinic.longitude
+              );
+            }
             groupHtml += `
               <div class="swiper-slide card">
+              <a href="hospital-details.html?clinicId=${clinic.clinicId}">
                 <div class="card-img">
-                  <img src="static/img/1.jpeg" alt="" />
+                  <img src="${
+                    clinic.profilePicture
+                      ? `data:image/jpeg;base64,${clinic.profilePicture}`
+                      : "static/img/1.jpeg"
+                  }" alt="診所圖片" />
                 </div>
                 <div class="card-content">
                   <span><h3>${clinic.clinicName}</h3></span>
@@ -202,15 +263,33 @@ function loadClinics(selector, majorId = null) {
                   </div>
                   <div class="price-and-button">
                     <div>
-                      <div class="price">1 <span>km</span></div>
+                      <div class="price">${distance} <span>km</span></div>
                     </div>
                     <div style="vertical-align: bottom; display: flex; gap: 10px;">
-                      <a href="#" class="view-room-btn">上午\n${clinic.morning}</a>
-                      <a href="#" class="view-room-btn">下午\n${clinic.afternoon}</a>
-                      <a href="#" class="view-room-btn">晚上\n${clinic.night}</a>
+                      <a href="hospital-details.html?clinicId=${
+                        clinic.clinicId
+                      }&date=${date}&time=0" class="view-room-btn">
+                        上午<br>
+                        <span style="font-size: 12px;">${clinic.morning}</span>
+                      </a>
+                      <a href="hospital-details.html?clinicId=${
+                        clinic.clinicId
+                      }&date=${date}&time=1" class="view-room-btn">
+                        下午<br>
+                        <span style="font-size: 12px;">${
+                          clinic.afternoon
+                        }</span>
+                      </a>
+                      <a href="hospital-details.html?clinicId=${
+                        clinic.clinicId
+                      }&date=${date}&time=2" class="view-room-btn">
+                        晚上<br>
+                        <span style="font-size: 12px;">${clinic.night}</span>
+                      </a>
                     </div>
                   </div>
                 </div>
+                </a>
               </div>
             `;
           }
@@ -235,3 +314,145 @@ function loadClinics(selector, majorId = null) {
     },
   });
 }
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c;
+  return d.toFixed(2);
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+$(document).ready(function () {});
+function clinicLinks() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  date = `${yyyy}-${mm}-${dd}`;
+
+  const startTime = "00:00";
+  const endTime = "23:59";
+  const distance = 10;
+
+  const linkMap = {
+    "#findAll": "",
+    "#findPeds": 1,
+    "#findDds": 2,
+    "#findOph": 3,
+    "#findObgyn": 4,
+    "#findDerm": 5,
+    "#findEnt": 6,
+    "#findPsych": 7,
+    "#findTcm": 8,
+    "#findNutrition": 9,
+    "#findPt": 10,
+  };
+
+  for (const [selector, majorId] of Object.entries(linkMap)) {
+    $(selector).on("click", function (e) {
+      e.preventDefault();
+      const query = new URLSearchParams({
+        date,
+        startTime,
+        endTime,
+        majorId,
+        distance,
+      });
+      window.location.href =
+        "/ires-system/Patient/hospital.html?" + query.toString();
+    });
+  }
+}
+
+//-------------time select ---------------
+// flatpickr("#timepicker_start", {
+//   enableTime: true,
+//   noCalendar: true,
+//   dateFormat: "H:i",
+//   minTime: "00:00",
+//   maxTime: "23:59",
+//   defaultDate: "00:00",
+// });
+
+// flatpickr("#timepicker_end", {
+//   enableTime: true,
+//   noCalendar: true,
+//   dateFormat: "H:i",
+//   minTime: "00:00",
+//   maxTime: "23:59",
+//   defaultDate: "23:59",
+// });
+
+// ------------ tc-testimonials-st7 -----------
+// var swiper = new Swiper(".tc-testimonials-st7 .testi-slider", {
+//   slidesPerView: 1,
+//   spaceBetween: 20,
+//   centeredSlides: true,
+//   speed: 1500,
+//   pagination: {
+//     el: ".tc-testimonials-st7 .swiper-pagination",
+//     clickable: true,
+//   },
+//   navigation: false,
+//   mousewheel: false,
+//   keyboard: true,
+//   autoplay: {
+//     delay: 5000,
+//   },
+//   loop: true,
+// });
+
+// ------------ team images width same height -----------
+// var images = $(".tc-team-style1 .team-card .img, .img_sm_h");
+// images.each(function () {
+//   var width = $(this).width();
+//   $(this).height(width);
+// });
+
+// ------------ tc-services-slider1 -----------
+// var swiper = new Swiper(".tc-services-st7 .services-slider", {
+//   slidesPerView: 3,
+//   spaceBetween: 20,
+//   centeredSlides: true,
+//   speed: 1500,
+//   pagination: {
+//     el: ".tc-services-st7 .swiper-pagination",
+//     clickable: true,
+//   },
+//   navigation: false,
+//   mousewheel: false,
+//   keyboard: true,
+//   autoplay: {
+//     delay: 6000,
+//   },
+//   loop: true,
+//   breakpoints: {
+//     0: {
+//       slidesPerView: 1,
+//     },
+//     480: {
+//       slidesPerView: 2,
+//     },
+//     787: {
+//       slidesPerView: 3,
+//     },
+//     991: {
+//       slidesPerView: 3,
+//     },
+//     1200: {
+//       slidesPerView: 3,
+//     },
+//   },
+// });
