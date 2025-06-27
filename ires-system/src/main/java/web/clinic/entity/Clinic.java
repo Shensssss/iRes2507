@@ -112,6 +112,11 @@ public class Clinic extends Core{
     @Column(name = "profile_picture")
     private byte[] profilePicture;
 
+    //該診所的評論數量
     @Column(name = "comments")
     private Integer comments;
+
+    //各時段的預約額度
+    @Column(name = "quota")
+    private Integer quota;
 }
