@@ -154,8 +154,8 @@ public class DoctorController {
     }
 
     // 根據醫師姓名搜尋
-    @PostMapping("showSearchedByName")
-    public ResponseEntity<Core> showSearchedByName(@RequestBody Doctor doctor, HttpSession session) {
+    @GetMapping("showSearchedByName")
+    public ResponseEntity<Core> showSearchedByName(@RequestParam("name") String name, HttpSession session) {
         Core core = new Core();
         Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
         if (loggedInClinic == null) {
@@ -167,10 +167,16 @@ public class DoctorController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
-        List<Doctor> doctors = doctorService.showSearchedByName(loggedInClinic.getClinicId(), doctor.getDoctorName());
-        core.setStatusCode(200);
-        core.setMessage("載入成功");
-        core.setData(doctors);
-        return ResponseEntity.ok(core);
+        List<Doctor> doctors = doctorService.showSearchedByName(loggedInClinic.getClinicId(), name);
+        if(doctors == null || doctors.isEmpty()) {
+        	core.setStatusCode(404);
+        	core.setMessage("查無符合條件之醫師");
+        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
+        }else {
+        	core.setStatusCode(200);
+        	core.setMessage("載入成功");
+        	core.setData(doctors);
+        	return ResponseEntity.ok(core);        	
+        }
     }
 }

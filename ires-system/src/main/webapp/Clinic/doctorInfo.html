@@ -142,53 +142,58 @@
                 <div class="container" id="container"></div>
 
                 <!-- 新增表單 -->
-                <div class="form-popup" id="addForm">
+                <form class="form-popup" id="addForm">
                     <h3>新增醫師資料</h3>
                     <input type="text" id="addName" placeholder="姓名">
-                    <input type="file" id="addProfilePicture" accept="image/*">
-                    <img id="addPreview" src="" alt="預覽圖片" style="max-width: 120px; display: none; margin: 5px 0;">
+                    <label for="addProfilePicture">照片：</label>
+                    <input type="file" id="addProfilePicture">
+                    <img id="addPreview" class="img-preview">
                     <input type="text" id="addEdu1" placeholder="學歷 1">
                     <input type="text" id="addEdu2" placeholder="學歷 2">
                     <input type="text" id="addEdu3" placeholder="學歷 3">
                     <input type="text" id="addExp1" placeholder="經歷 1">
                     <input type="text" id="addExp2" placeholder="經歷 2">
                     <input type="text" id="addExp3" placeholder="經歷 3">
-                    <input type="text" id="addMemo1" placeholder="專長1">
-                    <input type="text" id="addMemo2" placeholder="專長2">
-                    <input type="text" id="addMemo3" placeholder="專長3">
+                    <input type="text" id="addMemo1" placeholder="專長 1">
+                    <input type="text" id="addMemo2" placeholder="專長 2">
+                    <input type="text" id="addMemo3" placeholder="專長 3">
                     <input type="text" id="addTime" placeholder="看診時段">
                     <button id="saveAddBtn">儲存</button>
                     <button id="cancelAddBtn">取消</button>
-                </div>
+                </form>
 
                 <!-- 編輯表單 -->
-                <div class="form-popup" id="editForm">
+                <form class="form-popup" id="editForm">
                     <h3>編輯醫師資料</h3>
                     <input type="text" id="editName" placeholder="姓名">
-                    <input type="file" id="editProfilePicture" accept="image/*">
-                    <img id="editPreview" src="" alt="預覽圖片" style="max-width: 120px; display: none; margin: 5px 0;">
+                    <label for="editProfilePicture">照片：</label>
+                    <input type="file" id="editProfilePicture">
+                    <img id="editPreview"  class="img-preview">
                     <input type="text" id="editEdu1" placeholder="學歷 1">
                     <input type="text" id="editEdu2" placeholder="學歷 2">
                     <input type="text" id="editEdu3" placeholder="學歷 3">
                     <input type="text" id="editExp1" placeholder="經歷 1">
                     <input type="text" id="editExp2" placeholder="經歷 2">
                     <input type="text" id="editExp3" placeholder="經歷 3">
-                    <input type="text" id="editMemo" placeholder="專長">
+                    <input type="text" id="editMemo1" placeholder="專長 1">
+                    <input type="text" id="editMemo2" placeholder="專長 2">
+                    <input type="text" id="editMemo3" placeholder="專長 3">
+>>>>>>> main
                     <input type="text" id="editTime" placeholder="看診時段">
                     <button id="saveEditBtn">儲存</button>
                     <button id="cancelEditBtn">取消</button>
-                </div>
+                </form>
              
             </section>
         </section>       
     </section>
 
     
+    
     <script src="static/js/jquery-3.7.1.min.js"></script>
-    <script src="static/js/doctorInfo.js"></script>
     <!--/Config demo-->
     <!--Global JS-->
-    <script src="static/js/jquery-1.11.1.min.js"></script>
+    <!-- <script src="static/js/jquery-1.11.1.min.js"></script> -->
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/jquery.navgoco.min.js"></script>
     <script src="static/js/pace.min.js"></script>
@@ -227,7 +232,7 @@
         app.spinStop();
     });
     </script>-->
-     
+    <script src="static/js/doctorInfo.js"></script>
 </body>
 
 </html>
