@@ -4,72 +4,90 @@ flatpickr("#multiDate", {
 	locale: "zh"
 });
 
-const patients = Array.from({ length: 30 }, (_, i) => ({
-	phone: "09" + (10000000 + i),
-	name: "病患" + (i + 1)
-}));
-
-const doctors = ["林醫師", "張醫師", "黃醫師", "陳醫師"];
-const visitNumberCounter = { current: 1 };
-
 function renderPatients(page = 1, keyword = "") {
-	const filtered = patients.filter(p => p.phone.includes(keyword) || p.name.includes(keyword));
-	const rowsPerPage = 10;
-	const totalPages = Math.ceil(filtered.length / rowsPerPage);
 	const tbody = document.getElementById("patientTableBody");
 	const pagination = document.getElementById("pagination");
-
 	tbody.innerHTML = "";
 	pagination.innerHTML = "";
 
-	const start = (page - 1) * rowsPerPage;
-	const end = Math.min(start + rowsPerPage, filtered.length);
-	for (let i = start; i < end; i++) {
-		const tr = document.createElement("tr");
-		tr.innerHTML = `<td>${filtered[i].phone}</td><td>${filtered[i].name}</td>`;
-		tr.ondblclick = () => {
-			document.getElementById("patient").value = `${filtered[i].phone} ${filtered[i].name}`;
-			document.getElementById("patientTableContainer").style.display = "none";
-		};
-		tbody.appendChild(tr);
-	}
+	fetch(`/ires-system/patient/patientList?page=${page}&keyword=${encodeURIComponent(keyword)}`)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("後端回應失敗");
+			}
+			return response.json();
+		})
+		.then(data => {
+			const patients = data.patients || [];
+			const totalPages = data.totalPages || 1;
 
-	for (let i = 1; i <= totalPages; i++) {
-		const btn = document.createElement("button");
-		btn.textContent = i;
-		btn.onclick = () => renderPatients(i, document.getElementById("patientSearch").value);
-		pagination.appendChild(btn);
-	}
+			patients.forEach(p => {
+				const tr = document.createElement("tr");
+				tr.innerHTML = `<td>${p.phone}</td><td>${p.name}</td>`;
+				tr.ondblclick = () => {
+					document.getElementById("patient").value = `${p.phone} ${p.name}`;
+					document.getElementById("patientTableContainer").style.display = "none";
+				};
+				tbody.appendChild(tr);
+			});
+
+			for (let i = 1; i <= totalPages; i++) {
+				const btn = document.createElement("button");
+				btn.textContent = i;
+				btn.onclick = () => renderPatients(i, keyword);
+				pagination.appendChild(btn);
+			}
+		})
+		.catch(err => {
+			console.error("病患資料載入失敗", err);
+			alert("無法取得病患資料，請稍後再試");
+		});
 }
 
 function renderDoctors(page = 1, keyword = "") {
-	const filtered = doctors.filter(name => name.includes(keyword));
-	const rowsPerPage = 10;
-	const totalPages = Math.ceil(filtered.length / rowsPerPage);
-	const tbody = document.getElementById("doctorTableBody");
-	const pagination = document.getElementById("doctorPagination");
+	const pageSize = 10; // 可依後端預設調整
 
-	tbody.innerHTML = "";
-	pagination.innerHTML = "";
+	fetch(`/ires-system/doctor/doctorList?page=${page}&keyword=${encodeURIComponent(keyword)}`)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("後端回應失敗");
+			}
+			return response.json();
+		})
+		.then(data => {
+			const doctors = data.doctors || [];
+			const totalPages = data.totalPages || 1;
 
-	const start = (page - 1) * rowsPerPage;
-	const end = Math.min(start + rowsPerPage, filtered.length);
-	for (let i = start; i < end; i++) {
-		const tr = document.createElement("tr");
-		tr.innerHTML = `<td>${filtered[i]}</td>`;
-		tr.ondblclick = () => {
-			document.getElementById("doctorInput").value = filtered[i];
-			document.getElementById("doctorTableContainer").style.display = "none";
-		};
-		tbody.appendChild(tr);
-	}
+			const tbody = document.getElementById("doctorTableBody");
+			const pagination = document.getElementById("doctorPagination");
+			tbody.innerHTML = "";
+			pagination.innerHTML = "";
 
-	for (let i = 1; i <= totalPages; i++) {
-		const btn = document.createElement("button");
-		btn.textContent = i;
-		btn.onclick = () => renderDoctors(i, document.getElementById("doctorSearch").value);
-		pagination.appendChild(btn);
-	}
+			// 填入資料列
+			doctors.forEach(doctor => {
+				const tr = document.createElement("tr");
+				tr.innerHTML = `<td>${doctor.id}</td><td>${doctor.name}</td>`;
+				tr.ondblclick = () => {
+					// 將選到的醫師寫入表單欄位
+					document.getElementById("doctorInput").value = doctor.name;
+					document.getElementById("doctorInput").dataset.id = doctor.id;
+					document.getElementById("doctorTableContainer").style.display = "none";
+				};
+				tbody.appendChild(tr);
+			});
+
+			// 分頁按鈕
+			for (let i = 1; i <= totalPages; i++) {
+				const btn = document.createElement("button");
+				btn.textContent = i;
+				btn.onclick = () => renderDoctors(i, document.getElementById("doctorSearch").value);
+				pagination.appendChild(btn);
+			}
+		})
+		.catch(error => {
+			console.error("取得醫師資料時發生錯誤：", error);
+			alert("無法取得醫師資料，請稍後再試");
+		});
 }
 
 function registerEventHandlers() {

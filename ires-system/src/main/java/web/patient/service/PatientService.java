@@ -2,6 +2,8 @@ package web.patient.service;
 
 import web.patient.entity.Patient;
 
+import java.util.Map;
+
 public interface PatientService {
 	
 	Patient register(Patient patient);
@@ -13,5 +15,7 @@ public interface PatientService {
 	void updatePatient(Patient patient);
 	
 	Patient edit(Patient reqPatient);
+
+	Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize);
 
 }

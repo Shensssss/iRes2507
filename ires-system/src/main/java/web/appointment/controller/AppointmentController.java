@@ -31,7 +31,8 @@ public class AppointmentController {
     @GetMapping("/apiToday")
     @ResponseBody
     public List<Appointment> getTodayAppointments(@RequestParam(value = "period", required = false) String period) {
-        Date today = normalizeDate(new Date());
+//        Date today = normalizeDate(new Date());
+        java.sql.Date today = new java.sql.Date(normalizeDate(new Date()).getTime());
 
         int timePeriod = 1;
         if ("afternoon".equalsIgnoreCase(period)) {

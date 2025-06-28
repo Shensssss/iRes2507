@@ -51,4 +51,5 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<Appointment> getAppointmentsByDateAndPeriod(Date date, int timePeriod) {
         return appointmentDAO.findByDateAndPeriod(date, timePeriod);
     }
+
 }

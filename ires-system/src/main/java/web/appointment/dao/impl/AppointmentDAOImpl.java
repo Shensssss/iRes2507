@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 
+import java.time.LocalDate;
 import java.util.Date;
+//import java.sql.Date;
 import java.util.List;
+
 
 import javax.persistence.PersistenceContext;
 
@@ -70,5 +73,33 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 .setParameter("date", date)
                 .setParameter("period", timePeriod)
                 .getResultList();
+    }
+
+    //判斷病患是否有在該診所預約過
+    public boolean existsByPatientIdAndClinicId(Integer patientId, Integer clinicId) {
+        String hql = "SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :pid AND a.clinic.id = :cid";
+        Long count = session.createQuery(hql, Long.class)
+                        .setParameter("pid", patientId)
+                        .setParameter("cid", clinicId)
+                        .getSingleResult();
+        return count > 0;
+    }
+
+    @Override
+    public boolean existsDuplicateAppointment(int patientId, int doctorId, LocalDate date, int timePeriod) {
+        String hql = "SELECT COUNT(*) FROM Appointment a " +
+                "WHERE a.patient.patientId = :pid " +
+                "AND a.doctor.doctorId = :did " +
+                "AND a.appointmentDate = :date " +
+                "AND a.timePeriod = :period ";
+
+        Long count = session.createQuery(hql, Long.class)
+                .setParameter("pid", patientId)
+                .setParameter("did", doctorId)
+                .setParameter("date", java.sql.Date.valueOf(date))
+                .setParameter("period", timePeriod)
+                .uniqueResult();
+
+        return count != null && count > 0;
     }
 }

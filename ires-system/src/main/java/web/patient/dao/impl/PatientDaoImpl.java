@@ -115,4 +115,30 @@ public class PatientDaoImpl implements PatientDao {
 	    return selectById(patientId);
 	}
 
+	@Override
+	public List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
+		String hql = "SELECT DISTINCT a.patient FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) " +
+				"ORDER BY a.patient.name ASC";
+
+		return session.createQuery(hql, Patient.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.setFirstResult(offset)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
+
+	@Override
+	public long countReservedPatientsByKeyword(String keyword, int clinicId) {
+		String hql = "SELECT COUNT(DISTINCT a.patient.id) FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) ";
+
+		return session.createQuery(hql, Long.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.uniqueResult();
+	}
 }
