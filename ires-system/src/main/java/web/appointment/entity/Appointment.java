@@ -23,13 +23,22 @@ public class Appointment {
 	@Column(name = "appointment_id", nullable = false, length = 36)
 	private String appointmentId;
 
+	@Column(name = "clinic_id")
+	private Integer clinicId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clinic_id", insertable = false, updatable = false)
 	private Clinic clinic;
 
+	@Column(name = "doctor_id")
+	private Integer doctorId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "doctor_id", insertable = false, updatable = false)
 	private Doctor doctor;
+
+	@Column(name = "patient_id")
+	private Integer patientId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "patient_id", insertable = false, updatable = false)
@@ -45,7 +54,7 @@ public class Appointment {
 	private Integer timePeriod;
 
 	@Column(name = "first_visit", nullable = false)
-	private Boolean firstVisit;
+	private Integer firstVisit;
 
 	@Column(name = "status", nullable = false)
 	private Integer status;
@@ -69,6 +78,14 @@ public class Appointment {
 		this.appointmentId = appointmentId;
 	}
 
+	public Integer getClinicId() {
+		return clinicId;
+	}
+
+	public void setClinicId(Integer clinicId) {
+		this.clinicId = clinicId;
+	}
+
 	public Clinic getClinic() {
 		return clinic;
 	}
@@ -77,12 +94,28 @@ public class Appointment {
 		this.clinic = clinic;
 	}
 
+	public Integer getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Integer doctorId) {
+		this.doctorId = doctorId;
+	}
+
 	public Doctor getDoctor() {
 		return doctor;
 	}
 
 	public void setDoctor(Doctor doctor) {
 		this.doctor = doctor;
+	}
+
+	public Integer getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(Integer patientId) {
+		this.patientId = patientId;
 	}
 
 	public Patient getPatient() {
@@ -117,11 +150,11 @@ public class Appointment {
 		this.timePeriod = timePeriod;
 	}
 
-	public Boolean getFirstVisit() {
+	public Integer getFirstVisit() {
 		return firstVisit;
 	}
 
-	public void setFirstVisit(Boolean firstVisit) {
+	public void setFirstVisit(Integer firstVisit) {
 		this.firstVisit = firstVisit;
 	}
 

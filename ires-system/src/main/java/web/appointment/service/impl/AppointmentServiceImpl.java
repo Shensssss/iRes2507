@@ -52,4 +52,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDAO.findByDateAndPeriod(date, timePeriod);
     }
 
+    public List<Appointment> getHistoryByPatientId(int patientId) {
+        return appointmentDAO.findByPatientId(patientId);
+    }
+
+
+    @Override
+    public void save(Appointment appointment) {
+        appointmentDAO.save(appointment);
+    }
+
 }

@@ -4,6 +4,49 @@ flatpickr("#multiDate", {
 	locale: "zh"
 });
 
+function renderAppointmentHistory(appointments) {
+	const tbody = document.getElementById("appointmentList");
+	tbody.innerHTML = "";
+
+	const timeMap = { 1: "早上", 2: "下午", 3: "晚上" };
+	const now = new Date().toISOString().replace("T", " ").substring(0, 19);
+
+	appointments.forEach(app => {
+		const tr = document.createElement("tr");
+		const isPast = new Date(app.appointmentDate) < new Date().setHours(0, 0, 0, 0);
+
+		tr.innerHTML = `
+			<td><span class="view">${app.appointmentDate}</span><input class="edit edit-date" type="date" value="${app.appointmentDate}" style="display:none"></td>
+			<td><span class="view">${timeMap[app.timePeriod] || "未知"}</span>
+				<select class="edit period-edit" style="display:none">
+					<option ${app.timePeriod === 1 ? 'selected' : ''}>早上</option>
+					<option ${app.timePeriod === 2 ? 'selected' : ''}>下午</option>
+					<option ${app.timePeriod === 3 ? 'selected' : ''}>晚上</option>
+				</select>
+			</td>
+			<td><span class="view">${app.doctorName || ''}</span>
+				<input class="edit doctor-edit" type="text" value="${app.doctorName || ''}" style="display:none" readonly>
+			</td>
+			<td>${app.reserveNo || '-'}</td>
+			<td>${
+				app.status === 1 ? '已報到' :
+				app.status === 2 ? '已取消' : 
+					'未報到'
+			}</td>
+			<td>${now}</td>
+			<td class="modified"></td>
+			<td>
+				<button class="editBtn" ${isPast ? 'disabled' : ''}>修改</button>
+				<button class="saveBtn" disabled>儲存</button>
+				<button class="cancelBtn" disabled>取消</button>
+				<button class="deleteBtn">刪除</button>
+			</td>
+		`;
+
+		tbody.appendChild(tr);
+	});
+}
+
 function renderPatients(page = 1, keyword = "") {
 	const tbody = document.getElementById("patientTableBody");
 	const pagination = document.getElementById("pagination");
@@ -24,10 +67,34 @@ function renderPatients(page = 1, keyword = "") {
 			patients.forEach(p => {
 				const tr = document.createElement("tr");
 				tr.innerHTML = `<td>${p.phone}</td><td>${p.name}</td>`;
-				tr.ondblclick = () => {
+				// tr.ondblclick = () => {
+				// 	document.getElementById("patient").value = `${p.phone} ${p.name}`;
+				// 	document.getElementById("patientTableContainer").style.display = "none";
+				// };
+				tr.ondblclick = async () => {
 					document.getElementById("patient").value = `${p.phone} ${p.name}`;
 					document.getElementById("patientTableContainer").style.display = "none";
+
+					try {
+						// 從手機號查詢 patientId
+						const res = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(p.phone)}`);
+						if (!res.ok) throw new Error("查詢 patientId 失敗");
+
+						const patientData = await res.json();
+						const patientId = patientData.patientId;
+
+						// 查詢該病患歷史預約
+						const historyRes = await fetch(`/ires-system/appointment/history?patientId=${patientId}`);
+						if (!historyRes.ok) throw new Error("載入歷史預約失敗");
+
+						const appointments = await historyRes.json();
+						renderAppointmentHistory(appointments);
+					} catch (err) {
+						console.error("載入病患預約紀錄失敗：", err);
+						alert("無法載入病患預約紀錄");
+					}
 				};
+
 				tbody.appendChild(tr);
 			});
 
@@ -123,6 +190,7 @@ function registerEventHandlers() {
 		}
 	});
 
+	/*
 	document.getElementById("btnReserve").addEventListener("click", () => {
 		const dates = document.getElementById("multiDate").value.split(", ");
 		const timeslot = document.getElementById("timeslot").value;
@@ -196,6 +264,51 @@ function registerEventHandlers() {
 				tbody.appendChild(tr); // 若沒有更晚的日期，就加在最後
 			}
 		});
+	});
+	*/
+
+	document.getElementById("btnReserve").addEventListener("click", async () => {
+		const patientInput = document.getElementById("patient").value.trim();
+		const phone = patientInput.split(" ")[0]; // 假設格式 "0912xxxxxx 王小明"
+		const doctorId = document.getElementById("doctorInput").dataset.id;
+		const clinicId = document.getElementById("doctorInput").dataset.clinicId; // 假設你也設定過
+		const timeslot = document.getElementById("timeslot").value;
+		const dates = document.getElementById("multiDate").value.split(", ");
+		const timePeriodMap = { "早上": 1, "下午": 2, "晚上": 3 };
+		const timePeriod = timePeriodMap[timeslot] || 1;
+
+		// 根據 phone 查病患 ID
+		const patientRes = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(phone)}`);
+		if (!patientRes.ok) {
+			alert("查無病患");
+			return;
+		}
+		const patientData = await patientRes.json();
+		const patientId = patientData.patientId;
+
+		// 組成多筆預約資料
+		const payload = dates.map(date => ({
+			patientId,
+			doctorId,
+			clinicId,
+			appointmentDate: date,
+			timePeriod
+		}));
+
+		// 傳送到後端
+		const res = await fetch("/ires-system/appointment/reserve", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8"
+			},
+			body: JSON.stringify(payload)
+		});
+
+		if (res.ok) {
+			alert("預約成功！");
+		} else {
+			alert("預約失敗！");
+		}
 	});
 
 	document.getElementById("appointmentList").addEventListener("click", (e) => {

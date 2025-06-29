@@ -141,4 +141,13 @@ public class PatientDaoImpl implements PatientDao {
 				.setParameter("keyword", "%" + keyword + "%")
 				.uniqueResult();
 	}
+
+	//以行動電話取得病患
+	public Patient findByPhone(String phone) {
+		String hql = "FROM Patient p WHERE p.phone = :phone";
+		return session.createQuery(hql, Patient.class)
+				.setParameter("phone", phone)
+				.uniqueResult();
+	}
+
 }

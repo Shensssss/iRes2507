@@ -16,4 +16,6 @@ public interface PatientDao extends CoreDao<Patient, Integer> {
 
 	long countReservedPatientsByKeyword(String keyword, int clinicId);
 
+	Patient findByPhone(String phone);
+
 }

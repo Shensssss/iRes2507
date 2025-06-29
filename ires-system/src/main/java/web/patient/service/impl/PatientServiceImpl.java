@@ -95,6 +95,7 @@ public class PatientServiceImpl implements PatientService {
 		return findById(patient.getPatientId());
 	}
 
+	@Override
 	public Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
 		List<Patient> patients = dao.findReservedPatientsByKeyword(keyword, offset, pageSize, clinicId);
@@ -114,5 +115,11 @@ public class PatientServiceImpl implements PatientService {
 		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
 		return response;
 	}
+
+	@Override
+	public Patient findByPhone(String phone) {
+		return dao.findByPhone(phone);
+	}
+
 
 }

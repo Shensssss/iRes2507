@@ -10,7 +10,14 @@ import core.dao.CoreDao;
 
 public interface AppointmentDAO extends CoreDao<Appointment, String> {
     List<Appointment> findByDate(Date date);
+
     List<Appointment> findByDateAndPeriod(Date date, int timePeriod);
+
     boolean existsByPatientIdAndClinicId(Integer patientId, Integer clinicId);
+
     boolean existsDuplicateAppointment(int patientId, int doctorId, LocalDate date, int timePeriod);
+
+    List<Appointment> findByPatientId(int patientId);
+
+    void save(Appointment appointment);
 }

@@ -102,4 +102,20 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         return count != null && count > 0;
     }
+
+    //取得病患歷史預約紀錄
+    public List<Appointment> findByPatientId(int patientId) {
+        String hql = "FROM Appointment a " +
+                "JOIN FETCH a.doctor " +  // 預抓 doctor 以避免 LazyException
+                "WHERE a.patient.patientId = :pid " +
+                "ORDER BY a.appointmentDate DESC";
+        return session.createQuery(hql, Appointment.class)
+                .setParameter("pid", patientId)
+                .list();
+    }
+
+    @Override
+    public void save(Appointment appointment) {
+        session.save(appointment);
+    }
 }
