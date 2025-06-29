@@ -63,7 +63,8 @@ public class Appointment {
 	@Column(name = "create_time", nullable = false, updatable = false, insertable = false)
 	private Timestamp createTime;
 
-	@Column(name = "update_time", insertable = false, updatable = false)
+	@UpdateTimestamp
+	@Column(name = "update_time")
 	private Timestamp updateTime;
 
 	@Column(name = "notes", columnDefinition = "TEXT")

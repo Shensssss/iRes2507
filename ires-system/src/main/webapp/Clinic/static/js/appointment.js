@@ -88,6 +88,7 @@ function renderPatients(page = 1, keyword = "") {
 				tr.ondblclick = async () => {
 					document.getElementById("patient").value = `${p.phone} ${p.name}`;
 					document.getElementById("patientTableContainer").style.display = "none";
+					window.selectedPhone = p.phone;
 
 					try {
 						// 從手機號查詢 patientId
@@ -311,6 +312,31 @@ function registerEventHandlers() {
 				tr.querySelectorAll(".view")[1].textContent = timeVal;
 				tr.querySelectorAll(".view")[2].textContent = doctorInput.value;
 				tr.querySelector(".modified").textContent = formatDateTime(data.updateTime);
+
+
+				try {
+					// 從手機號查詢 patientId
+					if (!window.selectedPhone) {
+						alert("請先選擇病患");
+						return;
+					}
+					const res = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(window.selectedPhone)}`);
+
+					if (!res.ok) throw new Error("查詢 patientId 失敗");
+
+					const patientData = await res.json();
+					const patientId = patientData.patientId;
+
+					// 查詢該病患歷史預約
+					const historyRes = await fetch(`/ires-system/appointment/history?patientId=${patientId}`);
+					if (!historyRes.ok) throw new Error("載入歷史預約失敗");
+
+					const appointments = await historyRes.json();
+					renderAppointmentHistory(appointments);
+				} catch (err) {
+					console.error("載入病患預約紀錄失敗：", err);
+					alert("無法載入病患預約紀錄");
+				}
 			} else {
 				alert("儲存失敗");
 				return;
