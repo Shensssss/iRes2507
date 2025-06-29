@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +22,14 @@ import web.doctor.entity.Doctor;
 import web.doctor.service.DoctorService;
 
 @RestController
-@RequestMapping("/doctor")
+@RequestMapping("doctor")
 public class DoctorController {
 	
 	@Autowired
 	private DoctorService doctorService;
 	
 	// 新增醫師
-    @PostMapping("/add")
+    @PostMapping("add")
     public ResponseEntity<Core> addDoctor(@RequestBody Doctor doctor, HttpSession session) {
         Core core = new Core();
         Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
@@ -56,7 +57,7 @@ public class DoctorController {
     }
     
     // 編輯醫師
-    @PostMapping("/edit")
+    @PostMapping("edit")
     public ResponseEntity<Core> editDoctor(@RequestBody Doctor doctor, HttpSession session) {
         Core core = new Core();
         Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
@@ -84,7 +85,7 @@ public class DoctorController {
     }
 
     // 刪除醫師
-    @PostMapping("/delete")
+    @DeleteMapping("delete")
     public ResponseEntity<Core> deleteDoctor(@RequestBody Map<String, Integer> payload, HttpSession session) {
         Core core = new Core();
 
@@ -100,8 +101,8 @@ public class DoctorController {
 
         Integer doctorId = payload.get("doctorId");
         if (doctorId == null) {
-            core.setStatusCode(404);
-            core.setMessage("找不到欲刪除的醫師資料");
+            core.setStatusCode(400);
+            core.setMessage("刪除失敗");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
         }
 
@@ -110,17 +111,16 @@ public class DoctorController {
         if (result == 1) {
             core.setStatusCode(200);
             core.setMessage("刪除成功");
-            core.setData(doctorService.showAllDoctors(loggedInClinic.getClinicId()));
             return ResponseEntity.ok(core);
         } else {
             core.setStatusCode(404);
-            core.setMessage("找不到欲刪除的醫師資料");
+            core.setMessage("找不到欲刪除的醫施");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
         }
     }
 
     // 顯示全部醫師
-    @GetMapping("/showAll")
+    @GetMapping("showAll")
     public ResponseEntity<Core> showAllDoctors(@RequestParam(required = false)Integer clinicId, HttpSession session) {
         Core core = new Core();
 //        病人查詢時從前端傳入clinicId
@@ -154,8 +154,8 @@ public class DoctorController {
     }
 
     // 根據醫師姓名搜尋
-    @PostMapping("/showSearchedByName")
-    public ResponseEntity<Core> showSearchedByName(@RequestBody Doctor doctor, HttpSession session) {
+    @GetMapping("showSearchedByName")
+    public ResponseEntity<Core> showSearchedByName(@RequestParam("name") String name, HttpSession session) {
         Core core = new Core();
         Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
         if (loggedInClinic == null) {
@@ -167,10 +167,16 @@ public class DoctorController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
-        List<Doctor> doctors = doctorService.showSearchedByName(loggedInClinic.getClinicId(), doctor.getDoctorName());
-        core.setStatusCode(200);
-        core.setMessage("載入成功");
-        core.setData(doctors);
-        return ResponseEntity.ok(core);
+        List<Doctor> doctors = doctorService.showSearchedByName(loggedInClinic.getClinicId(), name);
+        if(doctors == null || doctors.isEmpty()) {
+        	core.setStatusCode(404);
+        	core.setMessage("查無符合條件之醫師");
+        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
+        }else {
+        	core.setStatusCode(200);
+        	core.setMessage("載入成功");
+        	core.setData(doctors);
+        	return ResponseEntity.ok(core);        	
+        }
     }
 }
