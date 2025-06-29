@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
 
@@ -41,6 +42,9 @@ public class AppointmentController {
     @Autowired
     private CommonUtil commonUtil;
 
+    @Autowired
+    private AppointmentDAO appointmentDAO;
+
     @GetMapping("/apiToday")
     @ResponseBody
     public List<Appointment> getTodayAppointments(@RequestParam(value = "period", required = false) String period) {
@@ -63,11 +67,15 @@ public class AppointmentController {
         List<Appointment> list = service.getHistoryByPatientId(patientId);
         List<Map<String, Object>> result = list.stream().map(a -> {
             Map<String, Object> map = new HashMap<>();
+            map.put("appointmentId", a.getAppointmentId());
             map.put("appointmentDate", a.getAppointmentDate().toString()); // yyyy-MM-dd
             map.put("timePeriod", a.getTimePeriod());
+            map.put("doctorId", a.getDoctorId());
             map.put("doctorName", a.getDoctor().getDoctorName());
             map.put("reserveNo", a.getReserveNo());
             map.put("status", a.getStatus());
+            map.put("createTime", a.getCreateTime());
+            map.put("updateTime", a.getUpdateTime());
             return map;
         }).collect(Collectors.toList());
 
@@ -102,6 +110,7 @@ public class AppointmentController {
 
             a.setReserveNo(commonUtil.getNextReserveNo(
                     a.getClinicId(),
+                    a.getDoctorId(),
                     a.getAppointmentDate(),
                     a.getTimePeriod()
             ));
@@ -116,6 +125,34 @@ public class AppointmentController {
             service.save(a);
         }
         return ResponseEntity.ok("預約成功");
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public ResponseEntity<?> update(@RequestBody Appointment appointment) {
+        if (appointment.getAppointmentId() == null) {
+            return ResponseEntity.badRequest().body("缺少 appointmentId");
+        }
+
+        Appointment updated = service.updateAppointment(appointment);
+        if (updated == null) {
+            return ResponseEntity.status(500).body("更新失敗");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "更新成功");
+
+        Appointment newAppointment = appointmentDAO.selectById(updated.getAppointmentId());
+        response.put("updateTime", newAppointment.getUpdateTime());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> delete(@PathVariable("id") String appointmentId) {
+        boolean success = service.deleteAppointment(appointmentId);
+        return success ? ResponseEntity.ok("刪除成功") : ResponseEntity.status(500).body("刪除失敗");
     }
 
     private Date normalizeDate(Date date) {

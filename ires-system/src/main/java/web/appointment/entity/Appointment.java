@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import web.clinic.entity.Clinic;
 import web.doctor.entity.Doctor;
 import web.patient.entity.Patient;
@@ -62,7 +63,7 @@ public class Appointment {
 	@Column(name = "create_time", nullable = false, updatable = false, insertable = false)
 	private Timestamp createTime;
 
-	@Column(name = "update_time", insertable = false)
+	@Column(name = "update_time", insertable = false, updatable = false)
 	private Timestamp updateTime;
 
 	@Column(name = "notes", columnDefinition = "TEXT")

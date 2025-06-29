@@ -1,5 +1,6 @@
 package web.appointment.service.impl;
 
+import core.util.CommonUtil;
 import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
@@ -17,6 +18,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
     private AppointmentDAO appointmentDAO;
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Override
     public void saveOrUpdate(Appointment appointment) {
@@ -56,10 +59,43 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDAO.findByPatientId(patientId);
     }
 
-
     @Override
     public void save(Appointment appointment) {
-        appointmentDAO.save(appointment);
+        appointmentDAO.insert(appointment);
     }
+
+    public Appointment updateAppointment(Appointment a) {
+        Appointment origin = appointmentDAO.selectById(a.getAppointmentId());
+        if (origin == null) return null;
+
+        boolean dateChanged = !origin.getAppointmentDate().equals(a.getAppointmentDate());
+        boolean periodChanged = !origin.getTimePeriod().equals(a.getTimePeriod());
+        boolean doctorChanged = !origin.getDoctorId().equals(a.getDoctorId());
+
+        origin.setAppointmentDate(a.getAppointmentDate());
+        origin.setTimePeriod(a.getTimePeriod());
+        origin.setDoctorId(a.getDoctorId());
+
+        if (dateChanged || periodChanged || doctorChanged) {
+            int newReserveNo = commonUtil.getNextReserveNo(
+                    origin.getClinicId(),
+                    origin.getDoctorId(),
+                    origin.getAppointmentDate(),
+                    origin.getTimePeriod()
+            );
+            origin.setReserveNo(newReserveNo);
+        }
+
+        appointmentDAO.update(origin);
+        return origin;
+    }
+
+    public boolean deleteAppointment(String id) {
+        Appointment a = appointmentDAO.selectById(id);
+        if (a == null) return false;
+        appointmentDAO.deleteById(a.getAppointmentId());
+        return true;
+    }
+
 
 }

@@ -85,6 +85,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return count > 0;
     }
 
+    //判斷是否有重複預約
     @Override
     public boolean existsDuplicateAppointment(int patientId, int doctorId, LocalDate date, int timePeriod) {
         String hql = "SELECT COUNT(*) FROM Appointment a " +
@@ -104,6 +105,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     //取得病患歷史預約紀錄
+    @Override
     public List<Appointment> findByPatientId(int patientId) {
         String hql = "FROM Appointment a " +
                 "JOIN FETCH a.doctor " +  // 預抓 doctor 以避免 LazyException
@@ -112,10 +114,5 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return session.createQuery(hql, Appointment.class)
                 .setParameter("pid", patientId)
                 .list();
-    }
-
-    @Override
-    public void save(Appointment appointment) {
-        session.save(appointment);
     }
 }

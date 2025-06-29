@@ -51,18 +51,21 @@ public class CommonUtil {
 	}
 
 	//取得看診號碼
-	public int getNextReserveNo(int clinicId, Date date, int timePeriod) {
+	public int getNextReserveNo(int clinicId, int doctorId, Date date, int timePeriod) {
 		String hql = "SELECT MAX(a.reserveNo) FROM Appointment a " +
-				"WHERE a.clinicId = :clinicId AND a.appointmentDate = :date AND a.timePeriod = :period";
+				"WHERE a.clinicId = :clinicId AND a.doctorId = :doctorId " +
+				"AND a.appointmentDate = :date AND a.timePeriod = :period";
 
 		Integer max = session.createQuery(hql, Integer.class)
 				.setParameter("clinicId", clinicId)
+				.setParameter("doctorId", doctorId)
 				.setParameter("date", date)
 				.setParameter("period", timePeriod)
 				.uniqueResult();
 
 		int next = (max != null ? max : 0) + 1;
 
+		// 奇數號 = 網路預約，偶數號保留給現場掛號
 		if (next % 2 == 0) {
 			next += 1;
 		}

@@ -4,6 +4,14 @@ flatpickr("#multiDate", {
 	locale: "zh"
 });
 
+function formatDateTime(value) {
+	if (!value) return "";
+	const dt = new Date(value);
+	const pad = n => n.toString().padStart(2, "0");
+	return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} `
+		+ `${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
+}
+
 function renderAppointmentHistory(appointments) {
 	const tbody = document.getElementById("appointmentList");
 	tbody.innerHTML = "";
@@ -13,6 +21,7 @@ function renderAppointmentHistory(appointments) {
 
 	appointments.forEach(app => {
 		const tr = document.createElement("tr");
+		tr.dataset.id = app.appointmentId;
 		const isPast = new Date(app.appointmentDate) < new Date().setHours(0, 0, 0, 0);
 
 		tr.innerHTML = `
@@ -24,8 +33,17 @@ function renderAppointmentHistory(appointments) {
 					<option ${app.timePeriod === 3 ? 'selected' : ''}>晚上</option>
 				</select>
 			</td>
-			<td><span class="view">${app.doctorName || ''}</span>
-				<input class="edit doctor-edit" type="text" value="${app.doctorName || ''}" style="display:none" readonly>
+			<td>
+				<span class="view">${app.doctorName || ''}</span>
+				<input 
+					class="edit doctor-edit" 
+					type="text" 
+					value="${app.doctorName || ''}" 
+					data-id="${app.doctorId}" 
+					data-uid="${app.appointmentId}" 
+					style="display:none" 
+					readonly
+				>
 			</td>
 			<td>${app.reserveNo || '-'}</td>
 			<td>${
@@ -33,8 +51,8 @@ function renderAppointmentHistory(appointments) {
 				app.status === 2 ? '已取消' : 
 					'未報到'
 			}</td>
-			<td>${now}</td>
-			<td class="modified"></td>
+			<td class="created">${formatDateTime(app.createTime)}</td>
+			<td class="modified">${formatDateTime(app.updateTime)}</td>
 			<td>
 				<button class="editBtn" ${isPast ? 'disabled' : ''}>修改</button>
 				<button class="saveBtn" disabled>儲存</button>
@@ -67,10 +85,6 @@ function renderPatients(page = 1, keyword = "") {
 			patients.forEach(p => {
 				const tr = document.createElement("tr");
 				tr.innerHTML = `<td>${p.phone}</td><td>${p.name}</td>`;
-				// tr.ondblclick = () => {
-				// 	document.getElementById("patient").value = `${p.phone} ${p.name}`;
-				// 	document.getElementById("patientTableContainer").style.display = "none";
-				// };
 				tr.ondblclick = async () => {
 					document.getElementById("patient").value = `${p.phone} ${p.name}`;
 					document.getElementById("patientTableContainer").style.display = "none";
@@ -190,83 +204,6 @@ function registerEventHandlers() {
 		}
 	});
 
-	/*
-	document.getElementById("btnReserve").addEventListener("click", () => {
-		const dates = document.getElementById("multiDate").value.split(", ");
-		const timeslot = document.getElementById("timeslot").value;
-		const doctor = document.getElementById("doctorInput").value;
-		const tbody = document.getElementById("appointmentList");
-		const now = new Date().toISOString().replace("T", " ").substring(0, 19);
-
-		dates.forEach(date => {
-			// 檢查是否已存在相同日期
-			const isDuplicate = Array.from(tbody.querySelectorAll("tr")).some(tr => {
-				const existingDate = tr.querySelector("td:nth-child(1) .view")?.textContent;
-				return existingDate === date;
-			});
-
-			if (isDuplicate) {
-				console.log(`略過重複的日期：${date}`);
-				return; // 略過這筆資料
-			}
-
-			const uid = Math.random().toString(36).slice(2);
-			const tr = document.createElement("tr");
-			const appointmentDate = new Date(date);
-			const today = new Date();
-			today.setHours(0, 0, 0, 0); // 只比對日期，不含時間
-			const isPast = appointmentDate < today;
-
-			tr.innerHTML = `
-			<td><span class="view">${date}</span><input class="edit edit-date" type="date" value="${date}" style="display:none"></td>
-			<td><span class="view">${timeslot}</span>
-				<select class="edit period-edit" style="display:none">
-					<option ${timeslot === '早上' ? 'selected' : ''}>早上</option>
-					<option ${timeslot === '下午' ? 'selected' : ''}>下午</option>
-					<option ${timeslot === '晚上' ? 'selected' : ''}>晚上</option>
-				</select>
-			</td>
-			<td>
-				<span class="view">${doctor}</span>
-				<input class="edit doctor-edit" type="text" value="${doctor}" style="display:none" readonly data-uid="${uid}">
-			</td>
-			<td>${visitNumberCounter.current++}</td>
-			<td>未報到</td>
-			<td>${now}</td>
-			<td class="modified"></td>
-			<td>
-				<button class="editBtn" ${isPast ? 'disabled' : ''}>修改</button>
-				<button class="saveBtn" disabled>儲存</button>
-				<button class="cancelBtn" disabled>取消</button>
-				<button class="deleteBtn">刪除</button>
-			</td>
-			`;
-
-			// tbody.appendChild(tr);
-
-			// 尋找插入點：找到第一個日期比當前 date 晚的 tr
-			const allRows = Array.from(tbody.querySelectorAll("tr"));
-			let inserted = false;
-
-			for (let existingRow of allRows) {
-				const existingDateText = existingRow.querySelector("td:nth-child(1) .view")?.textContent;
-				if (!existingDateText) continue;
-
-				const existingDate = new Date(existingDateText);
-				if (appointmentDate < existingDate) {
-					tbody.insertBefore(tr, existingRow); // 插入在前面
-					inserted = true;
-					break;
-				}
-			}
-
-			if (!inserted) {
-				tbody.appendChild(tr); // 若沒有更晚的日期，就加在最後
-			}
-		});
-	});
-	*/
-
 	document.getElementById("btnReserve").addEventListener("click", async () => {
 		const patientInput = document.getElementById("patient").value.trim();
 		const phone = patientInput.split(" ")[0]; // 假設格式 "0912xxxxxx 王小明"
@@ -311,18 +248,18 @@ function registerEventHandlers() {
 		}
 	});
 
-	document.getElementById("appointmentList").addEventListener("click", (e) => {
+	document.getElementById("appointmentList").addEventListener("click", async (e) => {
 		const tr = e.target.closest("tr");
 		if (!tr) return;
 
+		const appointmentId = tr.dataset.id; // 重點：appointmentId 來自 tr data-id
 		const editBtn = tr.querySelector(".editBtn");
 		const saveBtn = tr.querySelector(".saveBtn");
 		const cancelBtn = tr.querySelector(".cancelBtn");
 		const deleteBtn = tr.querySelector(".deleteBtn");
 
 		if (e.target.classList.contains("editBtn")) {
-			const dateInput = tr.querySelector('input[type="date"]');
-			const appointmentDate = new Date(dateInput.value);
+			const appointmentDate = new Date(tr.querySelector('input[type="date"]').value);
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 
@@ -330,6 +267,7 @@ function registerEventHandlers() {
 				alert("無法修改已過期的預約日期！");
 				return;
 			}
+
 			tr.querySelectorAll(".view").forEach(el => el.style.display = "none");
 			tr.querySelectorAll(".edit").forEach(el => el.style.display = "inline-block");
 			editBtn.disabled = true;
@@ -337,7 +275,6 @@ function registerEventHandlers() {
 			saveBtn.disabled = false;
 			cancelBtn.disabled = false;
 
-			// 儲存原始值做取消用
 			tr.dataset.originalDate = tr.querySelector('input[type="date"]').value;
 			tr.dataset.originalTime = tr.querySelector('select').value;
 			tr.dataset.originalDoctor = tr.querySelector('input[type="text"]').value;
@@ -346,16 +283,41 @@ function registerEventHandlers() {
 		if (e.target.classList.contains("saveBtn")) {
 			const dateVal = tr.querySelector('input[type="date"]').value;
 			const timeVal = tr.querySelector('select').value;
-			const docVal = tr.querySelector('input[type="text"]').value;
 
-			tr.querySelectorAll(".view")[0].textContent = dateVal;
-			tr.querySelectorAll(".view")[1].textContent = timeVal;
-			tr.querySelectorAll(".view")[2].textContent = docVal;
+			const doctorInput = tr.querySelector('.doctor-edit');
+			const doctorId = doctorInput.dataset.id;
 
-			tr.querySelector(".modified").textContent = new Date().toISOString().replace("T", " ").substring(0, 19);
+			const timePeriodMap = { "早上": 1, "下午": 2, "晚上": 3 };
+			const timePeriod = timePeriodMap[timeVal] || 1;
+
+			const payload = {
+				appointmentId,
+				appointmentDate: dateVal,
+				timePeriod,
+				doctorId
+			};
+
+			const res = await fetch("/ires-system/appointment/update", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(payload)
+			});
+
+			if (res.ok) {
+				const data = await res.json();
+				tr.querySelectorAll(".view")[0].textContent = dateVal;
+				tr.querySelectorAll(".view")[1].textContent = timeVal;
+				tr.querySelectorAll(".view")[2].textContent = doctorInput.value;
+				tr.querySelector(".modified").textContent = formatDateTime(data.updateTime);
+			} else {
+				alert("儲存失敗");
+				return;
+			}
+
 			tr.querySelectorAll(".view").forEach(el => el.style.display = "inline");
 			tr.querySelectorAll(".edit").forEach(el => el.style.display = "none");
-
 			saveBtn.disabled = true;
 			cancelBtn.disabled = true;
 			editBtn.disabled = false;
@@ -378,7 +340,14 @@ function registerEventHandlers() {
 
 		if (e.target.classList.contains("deleteBtn")) {
 			if (!deleteBtn.disabled && confirm("確定要刪除這筆預約嗎？")) {
-				tr.remove();
+				const res = await fetch(`/ires-system/appointment/delete/${appointmentId}`, {
+					method: "DELETE"
+				});
+				if (res.ok) {
+					tr.remove();
+				} else {
+					alert("刪除失敗");
+				}
 			}
 		}
 	});
@@ -396,37 +365,48 @@ function registerEventHandlers() {
 			const rect = input.getBoundingClientRect();
 			popup.style.left = rect.left + window.scrollX + "px";
 			popup.style.top = rect.bottom + window.scrollY + "px";
+			popup.style.width = input.offsetWidth + "px";  // ★ 讓 popup 寬度與 input 一樣
 			popup.style.display = "block";
+
 			popup.dataset.uid = uid;
 
 			const render = (keyword = "", page = 1) => {
-				const perPage = 4;
-				const filtered = doctors.filter(name => name.includes(keyword));
-				const totalPages = Math.ceil(filtered.length / perPage);
+				const pageSize = 5;
 
-				tbody.innerHTML = "";
-				footer.innerHTML = "";
+				fetch(`/ires-system/doctor/doctorList?page=${page}&keyword=${encodeURIComponent(keyword)}`)
+					.then(response => response.json())
+					.then(data => {
+						const doctors = data.doctors || [];
+						const totalPages = data.totalPages || 1;
 
-				filtered.slice((page - 1) * perPage, page * perPage).forEach(name => {
-					const tr = document.createElement("tr");
-					tr.innerHTML = `<td>${name}</td>`;
-					tr.addEventListener("dblclick", () => {
-						const targetInput = document.querySelector(`.doctor-edit[data-uid="${uid}"]`);
-						if (targetInput) {
-							targetInput.value = name;
-							popup.style.display = "none";
+						tbody.innerHTML = "";
+						footer.innerHTML = "";
+
+						doctors.forEach(doctor => {
+							const tr = document.createElement("tr");
+							tr.innerHTML = `<td>${doctor.id}</td><td>${doctor.name}</td>`;
+							tr.addEventListener("dblclick", () => {
+								const targetInput = document.querySelector(`.doctor-edit[data-uid="${uid}"]`);
+								if (targetInput) {
+									targetInput.value = doctor.name;
+									targetInput.dataset.id = doctor.id;
+									popup.style.display = "none";
+								}
+							});
+							tbody.appendChild(tr);
+						});
+
+						for (let i = 1; i <= totalPages; i++) {
+							const btn = document.createElement("button");
+							btn.textContent = i;
+							btn.onclick = () => render(keyword, i);
+							footer.appendChild(btn);
 						}
+					})
+					.catch(error => {
+						console.error("取得醫師資料失敗", error);
+						alert("無法取得醫師清單");
 					});
-					tbody.appendChild(tr);
-				});
-
-				for (let i = 1; i <= totalPages; i++) {
-					const btn = document.createElement("button");
-					btn.textContent = i;
-					btn.onclick = () => render(keyword, i);
-					btn.style.margin = "2px";
-					footer.appendChild(btn);
-				}
 			};
 
 			search.value = "";

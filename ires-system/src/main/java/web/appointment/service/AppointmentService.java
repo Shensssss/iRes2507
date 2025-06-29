@@ -22,4 +22,8 @@ public interface AppointmentService {
     List<Appointment> getHistoryByPatientId(int patientId);
 
     void save(Appointment appointment);
+
+    Appointment updateAppointment(Appointment a);
+
+    boolean deleteAppointment(String id);
 }
