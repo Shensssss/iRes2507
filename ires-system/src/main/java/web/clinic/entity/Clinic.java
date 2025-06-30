@@ -111,4 +111,7 @@ public class Clinic extends Core{
     @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
+
+    @Column(name = "quota")
+    private int quota;
 }

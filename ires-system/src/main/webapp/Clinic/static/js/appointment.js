@@ -242,11 +242,14 @@ function registerEventHandlers() {
 			body: JSON.stringify(payload)
 		});
 
-		if (res.ok) {
-			alert("預約成功！");
-		} else {
-			alert("預約失敗！");
-		}
+		const text = await res.text();
+		alert(text);
+
+		// if (res.ok) {
+		// 	alert(text);
+		// } else {
+		// 	alert("錯誤（" + res.status + "）：" + text);
+		// }
 	});
 
 	document.getElementById("appointmentList").addEventListener("click", async (e) => {

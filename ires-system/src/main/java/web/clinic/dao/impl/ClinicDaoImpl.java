@@ -1,14 +1,18 @@
 package web.clinic.dao.impl;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import web.appointment.entity.Appointment;
 import web.clinic.dao.ClinicDAO;
 import web.clinic.entity.Clinic;
 
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 public class ClinicDaoImpl implements ClinicDAO {
+	@PersistenceContext
+	private Session session;
 
 	@Override
 	public int insert(Clinic clinic) {
@@ -31,7 +35,7 @@ public class ClinicDaoImpl implements ClinicDAO {
 
 	@Override
 	public Clinic selectById(Integer id) {
-		return null;
+		return session.get(Clinic.class, id);
 	}
 
 	@Override

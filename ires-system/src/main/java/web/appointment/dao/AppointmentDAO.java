@@ -15,7 +15,9 @@ public interface AppointmentDAO extends CoreDao<Appointment, String> {
 
     boolean existsByPatientIdAndClinicId(Integer patientId, Integer clinicId);
 
-    boolean existsDuplicateAppointment(int patientId, int doctorId, LocalDate date, int timePeriod);
+    boolean existsDuplicateAppointment(int patientId, Date date);
 
     List<Appointment> findByPatientId(int patientId);
+
+    Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod);
 }

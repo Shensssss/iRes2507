@@ -26,4 +26,6 @@ public interface AppointmentService {
     Appointment updateAppointment(Appointment a);
 
     boolean deleteAppointment(String id);
+
+    void reserveAppointments(Integer clinicId, List<Appointment> appointments);
 }

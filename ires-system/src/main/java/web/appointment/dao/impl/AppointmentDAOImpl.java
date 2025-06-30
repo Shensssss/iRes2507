@@ -85,20 +85,16 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return count > 0;
     }
 
-    //判斷是否有重複預約
+    //判斷同一天是否有重複預約
     @Override
-    public boolean existsDuplicateAppointment(int patientId, int doctorId, LocalDate date, int timePeriod) {
+    public boolean existsDuplicateAppointment(int patientId, Date date) {
         String hql = "SELECT COUNT(*) FROM Appointment a " +
                 "WHERE a.patient.patientId = :pid " +
-                "AND a.doctor.doctorId = :did " +
-                "AND a.appointmentDate = :date " +
-                "AND a.timePeriod = :period ";
+                "AND a.appointmentDate = :date ";
 
         Long count = session.createQuery(hql, Long.class)
                 .setParameter("pid", patientId)
-                .setParameter("did", doctorId)
-                .setParameter("date", java.sql.Date.valueOf(date))
-                .setParameter("period", timePeriod)
+                .setParameter("date", date)
                 .uniqueResult();
 
         return count != null && count > 0;
@@ -114,5 +110,22 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return session.createQuery(hql, Appointment.class)
                 .setParameter("pid", patientId)
                 .list();
+    }
+
+    //判斷是否超出預約人數
+    @Override
+    public Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod) {
+        String hql = "SELECT COUNT(*) FROM Appointment a " +
+                "WHERE a.clinic.clinicId = :cid " +
+                "AND a.doctor.doctorId = :did " +
+                "AND a.appointmentDate = :date " +
+                "AND a.timePeriod = :period";
+
+        return session.createQuery(hql, Long.class)
+                .setParameter("cid", clinicId)
+                .setParameter("did", doctorId)
+                .setParameter("date", date)
+                .setParameter("period", timePeriod)
+                .uniqueResult();
     }
 }
