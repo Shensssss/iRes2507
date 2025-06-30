@@ -1,5 +1,6 @@
 package web.patient.dao.impl;
 
+import java.sql.Date;
 import java.util.List;
 
 
@@ -115,4 +116,35 @@ public class PatientDaoImpl implements PatientDao {
 	    return selectById(patientId);
 	}
 
+	@Override
+	public List<Patient> searchedByNameAndBirthday(String name, String birthday) {
+	    String hql = "FROM Patient WHERE name = :name AND birthday = :birthday";
+	    System.out.println("Searching for birthday: " + birthday);
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("birthday", birthday)
+	                  .getResultList();
+	}
+	
+	@Override
+	public List<Patient> searchedByNameAndPhone(String name, String phone) {
+		String hql = "FROM Patient WHERE name = :name AND phone = :phone";
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("phone", phone)
+	                  .getResultList();
+	}
+
+	@Override
+	public List<Patient> searchedByNameAndBirthdayAndPhone(String name, String birthday, String phone) {
+		String hql = "FROM Patient WHERE name = :name AND birthday = :birthday AND phone = :phone";
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("birthday", birthday)
+	                  .setParameter("phone", phone)
+	                  .getResultList();
+	}
 }

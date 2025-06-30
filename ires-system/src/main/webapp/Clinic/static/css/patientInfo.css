@@ -3,16 +3,17 @@ div.container{
 }
 
 div.box{
-    width: 50%;
+    width: 35%;
     padding: 10px;
     margin: 20px;
     border: 1px solid grey;
     border-radius: 10px;
-    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);                
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+    position: relative;                
 }
 
 div.record{
-    width: 90%;
+    width: 80%;
     padding: 10px;
     margin: 20px;
     border: 1px solid grey;
@@ -22,6 +23,7 @@ div.record{
 
 p.item{
     margin: 8px;
+    font-size: 18px;
 }
 
 p.detail{
@@ -31,4 +33,17 @@ p.detail{
 
 .-none{
     display: none;
+}
+
+#edit {
+    position: absolute;
+    top: 10px;
+    right: 10px; 
+    padding: 5px 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
 }

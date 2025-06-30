@@ -1,6 +1,13 @@
 package web.patient.service.impl;
 
 
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,4 +92,18 @@ public class PatientServiceImpl implements PatientService {
 		return findById(patient.getPatientId());
 	}
 
+	@Override
+	public List<Patient> clinicSearch(String name, String birthday, String phone) {
+	    
+	    if (birthday != null && (phone == null || phone.isEmpty())) {
+	        return dao.searchedByNameAndBirthday(name, birthday);
+	    } else if ((birthday == null || birthday.isEmpty()) && phone != null) {
+	        return dao.searchedByNameAndPhone(name, phone);
+	    } else if (birthday != null && phone != null) {
+	        return dao.searchedByNameAndBirthdayAndPhone(name, birthday, phone); // 生日和電話條件
+	    } else {
+	        throw new IllegalArgumentException("查詢條件不足");
+	    }
+	}
+	
 }
