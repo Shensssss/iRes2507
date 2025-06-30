@@ -104,12 +104,14 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     @Override
     public List<Appointment> findByPatientId(int patientId) {
         String hql = "FROM Appointment a " +
-                "JOIN FETCH a.doctor " +  // 預抓 doctor 以避免 LazyException
-                "WHERE a.patient.patientId = :pid " +
+                "JOIN FETCH a.doctor " +
+                "JOIN FETCH a.clinic " +
+                "JOIN FETCH a.patient " +
+                "WHERE a.patientId = :pid " +
                 "ORDER BY a.appointmentDate DESC";
         return session.createQuery(hql, Appointment.class)
                 .setParameter("pid", patientId)
-                .list();
+                .getResultList();
     }
 
     //判斷是否超出預約人數

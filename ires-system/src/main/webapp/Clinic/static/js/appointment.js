@@ -12,20 +12,56 @@ function formatDateTime(value) {
 		+ `${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
 }
 
+function formatDate(input) {
+	if (!input) return "";
+
+	const date = typeof input === 'string' ? toLocalDateOnly(input) : new Date(input);
+	return date.toLocaleDateString("zh-TW", {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	});
+}
+
+function formatInputDate(input) {
+	if (!input) return "";
+
+	const date = typeof input === 'string' ? toLocalDateOnly(input) : new Date(input);
+	const yyyy = date.getFullYear();
+	const mm = String(date.getMonth() + 1).padStart(2, '0');
+	const dd = String(date.getDate()).padStart(2, '0');
+	return `${yyyy}-${mm}-${dd}`;
+}
+
+function toLocalDateOnly(str) {
+	const [year, month, day] = str.split("-");
+	return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
 function renderAppointmentHistory(appointments) {
 	const tbody = document.getElementById("appointmentList");
 	tbody.innerHTML = "";
 
 	const timeMap = { 1: "早上", 2: "下午", 3: "晚上" };
-	const now = new Date().toISOString().replace("T", " ").substring(0, 19);
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
 
 	appointments.forEach(app => {
 		const tr = document.createElement("tr");
 		tr.dataset.id = app.appointmentId;
-		const isPast = new Date(app.appointmentDate) < new Date().setHours(0, 0, 0, 0);
+
+		const appDate = toLocalDateOnly(formatInputDate(app.appointmentDate));
+		const isPast = appDate < today;
+
+		console.log(appDate);
+		console.log(formatDate(app.appointmentDate));
+		console.log(formatInputDate(app.appointmentDate));
 
 		tr.innerHTML = `
-			<td><span class="view">${app.appointmentDate}</span><input class="edit edit-date" type="date" value="${app.appointmentDate}" style="display:none"></td>
+			<td>
+				<span class="view">${formatDate(app.appointmentDate)}</span>
+				<input class="edit edit-date" type="date" value="${formatInputDate(app.appointmentDate)}" style="display:none">
+			</td>
 			<td><span class="view">${timeMap[app.timePeriod] || "未知"}</span>
 				<select class="edit period-edit" style="display:none">
 					<option ${app.timePeriod === 1 ? 'selected' : ''}>早上</option>
@@ -47,10 +83,10 @@ function renderAppointmentHistory(appointments) {
 			</td>
 			<td>${app.reserveNo || '-'}</td>
 			<td>${
-				app.status === 1 ? '已報到' :
-				app.status === 2 ? '已取消' : 
+			app.status === 1 ? '已報到' :
+				app.status === 2 ? '已取消' :
 					'未報到'
-			}</td>
+		}</td>
 			<td class="created">${formatDateTime(app.createTime)}</td>
 			<td class="modified">${formatDateTime(app.updateTime)}</td>
 			<td>
@@ -93,7 +129,7 @@ function renderPatients(page = 1, keyword = "") {
 					try {
 						// 從手機號查詢 patientId
 						const res = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(p.phone)}`);
-						if (!res.ok) throw new Error("查詢 patientId 失敗");
+						if (!res.ok) throw new Error("查詢病患失敗");
 
 						const patientData = await res.json();
 						const patientId = patientData.patientId;
@@ -206,50 +242,60 @@ function registerEventHandlers() {
 	});
 
 	document.getElementById("btnReserve").addEventListener("click", async () => {
-		const patientInput = document.getElementById("patient").value.trim();
-		const phone = patientInput.split(" ")[0]; // 假設格式 "0912xxxxxx 王小明"
-		const doctorId = document.getElementById("doctorInput").dataset.id;
-		const clinicId = document.getElementById("doctorInput").dataset.clinicId; // 假設你也設定過
-		const timeslot = document.getElementById("timeslot").value;
-		const dates = document.getElementById("multiDate").value.split(", ");
-		const timePeriodMap = { "早上": 1, "下午": 2, "晚上": 3 };
-		const timePeriod = timePeriodMap[timeslot] || 1;
+		try {
+			const patientInput = document.getElementById("patient").value.trim();
+			const phone = patientInput.split(" ")[0];
+			const doctorId = document.getElementById("doctorInput").dataset.id;
+			const clinicId = document.getElementById("doctorInput").dataset.clinicId;
+			const timeslot = document.getElementById("timeslot").value;
+			const dates = document.getElementById("multiDate").value.split(", ");
+			const timePeriodMap = { "早上": 1, "下午": 2, "晚上": 3 };
+			const timePeriod = timePeriodMap[timeslot] || 1;
 
-		// 根據 phone 查病患 ID
-		const patientRes = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(phone)}`);
-		if (!patientRes.ok) {
-			alert("查無病患");
-			return;
+			// 查病患 ID
+			const patientRes = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(phone)}`);
+			if (!patientRes.ok) {
+				alert("查無病患");
+				return;
+			}
+			const patientData = await patientRes.json();
+			const patientId = patientData.patientId;
+
+			// 組多筆預約資料
+			const payload = dates.map(date => ({
+				patientId,
+				doctorId,
+				clinicId,
+				appointmentDate: date,
+				timePeriod
+			}));
+
+			// 傳送預約
+			const reserveRes = await fetch("/ires-system/appointment/reserve", {
+				method: "POST",
+				headers: { "Content-Type": "application/json; charset=utf-8" },
+				body: JSON.stringify(payload)
+			});
+
+			if (!reserveRes.ok) {
+				alert("預約失敗");
+				return;
+			}
+
+			const resultText = await reserveRes.text();
+			alert(resultText);
+
+			// 查歷史預約
+			const historyRes = await fetch(`/ires-system/appointment/history?patientId=${patientId}`);
+			if (!historyRes.ok) throw new Error("載入歷史預約失敗");
+
+			const appointments = await historyRes.json();
+			renderAppointmentHistory(appointments);
+
+		} catch (err) {
+			console.error("預約流程失敗：", err);
+			alert("處理預約時發生錯誤，請稍後再試");
 		}
-		const patientData = await patientRes.json();
-		const patientId = patientData.patientId;
-
-		// 組成多筆預約資料
-		const payload = dates.map(date => ({
-			patientId,
-			doctorId,
-			clinicId,
-			appointmentDate: date,
-			timePeriod
-		}));
-
-		// 傳送到後端
-		const res = await fetch("/ires-system/appointment/reserve", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json; charset=utf-8"
-			},
-			body: JSON.stringify(payload)
-		});
-
-		const text = await res.text();
-		alert(text);
-
-		// if (res.ok) {
-		// 	alert(text);
-		// } else {
-		// 	alert("錯誤（" + res.status + "）：" + text);
-		// }
 	});
 
 	document.getElementById("appointmentList").addEventListener("click", async (e) => {
@@ -263,7 +309,12 @@ function registerEventHandlers() {
 		const deleteBtn = tr.querySelector(".deleteBtn");
 
 		if (e.target.classList.contains("editBtn")) {
-			const appointmentDate = new Date(tr.querySelector('input[type="date"]').value);
+			// const appointmentDate = new Date(tr.querySelector('input[type="date"]').value);
+			const dateStr = tr.querySelector('input[type="date"]').value;
+			console.log(dateStr);
+			const appointmentDate = new Date(dateStr + 'T00:00:00+08:00');
+			console.log(appointmentDate);
+
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 
@@ -325,7 +376,7 @@ function registerEventHandlers() {
 					}
 					const res = await fetch(`/ires-system/patient/findByPhone?phone=${encodeURIComponent(window.selectedPhone)}`);
 
-					if (!res.ok) throw new Error("查詢 patientId 失敗");
+					if (!res.ok) throw new Error("查詢病患失敗");
 
 					const patientData = await res.json();
 					const patientId = patientData.patientId;
