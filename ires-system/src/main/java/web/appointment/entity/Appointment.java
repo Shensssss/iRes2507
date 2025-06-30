@@ -1,27 +1,29 @@
 package web.appointment.entity;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import web.clinic.entity.Clinic;
 import web.doctor.entity.Doctor;
 import web.patient.entity.Patient;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 @Entity
 @Table(name = "appointment")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Appointment {
 
 	@Id
-	@Column(name = "appointment_id", nullable = false, length = 36)
+	@Column(name = "appointment_id", length = 36)
 	private String appointmentId;
 
 	@Column(name = "clinic_id")
@@ -29,6 +31,8 @@ public class Appointment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clinic_id", insertable = false, updatable = false)
+	@JsonIgnore
+	@ToString.Exclude
 	private Clinic clinic;
 
 	@Column(name = "doctor_id")
@@ -36,6 +40,8 @@ public class Appointment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+	@JsonIgnore
+	@ToString.Exclude
 	private Doctor doctor;
 
 	@Column(name = "patient_id")
@@ -43,144 +49,56 @@ public class Appointment {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "patient_id", insertable = false, updatable = false)
+	@JsonIgnore
+	@ToString.Exclude
 	private Patient patient;
 
-	@Column(name = "reserve_no", nullable = false)
+	@Column(name = "reserve_no")
 	private Integer reserveNo;
 
-	@Column(name = "appointment_date", nullable = false)
+	@Column(name = "appointment_date")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date appointmentDate;
 
-	@Column(name = "time_period", nullable = false)
+	@Column(name = "time_period")
 	private Integer timePeriod;
 
-	@Column(name = "first_visit", nullable = false)
+	@Column(name = "first_visit")
 	private Integer firstVisit;
 
-	@Column(name = "status", nullable = false)
+	@Column(name = "status")
 	private Integer status;
 
-	@Column(name = "create_time", nullable = false, updatable = false, insertable = false)
+	@Column(name = "create_time", updatable = false, insertable = false)
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Timestamp createTime;
 
 	@UpdateTimestamp
 	@Column(name = "update_time")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Timestamp updateTime;
 
 	@Column(name = "notes", columnDefinition = "TEXT")
 	private String notes;
 
-	// Getters and Setters
+	@Transient
+	private String doctorName;
 
-	public String getAppointmentId() {
-		return appointmentId;
+	public String getDoctorName() {
+		return (doctor != null) ? doctor.getDoctorName() : null;
 	}
 
-	public void setAppointmentId(String appointmentId) {
-		this.appointmentId = appointmentId;
+	@Transient
+	private String clinicName;
+
+	public String getClinicName() {
+		return (clinic != null) ? clinic.getClinicName() : null;
 	}
 
-	public Integer getClinicId() {
-		return clinicId;
-	}
+	@Transient
+	private String patientName;
 
-	public void setClinicId(Integer clinicId) {
-		this.clinicId = clinicId;
-	}
-
-	public Clinic getClinic() {
-		return clinic;
-	}
-
-	public void setClinic(Clinic clinic) {
-		this.clinic = clinic;
-	}
-
-	public Integer getDoctorId() {
-		return doctorId;
-	}
-
-	public void setDoctorId(Integer doctorId) {
-		this.doctorId = doctorId;
-	}
-
-	public Doctor getDoctor() {
-		return doctor;
-	}
-
-	public void setDoctor(Doctor doctor) {
-		this.doctor = doctor;
-	}
-
-	public Integer getPatientId() {
-		return patientId;
-	}
-
-	public void setPatientId(Integer patientId) {
-		this.patientId = patientId;
-	}
-
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
-
-	public Integer getReserveNo() {
-		return reserveNo;
-	}
-
-	public void setReserveNo(Integer reserveNo) {
-		this.reserveNo = reserveNo;
-	}
-
-	public Date getAppointmentDate() {
-		return appointmentDate;
-	}
-
-	public void setAppointmentDate(Date appointmentDate) {
-		this.appointmentDate = appointmentDate;
-	}
-
-	public Integer getTimePeriod() {
-		return timePeriod;
-	}
-
-	public void setTimePeriod(Integer timePeriod) {
-		this.timePeriod = timePeriod;
-	}
-
-	public Integer getFirstVisit() {
-		return firstVisit;
-	}
-
-	public void setFirstVisit(Integer firstVisit) {
-		this.firstVisit = firstVisit;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-	public String getNotes() {
-		return notes;
-	}
-
-	public void setNotes(String notes) {
-		this.notes = notes;
+	public String getPatientName() {
+		return (patient != null) ? patient.getName(): null;
 	}
 }

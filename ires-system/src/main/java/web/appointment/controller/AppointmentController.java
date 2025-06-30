@@ -43,26 +43,34 @@ public class AppointmentController {
         return service.getAppointmentsByDateAndPeriod(today, timePeriod);
     }
 
+//    @GetMapping("/history")
+//    @ResponseBody
+//    public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
+//        List<Appointment> list = service.getHistoryByPatientId(patientId);
+//        List<Map<String, Object>> result = list.stream().map(a -> {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("appointmentId", a.getAppointmentId());
+//            map.put("appointmentDate", a.getAppointmentDate().toString()); // yyyy-MM-dd
+//            map.put("timePeriod", a.getTimePeriod());
+//            map.put("doctorId", a.getDoctorId());
+//            map.put("doctorName", a.getDoctor().getDoctorName());
+//            map.put("reserveNo", a.getReserveNo());
+//            map.put("status", a.getStatus());
+//            map.put("createTime", a.getCreateTime());
+//            map.put("updateTime", a.getUpdateTime());
+//            return map;
+//        }).collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(result);
+//    }
+
     @GetMapping("/history")
     @ResponseBody
     public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
         List<Appointment> list = service.getHistoryByPatientId(patientId);
-        List<Map<String, Object>> result = list.stream().map(a -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("appointmentId", a.getAppointmentId());
-            map.put("appointmentDate", a.getAppointmentDate().toString()); // yyyy-MM-dd
-            map.put("timePeriod", a.getTimePeriod());
-            map.put("doctorId", a.getDoctorId());
-            map.put("doctorName", a.getDoctor().getDoctorName());
-            map.put("reserveNo", a.getReserveNo());
-            map.put("status", a.getStatus());
-            map.put("createTime", a.getCreateTime());
-            map.put("updateTime", a.getUpdateTime());
-            return map;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(list);
     }
+
 
     @PostMapping("/reserve")
     @ResponseBody
