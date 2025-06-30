@@ -205,7 +205,7 @@
             padding: 8px;
             z-index: 99;
             min-width: 200px;
-            max-height: 200px;
+            max-height: 300px;
             overflow: auto;
         }
 
@@ -393,8 +393,8 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>電話</th>
-                                        <th>姓名</th>
+                                        <th>病患電話</th>
+                                        <th>病患姓名</th>
                                     </tr>
                                 </thead>
                                 <tbody id="patientTableBody"></tbody>
@@ -426,11 +426,11 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>醫師名稱</th>
+                                        <th>醫師編號</th>
+                                        <th>醫師姓名</th>
                                     </tr>
                                 </thead>
                                 <tbody id="doctorTableBody"></tbody>
-                            </table>
                             </table>
                             <div id="doctorPagination"></div>
                         </div>
@@ -469,7 +469,13 @@
 
     <div id="doctorPopup" class="doctor-popup">
         <input type="text" class="popup-search" placeholder="搜尋醫師..." style="width:100%;margin-bottom:6px;">
-        <table>
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th style="border-bottom: 1px solid #ccc;">醫師編號</th>
+                <th style="border-bottom: 1px solid #ccc;">醫師姓名</th>
+            </tr>
+            </thead>
             <tbody class="popup-body"></tbody>
         </table>
         <div class="popup-footer" style="text-align:center; margin-top: 4px;"></div>

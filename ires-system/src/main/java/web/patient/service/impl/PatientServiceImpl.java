@@ -9,11 +9,21 @@ import org.springframework.stereotype.Service;
 import web.patient.dao.PatientDao;
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
+import web.appointment.dao.AppointmentDAO;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @Transactional
 public class PatientServiceImpl implements PatientService {
 	@Autowired
 	private PatientDao dao;
+
+	@Autowired
+	private AppointmentDAO appointmentDAO;
 
 	@Override
 	public Patient register(Patient patient) {
@@ -84,5 +94,32 @@ public class PatientServiceImpl implements PatientService {
 		updatePatient(patient);
 		return findById(patient.getPatientId());
 	}
+
+	@Override
+	public Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize) {
+		int offset = (page - 1) * pageSize;
+		List<Patient> patients = dao.findReservedPatientsByKeyword(keyword, offset, pageSize, clinicId);
+		long total = dao.countReservedPatientsByKeyword(keyword, clinicId);
+
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (Patient p : patients) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", p.getPatientId());
+			map.put("name", p.getName());
+			map.put("phone", p.getPhone());
+			result.add(map);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("patients", result);
+		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
+		return response;
+	}
+
+	@Override
+	public Patient findByPhone(String phone) {
+		return dao.findByPhone(phone);
+	}
+
 
 }
