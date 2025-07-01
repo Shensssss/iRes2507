@@ -19,7 +19,8 @@ import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan({ "web.*.*.impl" })
+//@ComponentScan({ "web.*.*.impl" })
+@ComponentScan(basePackages = { "core", "web" })
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 public class SpringConfig {

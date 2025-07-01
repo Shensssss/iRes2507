@@ -6,10 +6,25 @@ let clinicMemo = "";
 let doctorList = "";
 let doctorSelect = "";
 let majorList = "";
+let majorListImg = "";
 let commentHtml = "";
+let patientIdJson = "";
+let ratingLength = 0;
+let ratingCount = 0;
+
 $(document).ready(function () {
   const params = new URLSearchParams(window.location.search);
   const clinicId = params.get("clinicId");
+  $.ajax({
+    url: "/ires-system/account/patient",
+    type: "GET",
+    success: function (patient) {
+      patientIdJson = patient;
+    },
+    error: function () {
+      alert("尚未登入或 session 失效");
+    },
+  });
   $.ajax({
     url: `/ires-system/clinic/id/${clinicId}`,
     type: "GET",
@@ -35,14 +50,14 @@ $(document).ready(function () {
         url: `/ires-system/evaluations/list?clinicId=${clinicId}`,
         type: "GET",
         success: (data) => {
+          ratingLength = data.length;
           renderComment(data);
-
           $.ajax({
-            url: "/ires-system/doctorInfo",
-            type: "POST",
-            success: function (doctor) {
-              renderDoctorselect(doctor);
-              renderDoctorList(doctor);
+            url: `/ires-system/doctor/showAll?clinicId=${clinicId}`,
+            type: "GET",
+            success: function (response) {
+              renderDoctorselect(response.data);
+              renderDoctorList(response.data);
               renderhospitalDetails(clinic);
 
               const dateParam = params.get("date");
@@ -72,7 +87,38 @@ $(document).ready(function () {
   });
 });
 
-// google.maps.event.addDomListener(window, "load", init);
+$(document).on("click", "#submit-comment", function () {
+  const comment = $("#comment-text").val().trim();
+  if (!comment) {
+    alert("請輸入評論內容");
+    return;
+  }
+
+  const rating = $("#star-rating .fas").length;
+  const clinicId = new URLSearchParams(window.location.search).get("clinicId");
+
+  const data = {
+    patient: { patientId: patientIdJson.patientId },
+    clinic: { clinicId: clinicId },
+    rating: rating,
+    comment: comment,
+  };
+
+  $.ajax({
+    url: "/ires-system/evaluations/add",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(data),
+    success: function (res) {
+      alert("評論已送出！");
+      location.reload();
+    },
+    error: function (err) {
+      console.error(err);
+      alert("送出失敗，請稍後再試！");
+    },
+  });
+});
 
 function init() {
   var mapOptions = {
@@ -125,6 +171,10 @@ function renderDoctorList(doctors) {
   }
 
   doctors.forEach(function (doctor) {
+    const doctorImg = doctor.profilePicture.startsWith("data:")
+      ? doctor.profilePicture
+      : `data:image/jpeg;base64,${doctor.profilePicture}`;
+
     doctorList += `
       <div class="col-md-6 d-flex">
                       <div class="card-body p-0">
@@ -137,7 +187,7 @@ function renderDoctorList(doctors) {
                               <span class="point"></span>
                             </div>
                             <img
-                              src="static/picture/011.jpg"
+                              src="${doctorImg}"
                               alt=""
                               class="rounded-bottom rounded-circle"
                             />
@@ -153,7 +203,7 @@ function renderDoctorList(doctors) {
                             </div>
                             <div class="d-none d-sm-block small"> ${doctor.memo}</div>
                             <div class="d-none d-sm-block small">
-                              小兒科、腸胃科
+                              ${doctor.experience}
                             </div>
                           </div>
                         </div>
@@ -184,19 +234,19 @@ function renderComment(comments) {
     commentHtml = "<p>沒有人留言。</p>";
     return;
   }
-
   comments.forEach(function (comment) {
-    const avatar =
-      comment.patient && comment.patient.profilePicture
+    ratingCount = comment.clinic.rating;
+    const avatar = comment.patient.profilePicture
+      ? comment.patient.profilePicture.startsWith("data:")
         ? comment.patient.profilePicture
-        : "static/picture/041.jpg";
+        : `data:image/jpeg;base64,${comment.patient.profilePicture}`
+      : "static/picture/300.jpeg";
 
     const name =
       comment.patient && comment.patient.name
         ? comment.patient.name
         : "匿名使用者";
     const rating = parseInt(comment.rating) || 0;
-    // 產生星星 HTML
     let starsHtml = "";
     for (let i = 1; i <= 5; i++) {
       starsHtml += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
@@ -204,11 +254,11 @@ function renderComment(comments) {
 
     commentHtml += `
       <div class="mb-4 pb-4 border-bottom">
-        <div class="d-flex align-items-start">
-          <div class="text-center me-4" style="min-width: 80px;">
-            <img src="${avatar}" class="rounded-circle mb-2 d-block" alt="頭像" width="64" height="64" style="min-width: 64px; max-width: 64px; height: 64px; object-fit: cover; flex-shrink: 0;">
-            <div class="fw-semibold">${name}</div>
-          </div>
+        <div class="d-flex align-items-center">
+         <div class="text-center me-4 d-flex flex-column align-items-center" style="min-width: 80px;">
+          <img src="${avatar}" class="rounded-circle mb-2" alt="頭像" width="64" height="64" style="object-fit: cover;">
+          <div class="fw-semibold">${name}</div>
+        </div>
           <div class="flex-grow-1">
             <div class="mb-2 text-warning">
               ${starsHtml}
@@ -238,6 +288,34 @@ function renderMajorList(majors) {
     majorList += `
        <option value=${major.majorId}>${major.majorName}</option>
     `;
+    const imageSrc = major.image.startsWith("data:")
+      ? major.image
+      : `data:image/jpeg;base64,${major.image}`;
+
+    majorListImg += `
+    <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
+      <a class="card shadow border-0 text-inherit flex-fill w-100">
+        <div class="card-body text-center">
+          <h6 class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3">
+            ${major.majorName}
+          </h6>
+          <img
+            src="${imageSrc}"
+            alt="..."
+            height="80"
+            width="80"
+            class="mb-3"
+          />
+          <div class="mb-2 small">
+            ${major.description}
+          </div>
+          <small class="text-primary fw-medium d-block">
+            ${major.symptom}
+          </small>
+        </div>
+      </a>
+    </div>
+    `;
   });
 }
 
@@ -248,6 +326,14 @@ function renderhospitalDetails(clinic) {
   if (!clinic) {
     container.append("<p>沒有符合條件的診所。</p>");
     return;
+  }
+
+  let ratingStarsHtml = "";
+  for (let i = 1; i <= 5; i++) {
+    const iconClass = i <= Math.round(ratingCount) ? "fas" : "far";
+    ratingStarsHtml += `
+      <i class="align-items-center d-inline-flex fa-star ${iconClass} justify-content-center rounded-1 bg-warning text-dark"></i>
+    `;
   }
 
   const html = `
@@ -264,25 +350,11 @@ function renderhospitalDetails(clinic) {
                     class="align-items-center d-flex fs-13 justify-content-center mb-2 star-rating"
                   >
                     <div class="star-rating__box">
-                      <i
-                        class="align-items-center d-inline-flex fa-star fas justify-content-center rounded-1 bg-warning text-dark"
-                      ></i>
-                      <i
-                        class="align-items-center d-inline-flex fa-star fas justify-content-center rounded-1 bg-warning text-dark"
-                      ></i>
-                      <i
-                        class="align-items-center d-inline-flex fa-star fas justify-content-center rounded-1 bg-warning text-dark"
-                      ></i>
-                      <i
-                        class="align-items-center d-inline-flex fa-star fas justify-content-center rounded-1 bg-warning text-dark"
-                      ></i>
-                      <i
-                        class="far fa-star align-items-center d-inline-flex justify-content-center rounded-1 bg-warning text-dark"
-                      ></i>
+                      ${ratingStarsHtml}
                     </div>
                     <div class="ms-2 review-numbers">
-                      <span class="reviews-stats">4.5</span>
-                      <span class="reviews-count">(862)</span>
+                      <span class="reviews-stats">${ratingCount}</span>
+                      <span class="reviews-count">(${ratingLength})</span>
                     </div>
                   </div>
                   <h1 class="display-5 fw-semibold mb-5 text-white">
@@ -335,168 +407,7 @@ function renderhospitalDetails(clinic) {
                       >
                     </h4>
                     <div class="g-4 justify-content-center row">
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              過敏免疫與臨床醫學科
-                            </h6>
-                            <img
-                              src="static/picture/01.jpg"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              管理過敏反應並調理免疫系統
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >反覆感染、免疫力低下</small
-                            >
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              減重醫學科
-                            </h6>
-                            <img
-                              src="static/picture/02.png"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              適用於因肥胖引起之健康問題
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >反覆性感染、免疫力低下</small
-                            >
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              心臟科
-                            </h6>
-                            <img
-                              src="static/picture/03.jpg"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              治療心臟與高血壓相關疾病
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >反覆性感染、免疫力低下</small
-                            >
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              感冒、咳嗽與發燒
-                            </h6>
-                            <img
-                              src="static/picture/04.jpg"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              針對常見健康問題有效處理
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >發燒、眼睛感染、胃痛、頭痛</small
-                            >
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              大腸直腸外科
-                            </h6>
-                            <img
-                              src="static/picture/05.jpg"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              針對直腸、肛門與大腸疾病
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >發炎性腸道疾病、瘺管、腸阻塞</small
-                            >
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-4 d-flex">
-                        <a
-                          href="#"
-                          class="card shadow border-0 text-inherit flex-fill w-100"
-                        >
-                          <div class="card-body text-center">
-                            <h6
-                              class="speciality-title overflow-hidden mb-1 fw-bold fs-18 mb-3"
-                            >
-                              諮商
-                            </h6>
-                            <img
-                              src="static/picture/06.jpg"
-                              alt="..."
-                              height="80"
-                              width="80"
-                              class="mb-3"
-                            />
-                            <div class="mb-2 small">
-                              情緒或心理健康困擾有效處理
-                            </div>
-                            <small class="text-primary fw-medium d-block"
-                              >憂鬱、焦慮、心理壓力、創傷</small
-                            >
-                          </div>
-                        </a>
-                      </div>
+                    ${majorListImg}
                     </div>
                   </div>
                   <div class="mb-5">
@@ -838,7 +749,11 @@ function renderhospitalDetails(clinic) {
                       </div>
   
                       <div class="text-end">
-                        <button class="btn btn-primary" id="submit-comment">送出評論</button>
+                        <button class="btn btn-primary" id="submit-comment" ${
+                          !patientIdJson || !patientIdJson.patientId
+                            ? "disabled"
+                            : ""
+                        }>送出評論</button>
                       </div>
                   </div>
                     </div>
@@ -850,6 +765,17 @@ function renderhospitalDetails(clinic) {
           </div>
         </div>`;
   container.append(html);
+
+  if (!patientIdJson || !patientIdJson.patientId) {
+    $("#submit-comment")
+      .prop("disabled", true)
+      .addClass("disabled")
+      .attr("title", "請先登入才能評論");
+    $("#comment-text")
+      .prop("disabled", true)
+      .attr("placeholder", "請先登入才能輸入評論");
+    $("#star-rating i").css("pointer-events", "none");
+  }
 
   let selectedRating = 0;
   $("#star-rating")

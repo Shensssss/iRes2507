@@ -370,7 +370,8 @@
                         name: app.patient?.name ?? "匿名",
                         status: translateStatus(app.status),
                         appointmentId: app.appointmentId,
-                        patientId: app.patient?.patientId
+                        patientId: app.patient?.patientId,
+                        agencyId: app.clinic?.agencyId ?? "0000000000"
                     });
                 });
 
@@ -448,14 +449,22 @@
         }
 
         function showQRCode(doctorName) {
-            const match = doctorName.match(/\d+/);
-            const roomNumber = match ? match[0].padStart(3, '0') : "000";
+            const room = allData.find(r => r.doctor === doctorName);
+            if (!room) return alert("找不到該診間資料");
+
+            const agencyId = room.patients?.[0]?.agencyId || room.agencyId || "0000000000"; // 預設10碼錯誤碼
+
+            // 時段代碼：早上=1、下午=2、晚上=3
+            const timePeriodMap = { morning: "1", afternoon: "2", evening: "3" };
+            const periodCode = timePeriodMap[currentTime] || "1";
 
             const now = new Date();
             const yyyy = now.getFullYear();
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
-            const qrValue = `${yyyy}${mm}${dd}${roomNumber}`;
+            const dateCode = `${yyyy}${mm}${dd}`;
+
+            const qrValue = `${dateCode}${agencyId}${periodCode}`;
 
             localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
             window.open("qrcode.html", "_blank");

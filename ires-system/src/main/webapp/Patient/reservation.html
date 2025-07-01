@@ -8,7 +8,7 @@
 <link href="static/css/css2.css" rel="stylesheet">
 
 <link href="static/css/bootstrap.min.css" rel="stylesheet">
-<link href="static/css/all.css" rel="stylesheet">
+<link href="static/css/all.min.css" rel="stylesheet">
 <link href="static/css/select2.min.css" rel="stylesheet">
 <link href="static/css/select2-bootstrap-5-theme.min.css"
 	rel="stylesheet">
@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="static/css/reservation.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <title>I-RES預約紀錄</title>
-<link rel="icon" href="../src/img/fav.png" type="image/png" />
+<link rel="icon" href="static/img/fav.png" type="image/png" />
 </head>
 
 <body class="home-st7">
@@ -37,19 +37,19 @@
 			<div class="row">
 				<div class="main_links">
 					<ul>
-						<li><a href="#" class="main_link"> <i class="fas fa-home"></i>
+						<li><a href="index.html" class="main_link"> <i class="fas fa-home"></i>
 								主頁
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-calendar-check"></i> 預約清單
+						<li><a href="reservation.html" class="main_link"> <i
+								class="fas fa-calendar-check"></i> 預約紀錄
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-history"></i> 歷史紀錄
-						</a></li>
-						<li><a href="#" class="main_link"> <i class="fas fa-bell"></i>
+						<li><a href="favorites.html" class="main_link">
+							<i class="fas fa-heart"></i> 我的收藏</a>
+						</li>
+						<li><a href="notification.html" class="main_link"> <i class="fas fa-bell"></i>
 								通知消息
 						</a></li>
-						<li><a href="#" class="main_link"> <i
+						<li><a href="account.html" class="main_link"> <i
 								class="fas fa-user-cog"></i> 帳戶設定
 						</a></li>
 					</ul>
@@ -116,7 +116,26 @@
 
 				<!-- 中間資訊 -->
 				<div class="div1">預約紀錄</div>
-				<div class="appointments" id="appointments-list">
+				<div class="appointmentRecord" id="appointmentList"></div>
+
+					<template id="appointmentTemplate">
+						<div class="appointment">
+							<div class="info">
+								<h3 class="clinic"></h3>
+								<p class="time"></p>
+								<p class="reserveNo"></p>
+								<p class="status"></p>
+							</div>
+							<div class="actions">
+								<div class="group checkIn" hidden>
+									<button class="cancel">取消報到</button>
+									<button class="edit">修改預約</button>
+									<button class="favorite">加入收藏</button>
+									<button class="checkIn">報到</button>
+								</div>
+							</div>
+						</div>
+					</template>
 	
 	<!-- JS -->
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
