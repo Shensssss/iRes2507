@@ -205,7 +205,6 @@ function loadClinics(selector, majorId = null) {
     console.log("無使用者定位經緯度");
   }
 
-  console.log("userLat:", userLat, "userLng:", userLng);
   const url = majorId
     ? `/ires-system/clinicMajor/list?majorId=${majorId}`
     : "/ires-system/clinicMajor/list";
@@ -217,13 +216,18 @@ function loadClinics(selector, majorId = null) {
       if (Array.isArray(clinics)) {
         const $wrapper = $(`${selector} .swiper-wrapper`);
         $wrapper.empty();
-        console.log(clinics);
-
         for (let i = 0; i < clinics.length; i += 3) {
           let groupHtml = "";
           for (let j = i; j < i + 3 && j < clinics.length; j++) {
             const clinic = clinics[j];
-            let distance = "你沒給位置啊";
+            const rating =
+              clinic.rating == 0 ||
+              clinic.rating == null ||
+              clinic.rating == undefined
+                ? `尚未評論`
+                : `<i class="fa-solid fa-star" style="color: gold"></i>
+                    ${clinic.rating.toFixed(1)} Rating`;
+            let distance = "你沒給位置";
             if (
               userLat !== null &&
               userLng !== null &&
@@ -250,8 +254,7 @@ function loadClinics(selector, majorId = null) {
                 <div class="card-content">
                   <span><h3>${clinic.clinicName}</h3></span>
                   <div class="rating">
-                    <i class="fa-solid fa-star" style="color: gold"></i>
-                    4.5 Rating |
+                    ${rating} |
                     <div class="calender">
                       <svg width="23" height="23" viewBox="0 0 32 32" fill="none">
                         <path d="M10.6667 4C11.4031 4 12 4.59696 12 5.33333V8C12 8.73637 11.4031 9.33333 10.6667 9.33333C9.9303 9.33333 9.33334 8.73637 9.33334 8V5.33333C9.33334 4.59696 9.9303 4 10.6667 4Z" fill="black"/>
@@ -375,84 +378,3 @@ function clinicLinks() {
     });
   }
 }
-
-//-------------time select ---------------
-// flatpickr("#timepicker_start", {
-//   enableTime: true,
-//   noCalendar: true,
-//   dateFormat: "H:i",
-//   minTime: "00:00",
-//   maxTime: "23:59",
-//   defaultDate: "00:00",
-// });
-
-// flatpickr("#timepicker_end", {
-//   enableTime: true,
-//   noCalendar: true,
-//   dateFormat: "H:i",
-//   minTime: "00:00",
-//   maxTime: "23:59",
-//   defaultDate: "23:59",
-// });
-
-// ------------ tc-testimonials-st7 -----------
-// var swiper = new Swiper(".tc-testimonials-st7 .testi-slider", {
-//   slidesPerView: 1,
-//   spaceBetween: 20,
-//   centeredSlides: true,
-//   speed: 1500,
-//   pagination: {
-//     el: ".tc-testimonials-st7 .swiper-pagination",
-//     clickable: true,
-//   },
-//   navigation: false,
-//   mousewheel: false,
-//   keyboard: true,
-//   autoplay: {
-//     delay: 5000,
-//   },
-//   loop: true,
-// });
-
-// ------------ team images width same height -----------
-// var images = $(".tc-team-style1 .team-card .img, .img_sm_h");
-// images.each(function () {
-//   var width = $(this).width();
-//   $(this).height(width);
-// });
-
-// ------------ tc-services-slider1 -----------
-// var swiper = new Swiper(".tc-services-st7 .services-slider", {
-//   slidesPerView: 3,
-//   spaceBetween: 20,
-//   centeredSlides: true,
-//   speed: 1500,
-//   pagination: {
-//     el: ".tc-services-st7 .swiper-pagination",
-//     clickable: true,
-//   },
-//   navigation: false,
-//   mousewheel: false,
-//   keyboard: true,
-//   autoplay: {
-//     delay: 6000,
-//   },
-//   loop: true,
-//   breakpoints: {
-//     0: {
-//       slidesPerView: 1,
-//     },
-//     480: {
-//       slidesPerView: 2,
-//     },
-//     787: {
-//       slidesPerView: 3,
-//     },
-//     991: {
-//       slidesPerView: 3,
-//     },
-//     1200: {
-//       slidesPerView: 3,
-//     },
-//   },
-// });

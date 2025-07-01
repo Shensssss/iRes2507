@@ -67,9 +67,8 @@ public class Patient extends Core{
 	@Column(name = "notes")
 	private String notes;
 
-	@Lob
-	@Column(name = "profile_picture", columnDefinition = "LONGTEXT")
-	private String profilePicture;
+	@Column(name = "profile_picture")
+	private byte[] profilePicture;
 
 	@Column(name = "status")
 	private int status;
