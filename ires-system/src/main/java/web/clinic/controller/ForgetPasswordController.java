@@ -1,6 +1,7 @@
 package web.clinic.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import core.pojo.Core;
 import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 
@@ -24,20 +24,21 @@ public class ForgetPasswordController{
 	
 	@PostMapping("forgetPassword")
 	@ResponseBody
-	public Core findPassword(HttpServletRequest request, @RequestBody(required = false) Clinic clinic) {
-		Core core = new Core();
-		
-		
-		if(clinic != null) {
-			String errMsg = registerService.findPassword(clinic);
-			core.setSuccessful(errMsg == null);
-			if (errMsg != null) {
-				core.setMessage(errMsg);
-			}
-		} else {
-			core.setSuccessful(false);
-			core.setMessage("無會員資料");
+	public Clinic findPassword(HttpServletRequest request, @RequestBody(required = false) Clinic clinic) {
+		if(clinic == null) {
+			clinic = new Clinic();
+			clinic.setSuccessful(false);
+			clinic.setMessage("無會員資料");
+			return clinic;
 		}
-		return core;
+		clinic = registerService.findPassword(clinic);
+		if (clinic != null && clinic.isSuccessful()) {
+			if(request.getSession(false) != null) {
+				request.changeSessionId();
+			}
+			 final HttpSession session = request.getSession();
+			 session.setAttribute("clinic", clinic);
+		}
+		return clinic;
 	}
-}
+}	

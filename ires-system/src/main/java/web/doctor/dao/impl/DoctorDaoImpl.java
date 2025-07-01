@@ -35,6 +35,7 @@ public class DoctorDaoImpl implements DoctorDao{
 		doctor.setEducation(newDoctor.getEducation());
 		doctor.setExperience(newDoctor.getExperience());
 		doctor.setMemo(newDoctor.getMemo());
+		doctor.setProfilePicture(newDoctor.getProfilePicture());
 		return 1;
 	}
 

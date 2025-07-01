@@ -1,27 +1,23 @@
 package web.clinic.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import core.pojo.Core;
 import web.clinic.entity.Clinic;
 import web.clinic.service.RegisterService;
 
-@Controller
-@RequestMapping("clinic")
+@RestController
+@RequestMapping("clinic/register")
 public class RegisterController {
 	@Autowired
 	private RegisterService registerService;
 
-	@PostMapping("register")
-	@ResponseBody
-	public Core register(HttpServletRequest request, @RequestBody(required = false) Clinic clinic) {
+	@PostMapping
+	public Core register(@RequestBody(required = false) Clinic clinic) {
 		Core core = new Core();
 		if(clinic != null) {
 			String errMsg = registerService.register(clinic);

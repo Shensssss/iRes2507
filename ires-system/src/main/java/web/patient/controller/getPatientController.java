@@ -28,7 +28,7 @@ public class getPatientController {
             @RequestParam(defaultValue = "") String keyword,
             HttpSession session
     ) {
-        Clinic clinic = (Clinic) session.getAttribute("member");
+        Clinic clinic = (Clinic) session.getAttribute("clinic");
         if (clinic == null) {
             throw new RuntimeException("未登入診所");
         }

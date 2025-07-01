@@ -126,22 +126,36 @@ public class RegisterServiceImpl implements RegisterService {
 	}
 
 	@Override
-	public String findPassword(Clinic clinic) {
-		String agencyId = clinic.getAgencyId();
-		if (agencyId == null || agencyId.isBlank()) {
-			return "密碼未輸入";
+	public Clinic findPassword(Clinic clinic) {
+		
+		final String agencyId = clinic.getAgencyId();
+		final String account = clinic.getAccount();
+		
+		if (agencyId == null) {
+			clinic.setMessage("機構代碼未輸入");
+			clinic.setSuccessful(false);
+			return clinic;
 		}
-
-		String account = clinic.getAccount();
-		if (account == null || account.isBlank()) {
-			return "帳號未輸入";
+		
+		if (account == null) {
+			clinic.setMessage("使用者名稱未輸入");
+			clinic.setSuccessful(false);
+			return clinic;
 		}
-		Clinic result = dao.selectForPassword(agencyId, account);
-		if (result == null) {
-			return "機構代碼或註冊信箱錯誤";
+							
+		clinic = dao.selectForPassword(agencyId, account);
+		if (clinic == null) {
+			clinic = new Clinic();
+			clinic.setMessage("使用者名稱或機構代碼錯誤");
+			clinic.setSuccessful(false);
+			return clinic;
 		}
-		return null;
+		
+		clinic.setMessage("成功獲得密碼連結");
+		clinic.setSuccessful(true);
+		return clinic;
 	}
+
 
 	@Override
 	public String resetPassword(Clinic clinic) {

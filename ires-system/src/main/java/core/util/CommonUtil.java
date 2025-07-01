@@ -54,7 +54,7 @@ public class CommonUtil {
 	public int getNextReserveNo(int clinicId, int doctorId, Date date, int timePeriod) {
 		String hql = "SELECT MAX(a.reserveNo) FROM Appointment a " +
 				"WHERE a.clinicId = :clinicId AND a.doctorId = :doctorId " +
-				"AND a.appointmentDate = :date AND a.timePeriod = :period";
+				"AND DATE(a.appointmentDate) = :date AND a.timePeriod = :period";
 
 		Integer max = session.createQuery(hql, Integer.class)
 				.setParameter("clinicId", clinicId)
