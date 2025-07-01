@@ -24,4 +24,5 @@ public interface PatientService {
 
 	Patient findByPhone(String phone);
 
+	Patient checkIn(Patient patient, String code);
 }

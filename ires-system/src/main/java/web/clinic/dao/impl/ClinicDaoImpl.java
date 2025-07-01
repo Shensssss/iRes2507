@@ -1,25 +1,20 @@
 package web.clinic.dao.impl;
 
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import web.appointment.entity.Appointment;
-import web.clinic.dao.ClinicDAO;
-import web.clinic.entity.Clinic;
-import web.patient.entity.Patient;
-
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+
+import web.clinic.dao.ClinicDAO;
+import web.clinic.entity.Clinic;
 
 @Repository
 public class ClinicDaoImpl implements ClinicDAO {
 	@PersistenceContext
 	private Session session;
 
-	@PersistenceContext
-	private Session session;
-	
 	@Override
 	public int insert(Clinic clinic) {
 		return 1;
@@ -48,5 +43,10 @@ public class ClinicDaoImpl implements ClinicDAO {
 	public int updatePsd(Clinic clinic) {
 		return 0;
 	}
-	 
+
+	@Override
+	public Integer findClinicIdByAgencyId(String agencyId) {
+		return session.createQuery("SELECT c.clinicId FROM Clinic c WHERE c.agencyId = :id", Integer.class)
+				.setParameter("id", agencyId).getSingleResult();
+	}
 }

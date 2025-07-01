@@ -1,8 +1,6 @@
 package web.patient.dao.impl;
 
-import java.sql.Date;
 import java.util.List;
-
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -117,7 +115,6 @@ public class PatientDaoImpl implements PatientDao {
 	}
 
 	@Override
-<<<<<<< HEAD
 	public List<Patient> searchedByNameAndBirthday(String name, String birthday) {
 	    String hql = "FROM Patient WHERE name = :name AND birthday = :birthday";
 	    System.out.println("Searching for birthday: " + birthday);
@@ -148,7 +145,6 @@ public class PatientDaoImpl implements PatientDao {
 	                  .setParameter("phone", phone)
 	                  .getResultList();
 	}
-=======
 	public List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
 		String hql = "SELECT DISTINCT a.patient FROM Appointment a " +
 				"WHERE a.clinic.id = :clinicId " +
@@ -183,5 +179,5 @@ public class PatientDaoImpl implements PatientDao {
 				.uniqueResult();
 	}
 
->>>>>>> main
+
 }
