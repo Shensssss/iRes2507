@@ -4,6 +4,8 @@ import java.util.List;
 
 import web.patient.entity.Patient;
 
+import java.util.Map;
+
 public interface PatientService {
 	
 	Patient register(Patient patient);
@@ -17,5 +19,9 @@ public interface PatientService {
 	Patient edit(Patient reqPatient);
 	
 	List<Patient> clinicSearch(String name, String birthday, String phone);
+
+	Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize);
+
+	Patient findByPhone(String phone);
 
 }

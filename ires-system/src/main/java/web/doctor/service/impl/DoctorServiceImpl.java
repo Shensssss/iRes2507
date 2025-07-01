@@ -1,7 +1,10 @@
 package web.doctor.service.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,5 +96,28 @@ public class DoctorServiceImpl implements DoctorService{
 	public List<Doctor> showSearchedByName(Integer clinicId, String doctorName) {
 		return doctorDao.selectByClinicIdAndDoctorName(clinicId, doctorName);
 	}
+
+	@Override
+	public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize) {
+		int offset = (page - 1) * pageSize;
+		List<Doctor> doctors = doctorDao.findDoctorsByKeyword(keyword, offset, pageSize, clinicId);
+		long total = doctorDao.countDoctorsByKeyword(keyword, clinicId);
+
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (Doctor d : doctors) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", d.getDoctorId());
+			map.put("name", d.getDoctorName());
+			map.put("education", d.getEducation());
+			map.put("experience", d.getExperience());
+			result.add(map);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("doctors", result);
+		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
+		return response;
+	}
+
 
 }

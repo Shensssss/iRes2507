@@ -32,7 +32,6 @@ public class EvaluationsController {
 	@PostMapping("add")
 	@ResponseBody
 	public int addComment(@RequestBody Evaluations evaluations) throws JsonProcessingException{
-		System.out.println(new ObjectMapper().writeValueAsString(evaluations));
 		return service.addComment(evaluations);
 	}
 }

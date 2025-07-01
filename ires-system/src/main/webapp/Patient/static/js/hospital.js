@@ -37,6 +37,30 @@ function renderClinicList(clinics) {
   }
 
   clinics.forEach(function (clinic) {
+    const rating =
+      clinic.rating == 0 || clinic.rating == null || clinic.rating == undefined
+        ? `<span>尚未評論</span>`
+        : `   <span class="reviews-stats">${clinic.rating.toFixed(1)}</span>
+                <span class="reviews-count">(115)</span>`;
+    // let selectedRating = 0;
+    // $("#star-rating")
+    //   .off("click")
+    //   .on("click", "i", function () {
+    //     selectedRating = Number($(this).data("value"));
+    //     $("#star-rating i").each(function (idx) {
+    //       if (idx < selectedRating) {
+    //         $(this).removeClass("far").addClass("fas");
+    //       } else {
+    //         $(this).removeClass("fas").addClass("far");
+    //       }
+    //     });
+    //   });
+    let ratingStarsHtml = "";
+    for (let i = 1; i <= 5; i++) {
+      const iconClass = i <= Math.round(clinic.rating) ? "fas" : "far";
+      ratingStarsHtml += `<i class="${iconClass} fa-star"></i>
+    `;
+    }
     const html = `
       <div class="border-0 card mb-3 overflow-hidden rounded card-hover shadow card-hover-sm card-hover">
         <div class="d-sm-flex hospital-list__item">
@@ -52,13 +76,10 @@ function renderClinicList(clinics) {
           <div class="flex-grow-1 p-4">
             <div class="align-items-center d-flex fs-13 mb-2 star-rating">
               <div class="d-flex text-warning">
-                <i class="fas fa-star"></i> <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <i class="far fa-star"></i> <i class="far fa-star"></i>
+               ${ratingStarsHtml}
               </div>
               <div class="ms-2 review-numbers">
-                <span class="reviews-stats">4.5</span>
-                <span class="reviews-count">(115)</span>
+               ${rating}
               </div>
             </div>
             <h5 class="fs-19 fw-bold h-title mb-1 overflow-hidden text-capitalize">
