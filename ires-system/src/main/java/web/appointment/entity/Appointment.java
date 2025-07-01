@@ -73,4 +73,7 @@ public class Appointment {
 	public String getDoctorName() {
 		return (doctor != null) ? doctor.getDoctorName() : null;
 	}
+
+	@Transient
+	public String getAgencyId() { return (clinic != null) ? clinic.getAgencyId() : null; }
 }

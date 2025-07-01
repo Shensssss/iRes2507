@@ -116,7 +116,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return true;
     }
 
-    @Transactional
     public void reserveAppointments(Integer clinicId, List<Appointment> appointments) {
         for (Appointment a : appointments) {
 

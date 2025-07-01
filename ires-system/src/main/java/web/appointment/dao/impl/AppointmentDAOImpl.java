@@ -120,7 +120,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         String hql = "SELECT COUNT(*) FROM Appointment a " +
                 "WHERE a.clinic.clinicId = :cid " +
                 "AND a.doctor.doctorId = :did " +
-                "AND a.appointmentDate = :date " +
+                "AND DATE(a.appointmentDate) = :date " +
                 "AND a.timePeriod = :period";
 
         return session.createQuery(hql, Long.class)

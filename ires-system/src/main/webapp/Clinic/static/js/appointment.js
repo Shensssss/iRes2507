@@ -277,12 +277,13 @@ function registerEventHandlers() {
 				body: JSON.stringify(payload)
 			});
 
+			const resultText = await reserveRes.text();
+
 			if (!reserveRes.ok) {
-				alert("預約失敗");
+				alert(resultText);
 				return;
 			}
 
-			const resultText = await reserveRes.text();
 			alert(resultText);
 
 			// 查歷史預約
