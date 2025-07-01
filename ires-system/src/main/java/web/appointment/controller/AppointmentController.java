@@ -76,7 +76,7 @@ public class AppointmentController {
     @ResponseBody
     public ResponseEntity<String> reserve(HttpServletRequest request, @RequestBody List<Appointment> appointments) {
         HttpSession session = request.getSession(false);
-        Clinic clinic = (session != null) ? (Clinic) session.getAttribute("member") : null;
+        Clinic clinic = (session != null) ? (Clinic) session.getAttribute("clinic") : null;
 
         if (clinic == null) {
             return ResponseEntity
