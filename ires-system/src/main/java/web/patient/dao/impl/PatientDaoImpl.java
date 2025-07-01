@@ -147,4 +147,38 @@ public class PatientDaoImpl implements PatientDao {
 	                  .setParameter("phone", phone)
 	                  .getResultList();
 	}
+
+	public List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
+		String hql = "SELECT DISTINCT a.patient FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) " +
+				"ORDER BY a.patient.name ASC";
+
+		return session.createQuery(hql, Patient.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.setFirstResult(offset)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
+
+	@Override
+	public long countReservedPatientsByKeyword(String keyword, int clinicId) {
+		String hql = "SELECT COUNT(DISTINCT a.patient.id) FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) ";
+
+		return session.createQuery(hql, Long.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.uniqueResult();
+	}
+
+	//以行動電話取得病患
+	public Patient findByPhone(String phone) {
+		String hql = "FROM Patient p WHERE p.phone = :phone";
+		return session.createQuery(hql, Patient.class)
+				.setParameter("phone", phone)
+				.uniqueResult();
+	}
 }
