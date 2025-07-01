@@ -35,6 +35,7 @@ public class DoctorDaoImpl implements DoctorDao{
 		doctor.setEducation(newDoctor.getEducation());
 		doctor.setExperience(newDoctor.getExperience());
 		doctor.setMemo(newDoctor.getMemo());
+		doctor.setProfilePicture(newDoctor.getProfilePicture());
 		return 1;
 	}
 
@@ -62,5 +63,27 @@ public class DoctorDaoImpl implements DoctorDao{
 				.setParameter("clinicId", clinicId)
 				.setParameter("name",  "%" + doctorName + "%")
                 .getResultList();
+	}
+
+	@Override
+	public List<Doctor> findDoctorsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
+		String hql = "FROM Doctor d WHERE d.clinic.clinicId = :clinicId " +
+				"AND d.doctorName LIKE :keyword ORDER BY d.doctorId ASC";
+		return session.createQuery(hql, Doctor.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.setFirstResult(offset)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
+
+	@Override
+	public long countDoctorsByKeyword(String keyword, int clinicId) {
+		String hql = "SELECT COUNT(d) FROM Doctor d WHERE d.clinic.clinicId = :clinicId " +
+				"AND d.doctorName LIKE :keyword";
+		return session.createQuery(hql, Long.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.uniqueResult();
 	}
 }

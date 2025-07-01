@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 
+import java.time.LocalDate;
 import java.util.Date;
+//import java.sql.Date;
 import java.util.List;
+
 
 import javax.persistence.PersistenceContext;
 
@@ -70,5 +73,61 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 .setParameter("date", date)
                 .setParameter("period", timePeriod)
                 .getResultList();
+    }
+
+    //判斷病患是否有在該診所預約過
+    public boolean existsByPatientIdAndClinicId(Integer patientId, Integer clinicId) {
+        String hql = "SELECT COUNT(a) FROM Appointment a WHERE a.patient.id = :pid AND a.clinic.id = :cid";
+        Long count = session.createQuery(hql, Long.class)
+                        .setParameter("pid", patientId)
+                        .setParameter("cid", clinicId)
+                        .getSingleResult();
+        return count > 0;
+    }
+
+    //判斷同一天是否有重複預約
+    @Override
+    public boolean existsDuplicateAppointment(int patientId, Date date) {
+        String hql = "SELECT COUNT(*) FROM Appointment a " +
+                "WHERE a.patient.patientId = :pid " +
+                "AND a.appointmentDate = :date ";
+
+        Long count = session.createQuery(hql, Long.class)
+                .setParameter("pid", patientId)
+                .setParameter("date", date)
+                .uniqueResult();
+
+        return count != null && count > 0;
+    }
+
+    //取得病患歷史預約紀錄
+    @Override
+    public List<Appointment> findByPatientId(int patientId) {
+        String hql = "FROM Appointment a " +
+                "JOIN FETCH a.doctor " +
+                "JOIN FETCH a.clinic " +
+                "JOIN FETCH a.patient " +
+                "WHERE a.patientId = :pid " +
+                "ORDER BY a.appointmentDate DESC";
+        return session.createQuery(hql, Appointment.class)
+                .setParameter("pid", patientId)
+                .getResultList();
+    }
+
+    //判斷是否超出預約人數
+    @Override
+    public Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod) {
+        String hql = "SELECT COUNT(*) FROM Appointment a " +
+                "WHERE a.clinic.clinicId = :cid " +
+                "AND a.doctor.doctorId = :did " +
+                "AND DATE(a.appointmentDate) = :date " +
+                "AND a.timePeriod = :period";
+
+        return session.createQuery(hql, Long.class)
+                .setParameter("cid", clinicId)
+                .setParameter("did", doctorId)
+                .setParameter("date", date)
+                .setParameter("period", timePeriod)
+                .uniqueResult();
     }
 }

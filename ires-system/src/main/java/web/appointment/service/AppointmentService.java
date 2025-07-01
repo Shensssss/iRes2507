@@ -18,4 +18,14 @@ public interface AppointmentService {
     List<Appointment> getAppointmentsByDate(Date date);
 
     List<Appointment> getAppointmentsByDateAndPeriod(Date date, int timePeriod);
+
+    List<Appointment> getHistoryByPatientId(int patientId);
+
+    void save(Appointment appointment);
+
+    Appointment updateAppointment(Appointment a);
+
+    boolean deleteAppointment(String id);
+
+    void reserveAppointments(Integer clinicId, List<Appointment> appointments);
 }

@@ -1,6 +1,7 @@
 package web.doctor.service;
 
 import java.util.List;
+import java.util.Map;
 
 import web.doctor.entity.Doctor;
 
@@ -15,5 +16,7 @@ public interface DoctorService{
     List<Doctor> showAllDoctors(Integer clinicId);
 
     List<Doctor> showSearchedByName(Integer clinicId, String doctorName);
+
+    public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize);
 
 }
