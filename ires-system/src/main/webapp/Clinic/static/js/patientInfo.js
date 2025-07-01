@@ -65,6 +65,8 @@ function showSearchedResult(patient){
         return;
     }
 
+    const picSrc = patient.profilePicture ? `data:image/jpeg;base64,${patient.profilePicture}` : "";
+    $("#profilePictureResult").attr("src", picSrc);
     $("#nameResult").text("姓名：" + patient.name);
     let genderTypeText = getGenderText(patient.gender);
     $("#genderResult").text("性別："+genderTypeText);
@@ -106,13 +108,7 @@ $("#search").on("click", function(e){
 
 
 function edit(){
-    // if($("#notes").attr("data-edit") == undefined){
-    //     $("#notes").attr("data-edit" ,true);
-    //     $("#notes").toggleClass("-none");
-    //     $(".detailUpdate").toggleClass("-none");
-    // }else{
-    //     let updateNotes = $("")
-    // }
+
 }
 
 $("#edit").on("click", function(){

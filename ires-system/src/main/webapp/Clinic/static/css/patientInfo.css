@@ -1,24 +1,48 @@
 div.container{
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.top-row {
+    width: 100%;
+    display: flex;
+    gap: 20px; /* 兩個 box 之間的間距 */
+    box-sizing: border-box;
 }
 
 div.box{
-    width: 35%;
+    flex: 1 1 0;
     padding: 10px;
     margin: 20px;
     border: 1px solid grey;
     border-radius: 10px;
     box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
-    position: relative;                
+    position: relative;
+    box-sizing: border-box;
+}
+
+.box .profilePicture {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    border: 2px solid white;
+    /* border-radius: 60%; */
 }
 
 div.record{
-    width: 80%;
+    width: 100%;
     padding: 10px;
     margin: 20px;
     border: 1px solid grey;
     border-radius: 10px;
     box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    box-sizing: border-box;
 }
 
 p.item{
@@ -27,7 +51,7 @@ p.item{
 }
 
 p.detail{
-    margin: 2px;
+    margin: 8px;
     font-size: 14px;
 }
 
