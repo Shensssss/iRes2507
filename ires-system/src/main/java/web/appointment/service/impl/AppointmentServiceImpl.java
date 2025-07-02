@@ -178,7 +178,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                     " 醫師：" + doctor.getDoctorName());
             notification.setSentDatetime(new Timestamp(System.currentTimeMillis()));
             notification.setReadStatus(false);
-            notification.setNotificationType("appointment");
+            notification.setNotificationType("預約成功通知");
 
             notificationService.createNotification(notification);
         }
