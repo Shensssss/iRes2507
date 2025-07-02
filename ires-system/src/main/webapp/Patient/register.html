@@ -37,7 +37,7 @@
                 <p>註冊以創建帳戶</p>
               </div>
               <div class="fxt-form">
-                <form method="POST" id="register">
+                <form method="POST" id="register" enctype="multipart/form-data">
                   <div class="row">
                     <div class="form-group col-md-6">
                       <div class="fxt-transformY-50 fxt-transition-delay-1">
@@ -246,8 +246,9 @@
                     </div>
                   </div>
 
-                  <!-- <div class="form-group">
+                  <div class="form-group">
                     <div class="fxt-transformY-50 fxt-transition-delay-1">
+                      <label for="profile_picture">大頭照</label>
                       <input
                         type="file"
                         id="register_profile_picture"
@@ -256,7 +257,7 @@
                         accept="image/*"
                       />
                     </div>
-                  </div> -->
+                  </div>
 
                   <div class="form-group">
                     <div class="fxt-transformY-50 fxt-transition-delay-4">

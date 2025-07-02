@@ -6,38 +6,55 @@
     $("#register").on("submit", function (e) {
       e.preventDefault();
 
-      const formData = {
-        name: $("#register_name").val(),
-        phone: $("#register_phone").val(),
-        email: $("#register_email").val(),
-        password: $("#register_password").val(),
-        birthday: $("#register_birthdate").val(),
-        gender: parseInt($("#register_gender").val()),
-        address: $("#register_address").val(),
-        emergencyName: $("#register_emergency_name").val(),
-        emergencyContent: $("#register_emergency_content").val(),
-        relation: parseInt($("#register_relation").val()),
-        bloodType: parseInt($("#register_blood_type").val()),
-        notes: $("#register_notes").val(),
-      };
+      const fileInput = $("#register_profile_picture")[0];
+      const file = fileInput.files[0];
 
-      $.ajax({
-        url: "/ires-system/patient/register",
-        method: "POST",
-        data: JSON.stringify(formData),
-        contentType: "application/json",
-        success: function (response) {
-          if (response.successful) {
-            alert("註冊成功！");
-            window.location.href = "login.html";
-          } else {
-            alert("註冊失敗：" + response.message);
-          }
-        },
-        error: function () {
-          alert("發生錯誤，請稍後再試。");
-        },
-      });
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const base64Data = reader.result.split(",")[1];
+          sendForm(base64Data);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        sendForm(null);
+      }
+
+      function sendForm(base64Image) {
+        const formData = {
+          name: $("#register_name").val(),
+          phone: $("#register_phone").val(),
+          email: $("#register_email").val(),
+          password: $("#register_password").val(),
+          birthday: $("#register_birthdate").val(),
+          gender: parseInt($("#register_gender").val()),
+          address: $("#register_address").val(),
+          emergencyName: $("#register_emergency_name").val(),
+          emergencyContent: $("#register_emergency_content").val(),
+          relation: parseInt($("#register_relation").val()),
+          bloodType: parseInt($("#register_blood_type").val()),
+          notes: $("#register_notes").val(),
+          profilePicture: base64Image,
+        };
+
+        $.ajax({
+          url: "/ires-system/patient/register",
+          method: "POST",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (response) {
+            if (response.successful) {
+              alert("註冊成功！");
+              window.location.href = "login.html";
+            } else {
+              alert("註冊失敗：" + response.message);
+            }
+          },
+          error: function () {
+            alert("發生錯誤，請稍後再試。");
+          },
+        });
+      }
     });
   });
   //登入
