@@ -2,10 +2,6 @@ package web.patient.service.impl;
 
 
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -140,4 +136,12 @@ public class PatientServiceImpl implements PatientService {
 	public Patient findByPhone(String phone) {
 		return dao.findByPhone(phone);
 	}
+
+	@Override
+	public int clinicEditPatientNotes(int patientId, String newNotes) {
+		return dao.updateNotes(patientId, newNotes);
+	}
+
+
+
 }

@@ -1,6 +1,7 @@
 package web.patient.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -8,11 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.pojo.Core;
+import web.appointment.entity.Appointment;
+import web.appointment.service.AppointmentService;
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
 
@@ -21,6 +28,8 @@ import web.patient.service.PatientService;
 public class ClinicPatientProfileController {
 	@Autowired
 	private PatientService patientService;
+	@Autowired
+	private AppointmentService appointmentService;
 	
 	@GetMapping("searchPatient")
 	public ResponseEntity<Core> searchedPatient(
@@ -57,4 +66,50 @@ public class ClinicPatientProfileController {
 			}
 	    }
 	}
+	
+			
+	@PutMapping("editPatientNotes/{id}")
+	public ResponseEntity<Core> editPatientNotes(@PathVariable("id") int patientId, @RequestBody Map<String, String> reqBody) {
+	    String newNotes = reqBody.get("notes");
+	    Core core = new Core();
+	    
+	    Patient patient = patientService.findById(patientId);
+	    if (patient == null) {
+	    	core.setStatusCode(404);
+	        core.setMessage("查無此病人資料");
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
+	    }
+
+	    if (newNotes == null || newNotes.trim().isEmpty()) {
+	    	newNotes = "";
+	    }
+
+	    int result = patientService.clinicEditPatientNotes(patientId, newNotes);
+	    if (result > 0) {
+	        core.setMessage("備註更新成功");
+	        core.setStatusCode(200);
+	        return ResponseEntity.ok(core);
+	    } else {
+	        core.setMessage("更新失敗，請聯絡管理員");
+	        core.setStatusCode(500);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(core);
+	    }
+	}
+	
+    @GetMapping("appointmentHistory/{id}")
+    @ResponseBody
+    public ResponseEntity<Core> getAppointmentHistory(@PathVariable("id") int patientId) {
+    	Core core = new Core();
+    	Patient patient = patientService.findById(patientId);
+	    if (patient == null) {
+	    	core.setStatusCode(404);
+	        core.setMessage("查無此病人資料");
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
+	    }
+	    
+    	core.setStatusCode(200);
+    	core.setMessage("預約歷史載入成功");
+	    core.setData(appointmentService.getHistoryByPatientId(patientId));
+        return ResponseEntity.ok(core);
+    }
 }

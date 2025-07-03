@@ -30,6 +30,16 @@ fetchPatients();
 $("#infoForm").on("submit", function (e) {
     e.preventDefault();
     const get = id => $(`#${id}`).val();
+    
+    // 取得 preview 圖片的 src
+    const src = $('#preview').attr('src');
+    let base64Data = null;
+
+    if (src && src.startsWith('data:image/')) {
+        // 將 base64 data 從 data URL 中分離出來
+        base64Data = src.split(',')[1];
+    }
+
     const patientData = {
         name: get("name"),
         gender: get("gender"),
@@ -42,7 +52,8 @@ $("#infoForm").on("submit", function (e) {
         relation: get("relation"),
         bloodType: get("bloodType"),
         notes: get("notes"),
-        profilePicture: $('#preview').attr('src') || null
+        profilePicture: base64Data
+        // profilePicture: $('#preview').attr('src') || null
     };
     sendPatientData(patientData);
 });

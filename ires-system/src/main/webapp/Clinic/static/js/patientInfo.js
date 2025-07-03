@@ -58,6 +58,16 @@ function getRelationText(relationValue) {
     }
 }
 
+function getTimePeriodText(periodValue) {
+    switch (periodValue) {
+        case 1: return "上午";
+        case 2: return "下午";
+        case 3: return "晚上";
+        default: return "未知";
+    }
+}
+
+
 function showSearchedResult(patient){
     if (!patient || !patient.name) {
         $("#nameResult").text("姓名：查無資料");
@@ -81,6 +91,40 @@ function showSearchedResult(patient){
     $("#relationResult").text("關係：" + relationText);
     $("#emergencyContentResult").text("電話："+patient.emergencyContent);
     $("#notesResult").text(patient.notes);
+    $("#basic").attr("date-patient-id", patient.patientId);
+    $("#notes").attr("data-patient-id", patient.patientId);
+    $("#appointmentHistory").attr("data-patient-id", patient.patientId);
+}
+
+
+
+function showAppointmentHistory(data) {
+    const tbody = $("#appointmentTable tbody");
+    tbody.empty();
+
+    if (!data || data.length === 0) {
+        tbody.append(`<tr><td colspan="5">查無預約紀錄</td></tr>`);
+        return;
+    }
+
+    data.forEach(item => {
+        const appointmentDate = new Date(item.appointmentDate).toLocaleDateString();
+        const clinicName = item.clinic.clinicName;
+        const doctorName = item.doctor.doctorName;
+        const timePeriod = getTimePeriodText(item.timePeriod);
+        const reserveNo = item.reserveNo;
+
+        const row = `
+            <tr>
+                <td>${appointmentDate}</td>
+                <td>${clinicName}</td>
+                <td>${doctorName}</td>
+                <td>${timePeriod}</td>
+                <td>${reserveNo}</td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
 }
     
 
@@ -91,33 +135,60 @@ $("#search").on("click", function(e){
         let name = ($("#name").val()).trim();
         let birthday = $("#datePicker").val().trim();
         let phone = ($("#phone").val()).trim();
+
         fetch(`/ires-system/clinic/searchPatient?name=${name}&birthday=${birthday}&phone=${phone}`, { method: "GET" })
             .then((res) => res.json())
             .then((result) => {
                 alert(result.message);
-                if (result.statusCode === 200 && result.data.length > 0) {
+                if (result.statusCode === 200  && result.data.length > 0) {
                     //此處暫時將同名且同生日或手機號碼者視為不存在
-                    showSearchedResult(result.data[0]);
+                    const patient = result.data[0];
+                    showSearchedResult(patient);
+                    let patientId = patient.patientId;
+                    fetch(`/ires-system/clinic/appointmentHistory/${patientId}`, {method: 'GET',})
+                            .then((res) => res.json())
+                            .then((result) => {
+                                // alert(result.message);
+                                if(result.statusCode === 200){
+                                    // console.log(result.data); //如何顯示?
+                                    showAppointmentHistory(result.data) || [];
+                                }
+                            })
                 } else{
                     showSearchedResult({});
+                    showAppointmentHistory([]);
                 }
-            })
+            }) 
     }
 })
 
-
-
-function edit(){
-
-}
-
 $("#edit").on("click", function(){
-    edit();
+    $(".noteEditing").toggleClass("-none");
+    $("#notesResult").hide();
+    const currentNotes = $("#notesResult").text();
+    $("#noteInput").val(currentNotes);
 })
 
-
-
-
-
-
+$("#save").on("click", function(){
+    const newNotes = $("#noteInput").val().trim();
+    const patientId = $("#notes").data("patient-id");
+    if (!patientId) {
+        return;
+    }
+    
+    fetch(`/ires-system/clinic/editPatientNotes/${patientId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({notes: newNotes})
+    })
+    .then((res) => res.json())
+    .then((result) => {
+        alert(result.message);
+        if (result.statusCode === 200) {
+            $("#notesResult").text(newNotes);
+        }
+        $(".noteEditing").toggleClass("-none");
+        $("#notesResult").show(); 
+    })   
+});
 

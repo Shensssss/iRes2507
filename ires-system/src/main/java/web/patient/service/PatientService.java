@@ -23,5 +23,7 @@ public interface PatientService {
 	Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize);
 
 	Patient findByPhone(String phone);
+	
+	int clinicEditPatientNotes(int patientId, String newNotes);
 
 }

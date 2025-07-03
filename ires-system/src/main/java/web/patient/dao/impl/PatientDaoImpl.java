@@ -1,6 +1,5 @@
 package web.patient.dao.impl;
 
-import java.sql.Date;
 import java.util.List;
 
 
@@ -75,6 +74,7 @@ public class PatientDaoImpl implements PatientDao {
 					.setParameter("blood_type", patient.getBloodType())
 					.setParameter("notes", patient.getNotes())
 					.setParameter("profile_picture", patient.getProfilePicture())
+					.setParameter("email", patient.getEmail())
 					.executeUpdate();
 	}
 
@@ -180,5 +180,15 @@ public class PatientDaoImpl implements PatientDao {
 		return session.createQuery(hql, Patient.class)
 				.setParameter("phone", phone)
 				.uniqueResult();
+	}
+	
+	@Override
+	public int updateNotes(Integer patientId, String newNotes) {
+		String hql = "UPDATE Patient p SET p.notes = :notes WHERE p.patientId = :patientId";
+	    session.createQuery(hql)
+	           .setParameter("notes", newNotes)
+	           .setParameter("patientId", patientId)
+	           .executeUpdate();
+	    return 1;
 	}
 }
