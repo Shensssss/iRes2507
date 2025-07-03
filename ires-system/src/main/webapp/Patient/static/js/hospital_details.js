@@ -1,3 +1,62 @@
+// 預約日期變更時，查詢各時段剩餘名額並動態更新時段選項
+$(document).on("change", '.appointment-form input[type="date"]', function () {
+  const selectedDate = $(this).val();
+  if (!selectedDate) return;
+
+  const quotaInt = parseInt(quota);
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=morning`,
+    type: "GET",
+    success: function (data) {
+      morningQuota = quotaInt - data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("上午名額查詢失敗");
+    },
+  });
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=afternoon`,
+    type: "GET",
+    success: function (data) {
+      afternoonQuota = quotaInt - data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("下午名額查詢失敗");
+    },
+  });
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=evening`,
+    type: "GET",
+    success: function (data) {
+      eveningQuota = quotaInt - data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("晚上名額查詢失敗");
+    },
+  });
+});
+
+function updateTimeOptions() {
+  const timeSelects = $('.appointment-form select[name="time"]');
+  timeSelects.empty();
+  timeSelects.append(
+    `<option value="1">上午(可預約名額 ${morningQuota})</option>`
+  );
+  timeSelects.append(
+    `<option value="2">下午(可預約名額 ${afternoonQuota})</option>`
+  );
+  timeSelects.append(
+    `<option value="3">晚上(可預約名額 ${eveningQuota})</option>`
+  );
+}
+let clinicId = 0;
+let doctorId = 0;
 let clinicName = "";
 let clinicAddress = "";
 let clinicPhone = "";
@@ -8,13 +67,17 @@ let doctorSelect = "";
 let majorList = "";
 let majorListImg = "";
 let commentHtml = "";
-let patientIdJson = "";
+let patientIdJson = {};
 let ratingLength = 0;
 let ratingCount = 0;
+let quota = 0;
+let morningQuota = 0;
+let afternoonQuota = 0;
+let eveningQuota = 0;
 
 $(document).ready(function () {
   const params = new URLSearchParams(window.location.search);
-  const clinicId = params.get("clinicId");
+  clinicId = params.get("clinicId");
   $.ajax({
     url: "/ires-system/account/patient",
     type: "GET",
@@ -22,7 +85,7 @@ $(document).ready(function () {
       patientIdJson = patient;
     },
     error: function () {
-      alert("尚未登入或 session 失效");
+      // alert("尚未登入或 session 失效");
     },
   });
   $.ajax({
@@ -36,6 +99,7 @@ $(document).ready(function () {
       clinicPhone = clinic.phone;
       clinicEmail = clinic.account;
       clinicMemo = clinic.memo;
+      quota = clinic.quota;
       $.ajax({
         url: `/ires-system/clinicMajor/major?clinicId=${clinicId}`,
         type: "GET",
@@ -43,7 +107,7 @@ $(document).ready(function () {
           renderMajorList(major);
         },
         error: (e) => {
-          alert(e);
+          // alert(e);
         },
       });
       $.ajax({
@@ -77,12 +141,39 @@ $(document).ready(function () {
               alert("無法取得診所列表，請稍後再試！");
             },
           });
+          $.ajax({
+            url: `/ires-system/appointment/apiToday`,
+            type: "GET",
+            success: (data) => {
+              morningQuota = quota - data.length;
+              console.log(morningQuota);
+            },
+            // error: (e) => alert(e),
+          });
+          $.ajax({
+            url: `/ires-system/appointment/apiToday?period=afternoon`,
+            type: "GET",
+            success: (data) => {
+              afternoonQuota = quota - data.length;
+              console.log(afternoonQuota);
+            },
+            // error: (e) => alert(e),
+          });
+          $.ajax({
+            url: `/ires-system/appointment/apiToday?period=evening`,
+            type: "GET",
+            success: (data) => {
+              eveningQuota = quota - data.length;
+              console.log(eveningQuota);
+            },
+            // error: (e) => alert(e),
+          });
         },
-        error: (e) => alert(e),
+        // error: (e) => alert(e),
       });
     },
     error: (e) => {
-      alert(e);
+      // alert(e);
     },
   });
 });
@@ -278,7 +369,7 @@ function renderComment(comments) {
 function renderDoctorselect(doctors) {
   doctors.forEach(function (doctor) {
     doctorSelect += `
-      <option value="${doctor.doctor_id}">${doctor.doctorName}</option>
+      <option value="${doctor.doctorId}">${doctor.doctorName}</option>
     `;
   });
 }
@@ -494,16 +585,16 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                             <label class="required">預約時段</label>
                              <select name="time" class="form-select">
-                                <option value="0">上午</option>
-                                <option value="1">下午</option>
-                                <option value="2">晚上</option>
+                                <option value="0">上午(可預約名額 ${morningQuota})</option>
+                                <option value="1">下午(可預約名額 ${afternoonQuota})</option>
+                                <option value="2">晚上(可預約名額 ${eveningQuota})</option>
                               </select>
                             </div>
                           </div>
                           <div class="col-sm-6">
                             <div class="form-group">
                               <label class="required">科別</label>
-                              <select name="state" class="form-select">
+                              <select name="majorId" class="form-select">
                                 <option value="none">不指定</option>
                                ${majorList}
                               </select>
@@ -512,7 +603,7 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-6">
                             <div class="form-group">
                               <label class="required">醫生</label>
-                              <select name="state" class="form-select">
+                              <select name="doctorId" class="form-select">
                                 <option value="none">不指定</option>
                                 ${doctorSelect}
                               </select>
@@ -521,11 +612,11 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-12">
                             <div class="form-group">
                               <label class="required"> 預約類型</label>
-                              <select name="state" class="form-select">
-                                <option value="Live Video Call">
+                              <select name="visitType" class="form-select">
+                                <option value=0>
                                   醫師診間
                                 </option>
-                                <option value="Live Video Call">
+                                <option value=1>
                                   線上看診
                                 </option>
                               </select>
@@ -534,7 +625,7 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-12">
                             <div class="form-group">
                               <label class="required">診所地點</label>
-                              <select name="state" class="form-select">
+                              <select name="clinicLocation" class="form-select">
                                 <option value=${clinicName}>${clinicName}</option>
                               </select>
                             </div>
@@ -542,10 +633,10 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-12">
                             <div class="form-group">
                               <label class="required">病況類別</label>
-                              <select name="state" class="form-select">
-                                <option value="New">近期發病</option>
-                                <option value="Old">長期病症</option>
-                                <option value="Report">報告查詢</option>
+                              <select name="caseType" class="form-select">
+                                <option value=0>近期發病</option>
+                                <option value=1>長期病症</option>
+                                <option value=2>報告查詢</option>
                               </select>
                             </div>
                           </div>
@@ -553,6 +644,7 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">描述病徵</label>
                               <textarea
+                                name="notes" 
                                 class="form-control"
                                 placeholder="請填寫你的病徵"
                                 rows="2"
@@ -618,16 +710,16 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">預約時段</label>
                               <select name="time" class="form-select">
-                                <option value="0">上午</option>
-                                <option value="1">下午</option>
-                                <option value="2">晚上</option>
+                                <option value="0">上午(可預約名額 ${morningQuota})</option>
+                                <option value="1">下午(可預約名額 ${afternoonQuota})</option>
+                                <option value="2">晚上(可預約名額 ${eveningQuota})</option>
                               </select>
                             </div>
                           </div>
                           <div class="col-sm-6">
                             <div class="form-group">
                               <label class="required">科別</label>
-                              <select name="state" class="form-select">
+                              <select name="majorId" class="form-select">
                                  <option value="none">不指定</option>
                                ${majorList}
                               </select>
@@ -636,7 +728,7 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-6">
                             <div class="form-group">
                               <label class="required">醫生</label>
-                              <select name="state" class="form-select">
+                              <select name="doctorId" class="form-select">
                                 <option value="none">不指定</option>
                                 ${doctorSelect}
                               </select>
@@ -645,11 +737,11 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-12">
                             <div class="form-group">
                               <label class="required"> 預約類型</label>
-                              <select name="state" class="form-select">
-                                <option value="Live Video Call">
+                              <select name="visitType" class="form-select">
+                                <option value=0>
                                   醫師診間
                                 </option>
-                                <option value="Live Video Call">
+                                <option value=1>
                                   線上看診
                                 </option>
                               </select>
@@ -666,10 +758,10 @@ function renderhospitalDetails(clinic) {
                           <div class="col-sm-12">
                             <div class="form-group">
                               <label class="required">病況類別</label>
-                              <select name="Department" class="form-select">
-                                <option value="New">近期發病</option>
-                                <option value="Old">長期病症</option>
-                                <option value="Report">報告查詢</option>
+                              <select name="caseType" class="form-select">
+                                <option value=0>近期發病</option>
+                                <option value=1>長期病症</option>
+                                <option value=2>報告查詢</option>
                               </select>
                             </div>
                           </div>
@@ -677,6 +769,7 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">描述病徵</label>
                               <textarea
+                                name="notes" 
                                 class="form-control"
                                 placeholder="請填寫你的病徵"
                                 rows="2"
@@ -791,3 +884,58 @@ function renderhospitalDetails(clinic) {
       });
     });
 }
+$(document).on("submit", ".appointment-form form", function (e) {
+  e.preventDefault();
+
+  const $form = $(this);
+
+  // 表單驗證
+  const agree = $form.find('input[type="checkbox"]').prop("checked");
+  if (!agree) {
+    alert("請先勾選同意條款");
+    return;
+  }
+
+  // 判斷是否初診 tab
+  const isFirstVisit = $("#tab-one-pane").hasClass("active") ? 1 : 0;
+  // 預約類型
+  const visitType =
+    parseInt($form.find('select[name="visitType"]').val()) || null;
+  const caseType =
+    parseInt($form.find('select[name="caseType"]').val()) || null;
+
+  // 正確擷取 majorId
+  let majorIdVal = $form.find('select[name="majorId"]').val();
+  majorId = majorIdVal && majorIdVal !== "none" ? parseInt(majorIdVal) : null;
+
+  // doctorId: 若為 "none" 則不送出
+  doctorId = parseInt($form.find('select[name="doctorId"]').val()) || null;
+
+  const formData = {
+    appointmentDate: $form.find('input[type="date"]').val(),
+    timePeriod: parseInt($form.find('select[name="time"]').val()),
+    majorId: majorId,
+    doctorId: doctorId,
+    clinicId: parseInt(clinicId),
+    firstVisit: isFirstVisit,
+    notes: $form.find('textarea[name="notes"]').val(),
+    appointmentType: visitType,
+    selfCondition: caseType,
+    patientId: patientIdJson.patientId,
+  };
+  alert(JSON.stringify(formData, null, 2));
+  // 傳送預約資料
+  $.ajax({
+    url: "/ires-system/appointment/reserve",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify([formData]),
+    success: function (res) {
+      alert("預約成功");
+      location.reload();
+    },
+    error: function (err) {
+      alert("預約失敗：" + err.responseText);
+    },
+  });
+});

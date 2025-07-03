@@ -151,8 +151,7 @@
           <div class="booking-wrapper">
             <div class="booking-form-container">
               <form
-                id="clinicFilterForm"
-                class="booking-form"
+                class="booking-form clinicFilterForm"
                 action="javascript:void(0)"
               >
                 <div class="booking-form-row">
@@ -161,8 +160,7 @@
                     <br />
                     <input
                       name="date"
-                      id="datepicks1"
-                      class="datepicker form-control"
+                      class="datepicker form-control datepicks_val"
                       placeholder="mm / dd / yyyy"
                       type="date"
                     />
@@ -174,13 +172,17 @@
                     <div class="parent" style="display: flex; gap: 10px">
                       <div>
                         <input
-                          id="timepicker_start"
+                          class="timepicker_start"
                           type="time"
                           value="08:00"
                         />
                       </div>
                       <div>
-                        <input id="timepicker_end" type="time" value="12:00" />
+                        <input
+                          class="timepicker_end"
+                          type="time"
+                          value="12:00"
+                        />
                       </div>
                     </div>
                   </div>
@@ -189,11 +191,11 @@
                     <label>診所類別</label> <br />
                     <div class="parent">
                       <div class="custom-select">
-                        <select name="category" id="major-select">
+                        <select name="category" class="major-select">
                           <option value="all" selected="">全部</option>
                         </select>
                       </div>
-                      <div class="custom-select-options" id="major-options">
+                      <div class="custom-select-options">
                         <ul>
                           <li data-value="all">全部</li>
                         </ul>
@@ -204,22 +206,21 @@
                 <span>|</span>
                 <div class="booking-form-row">
                   <div class="booking-form-item">
-                    <label for="distance-range"
-                      ><span id="distance-value">1</span> 公里</label
-                    >
-                    <br />
-                    <div class="parent">
-                      <input
-                        type="range"
-                        id="distance-range"
-                        name="distance"
-                        class="modern-slider"
-                        min="1"
-                        max="9"
-                        step="1"
-                        value="1"
-                      />
-                    </div>
+                    <label>
+                      <span class="distance-value">1</span> 公里
+                      <br />
+                      <div class="parent">
+                        <input
+                          type="range"
+                          class="modern-slider distance-range"
+                          name="distance"
+                          min="1"
+                          max="9"
+                          step="1"
+                          value="1"
+                        />
+                      </div>
+                    </label>
                   </div>
                 </div>
                 <div class="booking-form-row full-width">

@@ -17,8 +17,6 @@ public class ClinicDaoImpl implements ClinicDAO {
 	@PersistenceContext
 	private Session session;
 
-	@PersistenceContext
-	private Session session;
 	
 	@Override
 	public int insert(Clinic clinic) {

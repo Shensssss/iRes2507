@@ -18,6 +18,7 @@ $(document).ready(function () {
         distance,
       },
       success: function (clinics) {
+        console.log(clinics);
         renderClinicList(clinics);
       },
       error: function () {
@@ -25,11 +26,103 @@ $(document).ready(function () {
       },
     });
   }
+  $.ajax({
+    url: "/ires-system/major/list",
+    method: "GET",
+    success: function (data) {
+      if (Array.isArray(data)) {
+        if ($("#hospital_major")) {
+          const select = $("#hospital_major");
+          select.empty();
+          select.append('<option value="all" selected>全部</option>');
+          data.forEach(function (item) {
+            const option = $("<option>", {
+              value: item.majorId,
+              text: item.majorName,
+            });
+            select.append(option);
+          });
+        }
+        if ($("#hospital_major_list")) {
+          const select = $("#hospital_major_list");
+          const ul = $(".custom-select-options ul");
+          select.empty();
+          ul.empty();
+          select.append('<option value="all" selected>全部</option>');
+          data.forEach(function (item) {
+            const option = $("<option>", {
+              value: item.majorId,
+              text: item.majorName,
+            });
+            select.append(option);
+
+            // const li = $("<li>", {
+            //   "data-value": item.majorId,
+            //   text: item.majorName,
+            // });
+            // ul.append(li);
+          });
+        }
+
+        // ul.append('<li data-value="all" class="is-highlighted">全部</li>');
+      }
+    },
+  });
 });
 
+function renderAddress(clinics) {
+  const container = $("#address_town");
+  container.empty();
+
+  if (clinics.length === 0) {
+    container.append("<p>無地區篩選條件</p>");
+    return;
+  }
+
+  // 建立巢狀結構：{ city: { town: count } }
+  const cityMap = {};
+  clinics.forEach(function (clinic) {
+    const city = clinic.addressCity || "未知縣市";
+    const town = clinic.addressTown || "未知地區";
+    if (!cityMap[city]) cityMap[city] = {};
+    if (cityMap[city][town]) {
+      cityMap[city][town]++;
+    } else {
+      cityMap[city][town] = 1;
+    }
+  });
+
+  // 輸出縣市與地區 checkbox 結構
+  Object.keys(cityMap).forEach(function (city, cityIndex) {
+    const cityId = `city_${cityIndex}`;
+    const cityHtml = `<h5 class="fw-bold mt-3 mb-2">${city}</h5>`;
+    container.append(cityHtml);
+
+    const towns = cityMap[city];
+    Object.keys(towns).forEach(function (town, townIndex) {
+      const checkboxId = `locality_${cityIndex}_${townIndex}`;
+      const html = `
+        <div class="form-check mb-1 ms-2">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="${town}"
+            id="${checkboxId}"
+          />
+          <label class="form-check-label" for="${checkboxId}">
+            ${town}<span class="count ms-1">(${towns[town]})</span>
+          </label>
+        </div>
+      `;
+      container.append(html);
+    });
+  });
+}
 function renderClinicList(clinics) {
   const container = $("#clinic-list");
   container.empty();
+
+  renderAddress(clinics); // ← 新增這行
 
   if (clinics.length === 0) {
     container.append("<p>沒有符合條件的診所。</p>");
@@ -41,7 +134,7 @@ function renderClinicList(clinics) {
       clinic.rating == 0 || clinic.rating == null || clinic.rating == undefined
         ? `<span>尚未評論</span>`
         : `   <span class="reviews-stats">${clinic.rating.toFixed(1)}</span>
-                <span class="reviews-count">(115)</span>`;
+                <span class="reviews-count">(${clinic.comments})</span>`;
     // let selectedRating = 0;
     // $("#star-rating")
     //   .off("click")

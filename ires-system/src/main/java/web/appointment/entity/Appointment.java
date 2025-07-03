@@ -1,79 +1,106 @@
 package web.appointment.entity;
 
-import javax.persistence.*;
-import lombok.*;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import web.clinic.entity.Clinic;
 import web.doctor.entity.Doctor;
 import web.patient.entity.Patient;
-import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 @Table(name = "appointment")
 @Data
-@NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Appointment {
 
-	@Id
-	@Column(name = "appointment_id", length = 36)
-	private String appointmentId;
+    @Id
+    @Column(name = "appointment_id", length = 36)
+    private String appointmentId;
 
-	@Column(name = "clinic_id")
-	private Integer clinicId;
+    @Column(name = "clinic_id")
+    private Integer clinicId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "clinic_id", insertable = false, updatable = false)
-	private Clinic clinic;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", insertable = false, updatable = false)
+    private Clinic clinic;
 
-	@Column(name = "doctor_id")
-	private Integer doctorId;
+    @Column(name = "doctor_id")
+    private Integer doctorId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "doctor_id", insertable = false, updatable = false)
-	private Doctor doctor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    private Doctor doctor;
 
-	@Column(name = "patient_id")
-	private Integer patientId;
+    @Column(name = "patient_id")
+    private Integer patientId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "patient_id", insertable = false, updatable = false)
-	private Patient patient;
+    @Column(name = "major_id")
+    private Integer majorId;
 
-	@Column(name = "reserve_no")
-	private Integer reserveNo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", insertable = false, updatable = false)
+    private Patient patient;
 
-	@Column(name = "appointment_date")
-	private Date appointmentDate;
+    @Column(name = "reserve_no")
+    private Integer reserveNo;
 
-	@Column(name = "time_period")
-	private Integer timePeriod;
+    @Column(name = "appointment_date")
+    private Date appointmentDate;
 
-	@Column(name = "first_visit")
-	private Integer firstVisit;
+    @Column(name = "time_period")
+    private Integer timePeriod;
 
-	@Column(name = "status")
-	private Integer status;
+    @Column(name = "first_visit")
+    private Integer firstVisit;
 
-	@CreationTimestamp
-	@Column(name = "create_time", updatable = false)
-	private Timestamp createTime;
+    @Column(name = "status")
+    private Integer status;
 
-	@UpdateTimestamp
-	@Column(name = "update_time", insertable = false)
-	private Timestamp updateTime;
+    @CreationTimestamp
+    @Column(name = "create_time", updatable = false)
+    private Timestamp createTime;
 
-	@Column(name = "notes", columnDefinition = "TEXT")
-	private String notes;
+    @UpdateTimestamp
+    @Column(name = "update_time", insertable = false)
+    private Timestamp updateTime;
 
-	@Transient
-	public String getDoctorName() {
-		return (doctor != null) ? doctor.getDoctorName() : null;
-	}
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
 
-	@Transient
-	public String getAgencyId() { return (clinic != null) ? clinic.getAgencyId() : null; }
+    @Column(name = "appointment_type")
+    private Integer appointmentType;
+
+    @Column(name = "self_condition")
+    private Integer selfCondition;
+
+    @Transient
+    public String getDoctorName() {
+        return (doctor != null) ? doctor.getDoctorName() : null;
+    }
+
+    @Transient
+    public String getAgencyId() {
+        return (clinic != null) ? clinic.getAgencyId() : null;
+    }
 }

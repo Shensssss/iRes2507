@@ -1,11 +1,5 @@
 package web.appointment.service.impl;
 
-import core.util.CommonUtil;
-import web.appointment.dao.AppointmentDAO;
-import web.appointment.entity.Appointment;
-import web.appointment.entity.Notification;
-import web.appointment.service.AppointmentService;
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -14,9 +8,14 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import core.util.CommonUtil;
+import web.appointment.dao.AppointmentDAO;
+import web.appointment.entity.Appointment;
+import web.appointment.entity.Notification;
+import web.appointment.service.AppointmentService;
 import web.appointment.service.NotificationService;
 import web.clinic.dao.ClinicDAO;
-import web.clinic.dao.impl.ClinicDaoImpl;
 import web.clinic.entity.Clinic;
 import web.doctor.dao.DoctorDao;
 import web.doctor.entity.Doctor;
@@ -27,7 +26,7 @@ import web.patient.service.PatientService;
 @Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
-	@Autowired
+    @Autowired
     private AppointmentDAO appointmentDAO;
     @Autowired
     private CommonUtil commonUtil;
@@ -85,7 +84,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     public Appointment updateAppointment(Appointment a) {
         Appointment origin = appointmentDAO.selectById(a.getAppointmentId());
-        if (origin == null) return null;
+        if (origin == null) {
+            return null;
+        }
 
         boolean dateChanged = !origin.getAppointmentDate().equals(a.getAppointmentDate());
         boolean periodChanged = !origin.getTimePeriod().equals(a.getTimePeriod());
@@ -111,7 +112,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     public boolean deleteAppointment(String id) {
         Appointment a = appointmentDAO.selectById(id);
-        if (a == null) return false;
+        if (a == null) {
+            return false;
+        }
         appointmentDAO.deleteById(a.getAppointmentId());
         return true;
     }
@@ -119,18 +122,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     public void reserveAppointments(Integer clinicId, List<Appointment> appointments) {
         for (Appointment a : appointments) {
 
-            if (a.getDoctorId() == null)
+            if (a.getDoctorId() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：doctorId");
+            }
 
-            if (a.getPatientId() == null)
+            if (a.getPatientId() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：patientId");
+            }
 
-            if (a.getAppointmentDate() == null)
+            if (a.getAppointmentDate() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：appointmentDate");
+            }
 
             //重複預約判斷
-            if (appointmentDAO.existsDuplicateAppointment(a.getPatientId(), a.getAppointmentDate()))
+            if (appointmentDAO.existsDuplicateAppointment(a.getPatientId(), a.getAppointmentDate())) {
                 throw new IllegalArgumentException("重複預約");
+            }
 
             //超出預約人數判斷
             Long existingCount = appointmentDAO.countAppointmentsByGroup(
@@ -154,13 +161,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                     a.getTimePeriod()
             ));
 
-            a.setFirstVisit(commonUtil.getFirstVisit(
-                    a.getPatientId(),
-                    clinicId
-            ));
-
             a.setStatus(0);
-            a.setNotes(null);
 
             appointmentDAO.insert(a);
 
@@ -173,9 +174,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             notification.setNotificationId(UUID.randomUUID().toString());
             notification.setAppointment(appointment);
             notification.setPatient(patient);
-            notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate() +
-                    "、時段：" + getTimePeriod(a.getTimePeriod()) +
-                    " 醫師：" + doctor.getDoctorName());
+            notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate()
+                    + "、時段：" + getTimePeriod(a.getTimePeriod())
+                    + " 醫師：" + doctor.getDoctorName());
             notification.setSentDatetime(new Timestamp(System.currentTimeMillis()));
             notification.setReadStatus(false);
             notification.setNotificationType("appointment");
@@ -185,7 +186,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private String getTimePeriod(Integer code) {
-         switch (code) {
+        switch (code) {
             case 1:
                 return "早上";
             case 2:
