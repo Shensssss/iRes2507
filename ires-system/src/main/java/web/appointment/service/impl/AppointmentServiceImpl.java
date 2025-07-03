@@ -176,15 +176,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             notification.setNotificationId(UUID.randomUUID().toString());
             notification.setAppointment(appointment);
             notification.setPatient(patient);
-<<<<<<< HEAD
             notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate()
                     + "、時段：" + getTimePeriod(a.getTimePeriod())
                     + " 醫師：" + doctor.getDoctorName());
-=======
             notification.setMessage("您已成功預約，看診日期：" + sdf.format(a.getAppointmentDate()) +
                     "、時段：" + getTimePeriod(a.getTimePeriod()) +
                     "、醫師：" + doctor.getDoctorName());
->>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
             notification.setSentDatetime(new Timestamp(System.currentTimeMillis()));
             notification.setReadStatus(false);
             notification.setNotificationType("預約成功通知");
@@ -205,12 +202,8 @@ public class AppointmentServiceImpl implements AppointmentService {
                 return "未知";
         }
     }
-<<<<<<< HEAD
-}
-=======
     @Override
     public List<Appointment> findByPatientId(Integer patientId) {
         return appointmentDAO.findByPatientId(patientId);
     }
 }
->>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6

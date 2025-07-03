@@ -15,10 +15,6 @@ public class ClinicDaoImpl implements ClinicDAO {
 	@PersistenceContext
 	private Session session;
 
-<<<<<<< HEAD
-	
-=======
->>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
 	@Override
 	public int insert(Clinic clinic) {
 		return 1;

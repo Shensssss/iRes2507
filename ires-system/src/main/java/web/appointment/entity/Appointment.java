@@ -16,7 +16,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,13 +58,9 @@ public class Appointment {
     @Column(name = "major_id")
     private Integer majorId;
 
-<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", insertable = false, updatable = false)
     private Patient patient;
-=======
-	@Column(name = "major_id")
-	private Integer majorId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "major_id", insertable = false, updatable = false)
@@ -73,10 +68,6 @@ public class Appointment {
 
 	@Column(name = "reserve_no")
 	private Integer reserveNo;
->>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
-
-    @Column(name = "reserve_no")
-    private Integer reserveNo;
 
     @Column(name = "appointment_date")
     private Date appointmentDate;
@@ -98,10 +89,9 @@ public class Appointment {
     @Column(name = "update_time", insertable = false)
     private Timestamp updateTime;
 
-<<<<<<< HEAD
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
-=======
+    
 	@Column(name = "appointment_type")
 	private Integer appointmentType;  // 0: 醫師診間, 1: 線上看診
 
@@ -112,18 +102,6 @@ public class Appointment {
 	public String getDoctorName() {
 		return (doctor != null) ? doctor.getDoctorName() : null;
 	}
->>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
-
-    @Column(name = "appointment_type")
-    private Integer appointmentType;
-
-    @Column(name = "self_condition")
-    private Integer selfCondition;
-
-    @Transient
-    public String getDoctorName() {
-        return (doctor != null) ? doctor.getDoctorName() : null;
-    }
 
     @Transient
     public String getAgencyId() {
