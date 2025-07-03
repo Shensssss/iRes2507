@@ -54,8 +54,8 @@ public class PatientDaoImpl implements PatientDao {
 			.append("relation = :relation,")
 			.append("blood_type = :blood_type,")
 			.append("notes = :notes,")
-			.append("profile_picture = :profile_picture,")
-			.append("update_time = NOW() ")
+			.append("profile_picture = :profile_picture, ")
+			.append("update_time = :updateTime ")
 			.append("WHERE email = :email");
 
 		Query<?> query = session.createQuery(hql.toString());
@@ -73,6 +73,8 @@ public class PatientDaoImpl implements PatientDao {
 					.setParameter("blood_type", patient.getBloodType())
 					.setParameter("notes", patient.getNotes())
 					.setParameter("profile_picture", patient.getProfilePicture())
+					.setParameter("updateTime", patient.getUpdateTime())
+					.setParameter("email", patient.getEmail())
 					.executeUpdate();
 	}
 
