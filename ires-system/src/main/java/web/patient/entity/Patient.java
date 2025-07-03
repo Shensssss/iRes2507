@@ -40,7 +40,7 @@ public class Patient extends Core{
 	private String name;
 
 	@Column(name = "gender")
-	private int gender;
+	private Integer gender;
 
 	@Column(name = "birthday")
 	private String birthday;
@@ -61,10 +61,10 @@ public class Patient extends Core{
 	private String emergencyName;
 
 	@Column(name = "relation")
-	private int relation;
+	private Integer relation;
 
 	@Column(name = "blood_type")
-	private int bloodType;
+	private Integer bloodType;
 
 	@Column(name = "notes")
 	private String notes;
@@ -73,7 +73,7 @@ public class Patient extends Core{
 	private byte[] profilePicture;
 
 	@Column(name = "status")
-	private int status;
+	private Integer status;
 
 	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;

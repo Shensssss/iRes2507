@@ -11,8 +11,29 @@
     .status-not-arrived { color: red; font-weight: bold; }
     .status-cancelled { color: gray; font-weight: bold; }
     .patient-table-scroll {
-      max-height: 400px;
       overflow-y: auto;
+      flex-grow: 1;
+    }
+    .btn-call {
+      background-color: #47607a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 20px;
+      margin: 4px;
+      min-width: 70px;
+    }
+    .btn-call:hover {
+      background-color: #2e3f54;
+    }
+    .selected-row {
+      background-color: #d0ebff !important;
+      transition: background-color 0.3s;
+    }
+    .full-height-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
   </style>
 </head>
@@ -65,88 +86,40 @@
     </div>
   </div>
 
-  <!-- 返回按鈕 -->
-  <div class="text-center mt-4">
+  <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn-call" onclick="prevNumber()">上一號</button>
+      <button class="btn-call" onclick="nextNumber()">下一號</button>
+      <button class="btn-call" data-bs-toggle="modal" data-bs-target="#insertModal">插號</button>
+      <button type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
+    </div>
+
     <button class="btn btn-secondary" onclick="history.back()">
       <i class="bi bi-arrow-left-circle"></i> 返回上一頁
     </button>
   </div>
 
-  <script>
-    function getStatusClass(status) {
-      switch (status) {
-        case '已報到': return 'status-arrived';
-        case '未報到': return 'status-not-arrived';
-        case '已取消': return 'status-cancelled';
-        default: return '';
-      }
-    }
-
-    function renderRoomData() {
-      const data = localStorage.getItem("callRoom");
-      if (!data) {
-        document.getElementById("roomCardContainer").innerHTML = "<p class='text-danger'>⚠️ 找不到診間資料</p>";
-        return;
-      }
-
-      const room = JSON.parse(data);
-
-      // 左側卡片
-      const card = document.createElement("div");
-      card.className = "card shadow-sm h-100";
-      card.innerHTML = `
-        <div class="card-header bg-info text-white">
-          醫師：${room.doctor}（共 ${room.patients.length} 位病人）
+  <!-- 插號 modal -->
+  <div class="modal fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="insertModalLabel">插號</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
         </div>
-        <div class="card-body p-3">
-          <div class="patient-table-scroll">
-            <table class="table table-bordered table-sm">
-              <thead class="table-light">
-                <tr><th>號碼</th><th>姓名</th><th>狀態</th></tr>
-              </thead>
-              <tbody>
-                ${room.patients.map(p => `
-                  <tr>
-                    <td>${p.number}</td>
-                    <td>${p.name}</td>
-                    <td><span class="${getStatusClass(p.status)}">${p.status}</span></td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
+        <div class="modal-body">
+          <label for="insertNumber" class="form-label">請輸入號碼：</label>
+          <input type="number" class="form-control" id="insertNumber" placeholder="例如 5">
         </div>
-      `;
-      document.getElementById("roomCardContainer").appendChild(card);
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" onclick="insertNumber()">確認</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      // 處理目前號碼 + 將來號碼
-      const notArrived = room.patients.filter(p => p.status === '未報到');
-
-      const current = notArrived[0];
-      if (current) {
-        document.getElementById("currentNumber").innerText = `號碼：${current.number}`;
-        document.getElementById("currentName").innerText = `姓名：${current.name}`;
-      }
-
-      const upcoming = notArrived.slice(1, 6);
-      const upcomingList = document.getElementById("upcomingList");
-      upcomingList.innerHTML = upcoming.length
-        ? upcoming.map(p => `<li class="list-group-item">${p.number} - ${p.name}</li>`).join("")
-        : `<li class="list-group-item text-muted">無將來號碼</li>`;
-    }
-
-    window.onload = function () {
-      renderRoomData();
-
-      // ⬇ 補強：讓左右卡片等高（必要時延遲確認）
-      setTimeout(() => {
-        const left = document.getElementById("roomCardContainer");
-        const right = document.querySelector(".col-md-5");
-        if (left && right) {
-          left.style.minHeight = right.offsetHeight + "px";
-        }
-      }, 100);
-    };
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="static/js/callRoom.js"></script>
 </body>
 </html>
