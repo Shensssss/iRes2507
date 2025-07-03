@@ -26,14 +26,15 @@ public class DoctorController {
     @PostMapping("add")
     public ResponseEntity<Core> addDoctor(@RequestBody Doctor doctor, HttpSession session) {
         Core core = new Core();
-        Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
+
+        Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if (loggedInClinic == null) {
         	//模擬登入
-        	loggedInClinic = new Clinic();
-            loggedInClinic.setClinicId(1);
-//            core.setStatusCode(401);
-//            core.setMessage("診所尚未登入");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
+//        	loggedInClinic = new Clinic();
+//          loggedInClinic.setClinicId(1);
+            core.setStatusCode(401);
+            core.setMessage("診所尚未登入");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
         doctor.setClinic(loggedInClinic);
@@ -54,14 +55,14 @@ public class DoctorController {
     @PostMapping("edit")
     public ResponseEntity<Core> editDoctor(@RequestBody Doctor doctor, HttpSession session) {
         Core core = new Core();
-        Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
+        Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if (loggedInClinic == null) {
         	//模擬登入
-        	loggedInClinic = new Clinic();
-            loggedInClinic.setClinicId(1);
-//            core.setStatusCode(401);
-//            core.setMessage("診所尚未登入");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
+//        	loggedInClinic = new Clinic();
+//          loggedInClinic.setClinicId(1);
+            core.setStatusCode(401);
+            core.setMessage("診所尚未登入");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
         
         doctor.setClinic(loggedInClinic);
@@ -83,14 +84,14 @@ public class DoctorController {
     public ResponseEntity<Core> deleteDoctor(@RequestBody Map<String, Integer> payload, HttpSession session) {
         Core core = new Core();
 
-        Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
+        Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if (loggedInClinic == null) {
         	//模擬登入
-        	loggedInClinic = new Clinic();
-            loggedInClinic.setClinicId(1);
-//            core.setStatusCode(401);
-//            core.setMessage("診所尚未登入");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
+//        	loggedInClinic = new Clinic();
+//          loggedInClinic.setClinicId(1);
+            core.setStatusCode(401);
+            core.setMessage("診所尚未登入");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
         Integer doctorId = payload.get("doctorId");
@@ -127,14 +128,14 @@ public class DoctorController {
         }
         
 //        診所使用時前端不傳入clinicId,需要從後端取得
-        Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
+        Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if(loggedInClinic == null) {
    	     //模擬登入
-        	loggedInClinic = new Clinic();
-            loggedInClinic.setClinicId(1);
-//        	core.setStatusCode(401);
-//	        core.setMessage("診所尚未登入");
-//	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
+//        	loggedInClinic = new Clinic();
+//          loggedInClinic.setClinicId(1);
+        	core.setStatusCode(401);
+	        core.setMessage("診所尚未登入");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
 	    }
         
 	    clinicId = loggedInClinic.getClinicId();
@@ -151,14 +152,14 @@ public class DoctorController {
     @GetMapping("showSearchedByName")
     public ResponseEntity<Core> showSearchedByName(@RequestParam("name") String name, HttpSession session) {
         Core core = new Core();
-        Clinic loggedInClinic = (Clinic) session.getAttribute("loggedInClinic");
+        Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if (loggedInClinic == null) {
         	//模擬登入
-        	loggedInClinic = new Clinic();
-            loggedInClinic.setClinicId(1);
-//            core.setStatusCode(401);
-//            core.setMessage("診所尚未登入");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
+//        	loggedInClinic = new Clinic();
+//          loggedInClinic.setClinicId(1);
+            core.setStatusCode(401);
+            core.setMessage("診所尚未登入");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
         List<Doctor> doctors = doctorService.showSearchedByName(loggedInClinic.getClinicId(), name);
@@ -174,7 +175,7 @@ public class DoctorController {
         }
     }
 
-    @GetMapping("/doctorList")
+    @GetMapping("doctorList")
     @ResponseBody
     public Map<String, Object> getDoctorList(
             @RequestParam(defaultValue = "1") int page,

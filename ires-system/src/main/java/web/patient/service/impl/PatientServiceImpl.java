@@ -1,6 +1,9 @@
 package web.patient.service.impl;
 
 
+
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +99,19 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
+	public List<Patient> clinicSearch(String name, String birthday, String phone) {
+	    
+	    if (birthday != null && (phone == null || phone.isEmpty())) {
+	        return dao.searchedByNameAndBirthday(name, birthday);
+	    } else if ((birthday == null || birthday.isEmpty()) && phone != null) {
+	        return dao.searchedByNameAndPhone(name, phone);
+	    } else if (birthday != null && phone != null) {
+	        return dao.searchedByNameAndBirthdayAndPhone(name, birthday, phone); // 生日和電話條件
+	    } else {
+	        throw new IllegalArgumentException("查詢條件不足");
+	    }
+	}
+	
 	public Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
 		List<Patient> patients = dao.findReservedPatientsByKeyword(keyword, offset, pageSize, clinicId);
@@ -120,6 +136,12 @@ public class PatientServiceImpl implements PatientService {
 	public Patient findByPhone(String phone) {
 		return dao.findByPhone(phone);
 	}
+
+	@Override
+	public int clinicEditPatientNotes(int patientId, String newNotes) {
+		return dao.updateNotes(patientId, newNotes);
+	}
+
 
 
 }
