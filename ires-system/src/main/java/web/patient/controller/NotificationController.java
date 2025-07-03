@@ -62,9 +62,11 @@ public class NotificationController {
 		if (notificationService.remove(notificationId)) {
 			core.setStatusCode(200);
 			core.setMessage("刪除成功");
+			core.setSuccessful(true);
 		} else {
 			core.setStatusCode(404);
 			core.setMessage("找不到通知");
+			core.setSuccessful(false);
 		}
 
 		return core;
