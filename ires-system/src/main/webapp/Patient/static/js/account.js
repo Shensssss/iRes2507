@@ -17,7 +17,7 @@ function fetchPatients() {
             $('#notes').val(patient.notes || '');
 
             if (patient.profilePicture) {
-                $('#preview').attr('src', patient.profilePicture).show();
+                $('#preview').attr('src', 'data:image/jpeg;base64,' + patient.profilePicture).show();
             }
         })
         .fail(function (err) {
@@ -30,7 +30,10 @@ fetchPatients();
 $("#infoForm").on("submit", function (e) {
     e.preventDefault();
     const get = id => $(`#${id}`).val();
+<<<<<<< HEAD
+=======
     
+>>>>>>> 4e0a7265d37df809011d4a6ef0d2c4a84d8125eb
     // 取得 preview 圖片的 src
     const src = $('#preview').attr('src');
     let base64Data = null;
@@ -39,7 +42,10 @@ $("#infoForm").on("submit", function (e) {
         // 將 base64 data 從 data URL 中分離出來
         base64Data = src.split(',')[1];
     }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 4e0a7265d37df809011d4a6ef0d2c4a84d8125eb
     const patientData = {
         name: get("name"),
         gender: get("gender"),

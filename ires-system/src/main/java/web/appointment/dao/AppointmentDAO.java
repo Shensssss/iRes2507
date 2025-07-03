@@ -1,12 +1,10 @@
 package web.appointment.dao;
 
-import web.appointment.entity.Appointment;
-
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 import core.dao.CoreDao;
+import web.appointment.entity.Appointment;
 
 public interface AppointmentDAO extends CoreDao<Appointment, String> {
     List<Appointment> findByDate(Date date);
@@ -20,4 +18,6 @@ public interface AppointmentDAO extends CoreDao<Appointment, String> {
     List<Appointment> findByPatientId(int patientId);
 
     Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod);
+
+    Appointment findByClinicIdPatientIdDate(Integer clinicId, Integer patientId, Date appointmentDate);
 }

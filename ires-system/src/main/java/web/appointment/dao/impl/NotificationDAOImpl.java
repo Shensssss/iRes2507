@@ -13,41 +13,52 @@ import web.appointment.entity.Notification;
 @Repository
 public class NotificationDAOImpl implements NotificationDAO {
 
-    @PersistenceContext
-    private Session session;
+	@PersistenceContext
+	private Session session;
 
-    @Override
-    public void save(Notification notification) {
-        session.persist(notification);
-    }
+	@Override
+	public void save(Notification notification) {
+		session.persist(notification);
+	}
 
-    @Override
-    public Notification findById(String id) {
-        return session.find(Notification.class, id);
-    }
+	@Override
+	public Notification findById(String id) {
+		return session.find(Notification.class, id);
+	}
 
-    @Override
-    public List<Notification> findByPatientId(int patientId) {
-        String hql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid ORDER BY n.sentDatetime DESC";
-        return session.createQuery(hql, Notification.class)
-                .setParameter("pid", patientId)
-                .getResultList();
-    }
+	@Override
+	public List<Notification> findByPatientId(int patientId) {
+		String hql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid ORDER BY n.sentDatetime DESC";
+		return session.createQuery(hql, Notification.class).setParameter("pid", patientId).getResultList();
+	}
 
-    @Override
-    public void update(Notification notification) {
-        session.merge(notification);
-    }
+	@Override
+	public void update(Notification notification) {
+		session.merge(notification);
+	}
 
-    @Override
-    public boolean existsByTypeAndAppointment(String type, String appointmentId) {
-        String hql = "SELECT COUNT(n) FROM Notification n " +
-                      "WHERE n.notificationType = :type AND n.appointment.appointmentId = :appointmentId";
-        Long count = session.createQuery(hql, Long.class)
-                .setParameter("type", type)
-                .setParameter("appointmentId", appointmentId)
-                .getSingleResult();
-        return count > 0;
-    }
+	@Override
+	public boolean existsByTypeAndAppointment(String type, String appointmentId) {
+		String hql = "SELECT COUNT(n) FROM Notification n "
+				+ "WHERE n.notificationType = :type AND n.appointment.appointmentId = :appointmentId";
+		Long count = session.createQuery(hql, Long.class).setParameter("type", type)
+				.setParameter("appointmentId", appointmentId).getSingleResult();
+		return count > 0;
+	}
+
+	@Override
+	public List<Notification> findByPatientIdCheckedIn(Integer patientId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int deleteById(String notificationId) {
+		Notification notification = session.get(Notification.class, notificationId);
+		if (notification != null) {
+			session.remove(notification);
+			return 1;
+		}
+		return 0;
+	}
 }
-

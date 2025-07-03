@@ -1,11 +1,5 @@
 package web.appointment.service.impl;
 
-import core.util.CommonUtil;
-import web.appointment.dao.AppointmentDAO;
-import web.appointment.entity.Appointment;
-import web.appointment.entity.Notification;
-import web.appointment.service.AppointmentService;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,9 +9,14 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import core.util.CommonUtil;
+import web.appointment.dao.AppointmentDAO;
+import web.appointment.entity.Appointment;
+import web.appointment.entity.Notification;
+import web.appointment.service.AppointmentService;
 import web.appointment.service.NotificationService;
 import web.clinic.dao.ClinicDAO;
-import web.clinic.dao.impl.ClinicDaoImpl;
 import web.clinic.entity.Clinic;
 import web.doctor.dao.DoctorDao;
 import web.doctor.entity.Doctor;
@@ -197,5 +196,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             default:
                 return "未知";
         }
+    }
+    @Override
+    public List<Appointment> findByPatientId(Integer patientId) {
+        return appointmentDAO.findByPatientId(patientId);
     }
 }
