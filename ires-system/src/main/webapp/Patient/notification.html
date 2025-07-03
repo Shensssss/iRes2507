@@ -6,19 +6,17 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="static/css/css2.css" rel="stylesheet">
-
+<link rel="stylesheet" href="static/css/notification.css">
 <link href="static/css/bootstrap.min.css" rel="stylesheet">
-<link href="static/css/all.css" rel="stylesheet">
+<link href="static/css/all.min.css" rel="stylesheet">
 <link href="static/css/select2.min.css" rel="stylesheet">
-<link href="static/css/select2-bootstrap-5-theme.min.css"
-	rel="stylesheet">
+<link href="static/css/select2-bootstrap-5-theme.min.css" rel="stylesheet">
 <link href="static/css/ion.rangeSlider.min.css" rel="stylesheet">
 <link rel="stylesheet" href="static/css/common_style.css">
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 <link rel="stylesheet" href="static/css/home_style.css">
-<link rel="stylesheet" href="./static/css/notification.css">
-
+<link rel="stylesheet" href="static/css/notification.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <title>I-RES通知消息</title>
 <link rel="icon" href="./static/img/fav.png" type="image/png" />
 </head>
@@ -37,19 +35,19 @@
 			<div class="row">
 				<div class="main_links">
 					<ul>
-						<li><a href="#" class="main_link"> <i class="fas fa-home"></i>
+						<li><a href="index.html" class="main_link"> <i class="fas fa-home"></i>
 								主頁
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-calendar-check"></i> 預約清單
+						<li><a href="reservation.html" class="main_link"> <i
+								class="fas fa-calendar-check"></i> 預約紀錄
 						</a></li>
-						<li><a href="#" class="main_link"> <i
-								class="fas fa-history"></i> 歷史紀錄
-						</a></li>
-						<li><a href="#" class="main_link"> <i class="fas fa-bell"></i>
+						<li><a href="favorites.html" class="main_link">
+							<i class="fas fa-heart"></i> 我的收藏</a>
+						</li>
+						<li><a href="notification.html" class="main_link"> <i class="fas fa-bell"></i>
 								通知消息
 						</a></li>
-						<li><a href="#" class="main_link"> <i
+						<li><a href="account.html" class="main_link"> <i
 								class="fas fa-user-cog"></i> 帳戶設定
 						</a></li>
 					</ul>
@@ -86,11 +84,14 @@
 						</a></li>
 					</ul>
 					<ul class="navbar-nav">
-						<!-- <li>
-							<a class="nav-link" href="./login.html">
-								Login <i class="fas fa-sign-in-alt"></i>
+						<li class="nav-item">
+							<a class="nav-link" href="javascript:void(0);" id="notificationBell">
+								<div class="notification-wrapper" style="position: relative;">
+									<i class="fas fa-bell"></i>
+									<span class="badge bg-danger" id="notificationCount" hidden>0</span>
+								</div>
 							</a>
-						</li> -->
+						</li>
 						<li class="nav-item menu-item d-none d-lg-block"><a
 							class="nav-link side_menu_btn" href="#"> Menu </a></li>
 					</ul>
@@ -111,32 +112,15 @@
 		</div>
 				<!-- 中間資訊 -->
 				<div class="div2">最新通知</div>
-				<div class="notification-container">
-					<div class="notification">
-						<button class="delete-btn" onclick="deleteNotification(this)">Ｘ</button>
-						<div class="status success">報到成功</div>
-						<div class="clinic-name">診所名稱</div>
-						<div class="details">2025年-04月-07日 14:21 您已報到成功！</div>
+				<div id="notificationContainer"></div>
+				<template id="notificationTemplate">
+					<div class="notifications">
+						<button class="deleteBtn">Ｘ</button>
+						<div class="notificationType"></div>
+						<div class="clinicName"></div>
+						<div class="message"></div>
 					</div>
-					<div class="notification">
-						<button class="delete-btn" onclick="deleteNotification(this)">Ｘ</button>
-						<div class="status alert">即將到號 - 10分鐘前</div>
-						<div class="clinic-name">診所名稱</div>
-						<div class="details">2025年-04月-07日 下午的預約即將到號！您的號碼為 <span class="highlight">15</span>。</div>
-					</div>
-					<div class="notification">
-						<button class="delete-btn" onclick="deleteNotification(this)">Ｘ</button>
-						<div class="status alert">即將到號 - 30分鐘前</div>
-						<div class="clinic-name">診所名稱</div>
-						<div class="details">2025年-04月-07日 下午的預約即將到號！您的號碼為 <span class="highlight">15</span>。</div>
-					</div>
-					<div class="notification">
-						<button class="delete-btn" onclick="deleteNotification(this)">Ｘ</button>
-						<div class="status system">系統通知 - 1天前</div>
-						<img class="logo2" src="static/img/logo.png" />
-						<div class="details">管理員已回覆您的意見回饋，請至帳戶資訊查看詳細內容。</div>
-					</div>
-				</div>
+				</template>
 			</div>
 		</div>
 	</div>

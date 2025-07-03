@@ -11,4 +11,6 @@ import core.dao.CoreDao;
 
 public interface ClinicDAO extends CoreDao<Clinic, Integer> {
     int updatePsd(Clinic clinic);
+    
+    Integer findClinicIdByAgencyId(String agencyId);
 }

@@ -9,4 +9,5 @@ public interface NotificationService {
     Notification findById(String id);
     List<Notification> findByPatientId(int patientId);
     void markAsRead(String notificationId);
+	boolean remove(String notificationId);
 }

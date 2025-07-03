@@ -81,7 +81,7 @@
                         </ul>
                     </li>
                     <li class="nav-dropdown">
-                        <a href="#" title="PatientInfo">
+                        <a href="patientInfo.html" title="PatientInfo">
                             <i class="fa  fa-fw fa-edit"></i> 病患資料
                         </a>
                     </li>
@@ -101,12 +101,12 @@
                         </a>
                         <ul class="nav-sub">
                             <li>
-                                <a href="#" title="ClinicInfo">
+                                <a href="clinicInfo.html" title="ClinicInfo">
                                     診所資料
                                 </a>
                             </li>
                             <li>
-                                <a href="#" title="DocInfo">
+                                <a href="doctorInfo.html" title="DocInfo">
                                     醫生資料
                                 </a>
                             </li>
@@ -142,7 +142,7 @@
                 <div class="container" id="container"></div>
 
                 <!-- 新增表單 -->
-                <form class="form-popup" id="addForm">
+                <div class="form-popup" id="addForm">
                     <h3>新增醫師資料</h3>
                     <input type="text" id="addName" placeholder="姓名">
                     <label for="addProfilePicture">照片：</label>
@@ -160,10 +160,10 @@
                     <input type="text" id="addTime" placeholder="看診時段">
                     <button id="saveAddBtn">儲存</button>
                     <button id="cancelAddBtn">取消</button>
-                </form>
+                </div>
 
                 <!-- 編輯表單 -->
-                <form class="form-popup" id="editForm">
+                <div class="form-popup" id="editForm">
                     <h3>編輯醫師資料</h3>
                     <input type="text" id="editName" placeholder="姓名">
                     <label for="editProfilePicture">照片：</label>
@@ -178,11 +178,10 @@
                     <input type="text" id="editMemo1" placeholder="專長 1">
                     <input type="text" id="editMemo2" placeholder="專長 2">
                     <input type="text" id="editMemo3" placeholder="專長 3">
->>>>>>> main
                     <input type="text" id="editTime" placeholder="看診時段">
                     <button id="saveEditBtn">儲存</button>
                     <button id="cancelEditBtn">取消</button>
-                </form>
+                </div>
              
             </section>
         </section>       
