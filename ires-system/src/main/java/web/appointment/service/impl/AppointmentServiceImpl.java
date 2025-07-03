@@ -1,6 +1,7 @@
 package web.appointment.service.impl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -167,17 +168,18 @@ public class AppointmentServiceImpl implements AppointmentService {
             Patient patient = patientService.findById(a.getPatientId());
             Appointment appointment = appointmentDAO.selectById(a.getAppointmentId());
             Doctor doctor = doctorDao.selectById(a.getDoctorId());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             Notification notification = new Notification();
             notification.setNotificationId(UUID.randomUUID().toString());
             notification.setAppointment(appointment);
             notification.setPatient(patient);
-            notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate() +
+            notification.setMessage("您已成功預約，看診日期：" + sdf.format(a.getAppointmentDate()) +
                     "、時段：" + getTimePeriod(a.getTimePeriod()) +
-                    " 醫師：" + doctor.getDoctorName());
+                    "、醫師：" + doctor.getDoctorName());
             notification.setSentDatetime(new Timestamp(System.currentTimeMillis()));
             notification.setReadStatus(false);
-            notification.setNotificationType("appointment");
+            notification.setNotificationType("預約成功通知");
 
             notificationService.createNotification(notification);
         }

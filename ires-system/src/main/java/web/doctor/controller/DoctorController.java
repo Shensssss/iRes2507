@@ -175,7 +175,7 @@ public class DoctorController {
         }
     }
 
-    @GetMapping("/doctorList")
+    @GetMapping("doctorList")
     @ResponseBody
     public Map<String, Object> getDoctorList(
             @RequestParam(defaultValue = "1") int page,

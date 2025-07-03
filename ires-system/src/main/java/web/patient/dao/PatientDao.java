@@ -12,6 +12,7 @@ public interface PatientDao extends CoreDao<Patient, Integer> {
 
 	Patient findById(int patientId);
 
+
 	List<Patient> searchedByNameAndBirthday(String name, String birthday);
 
 	List<Patient> searchedByNameAndPhone(String name, String phone);
@@ -19,9 +20,8 @@ public interface PatientDao extends CoreDao<Patient, Integer> {
 	List<Patient> searchedByNameAndBirthdayAndPhone(String name, String birthday, String phone);
 
 	List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId);
-
 	long countReservedPatientsByKeyword(String keyword, int clinicId);
-
 	Patient findByPhone(String phone);
 
+	int updateNotes(Integer patientId, String newNotes);
 }

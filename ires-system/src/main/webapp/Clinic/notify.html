@@ -269,8 +269,9 @@
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                                <th>#</th>
                                 <th>看診日期</th>
-                                <th>診間</th>
+<!--                                <th>診間</th>-->
                                 <th>號碼</th>
                                 <th>姓名</th>
                                 <th>醫師</th>
@@ -416,20 +417,23 @@
                 return;
             }
 
-            tbody.innerHTML = pageData.map(p => {
+            tbody.innerHTML = pageData.map((p, i) => {
                 let statusColor = "";
-                
+
                 if (p.status === "已發送過通知") {
                     statusColor = "color:red;font-weight:bold;";
                 } else if (p.status === "通知已發送") {
                     statusColor = "color:green;font-weight:bold;";
                 }
 
+                const serialNumber = (currentPage - 1) * itemsPerPage + i + 1;
+
                 return `
                     <tr>
                         <td><input type="checkbox" class="row-check"></td>
+                        <td>${serialNumber}</td>
                         <td>${p.date}</td>
-                        <td>${p.room}</td>
+            <!--            <td>${p.room}</td>-->
                         <td>${p.number}</td>
                         <td>${p.name}</td>
                         <td>${p.doctor}</td>

@@ -20,7 +20,7 @@ import web.appointment.entity.Notification;
 import web.appointment.service.NotificationService;
 import web.patient.entity.Patient;
 
-@RestController
+@RestController("patientNotificationController")
 @RequestMapping("/notification")
 public class NotificationController {
 

@@ -147,6 +147,7 @@ public class PatientDaoImpl implements PatientDao {
 	                  .setParameter("phone", phone)
 	                  .getResultList();
 	}
+
 	public List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
 		String hql = "SELECT DISTINCT a.patient FROM Appointment a " +
 				"WHERE a.clinic.id = :clinicId " +
@@ -180,6 +181,14 @@ public class PatientDaoImpl implements PatientDao {
 				.setParameter("phone", phone)
 				.uniqueResult();
 	}
-
-
+	
+	@Override
+	public int updateNotes(Integer patientId, String newNotes) {
+		String hql = "UPDATE Patient p SET p.notes = :notes WHERE p.patientId = :patientId";
+	    session.createQuery(hql)
+	           .setParameter("notes", newNotes)
+	           .setParameter("patientId", patientId)
+	           .executeUpdate();
+	    return 1;
+	}
 }
