@@ -160,8 +160,8 @@
                 </div>
                 <div class="container">
                     <div class="top-row">
-                        <div class="box" id="basic">
-                            <p class="item">基本資料</p>
+                        <div class="box" id="basics">
+                            <p class="item" id="basic" data-patient-id="">基本資料</p>
                             <img src="" alt="圖片未上傳" class="profilePicture" id="profilePictureResult">
                             <p class="detail" id="nameResult">姓名：</p>
                             <p class="detail" id="genderResult">性別：</p>
@@ -174,15 +174,31 @@
                             <p class="detail" id="relationResult">關係：</p>
                             <p class="detail" id="emergencyContentResult">電話：</p>
                         </div>
-                        <div class="box" id="notes">
-                            <p class="item">備註<button id="edit">編輯</button></p>
-                            <p class="detail" id="notesResult">(這裡是備註)</p>
-                            <input type="text" class="detailUpdate -none" placeholder="請輸入備註">
+                        <div class="box" id="note">
+                            <p class="item" id="notes" data-patient-id="">備註<button class="noteEditing" id="edit">編輯</button></p>
+                            <p class="detail" id="notesResult"></p>
+                            <textarea class="noteEditing -none" id="noteInput" placeholder="請輸入備註"></textarea>
+                            <button class="noteEditing -none" id="save">儲存</button>
                         </div>
                     </div>
-                        <div class="record">
-                        <p class="item">預約紀錄</p>
-                        <p class="detail">(這裡要列出預約紀錄但我不知道怎麼換頁)</p>
+
+                    <div class="record" >
+                        <p class="item" id="appointmentHistory" data-patient-id="">預約紀錄</p>
+                        
+                        <table id="appointmentTable" class="appointment-table">
+                            <thead>
+                                <tr>
+                                    <th>預約日期</th>
+                                    <th>診所名稱</th>
+                                    <th>醫師姓名</th>
+                                    <th>預約時段</th>
+                                    <th>預約序號</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 插入資料 -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 

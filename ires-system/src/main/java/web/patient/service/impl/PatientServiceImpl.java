@@ -169,4 +169,7 @@ public class PatientServiceImpl implements PatientService {
 		return patient;
 	}
 
+	public int clinicEditPatientNotes(int patientId, String newNotes) {
+		return dao.updateNotes(patientId, newNotes);
+	}
 }

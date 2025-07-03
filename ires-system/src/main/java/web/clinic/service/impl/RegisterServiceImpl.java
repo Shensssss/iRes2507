@@ -82,6 +82,12 @@ public class RegisterServiceImpl implements RegisterService {
 		if (clinic.getRegistrationFee() == null) {
 			clinic.setRegistrationFee(0);
 		}
+		if (clinic.getWeb() == null) {
+			clinic.setWeb("");
+		}
+		if (clinic.getMemo() == null) {
+			clinic.setMemo("");
+		}		
 		if (clinic.getRating() == null) {
 			clinic.setRating(BigDecimal.ZERO);
 		}
