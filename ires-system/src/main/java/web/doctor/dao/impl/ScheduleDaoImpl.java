@@ -2,9 +2,12 @@ package web.doctor.dao.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import web.doctor.dao.ScheduleDao;
 import web.doctor.entity.Schedule;
 
+@Repository
 public class ScheduleDaoImpl implements ScheduleDao{
 
 	@Override

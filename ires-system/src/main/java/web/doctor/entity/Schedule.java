@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import core.util.ListToJsonConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,6 +62,7 @@ public class Schedule implements Serializable{
     /**
      * 時段：morning / afternoon / night（不可為 null）
      */
+    @Convert(converter = ListToJsonConverter.class)
     @Column(name = "time_period", nullable = false)
     private List<String> timePeriod;
 
