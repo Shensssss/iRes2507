@@ -2,6 +2,9 @@ package web.doctor.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import web.doctor.dao.ScheduleDao;
@@ -9,35 +12,50 @@ import web.doctor.entity.Schedule;
 
 @Repository
 public class ScheduleDaoImpl implements ScheduleDao{
+	@PersistenceContext
+    private Session session;
 
 	@Override
-	public int insert(Schedule pojo) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int insert(Schedule schedule) {
+		session.persist(schedule);
+		return 1;
+	}
+
+	//若只能編輯更新的話可能用不到刪除
+	@Override
+	public int deleteById(Integer scheduleDoctorId) {
+		Schedule schedule = session.load(Schedule.class, scheduleDoctorId);
+		session.remove(schedule);
+		return 1;
 	}
 
 	@Override
-	public int deleteById(Integer id) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int update(Schedule newSchedule) {
+		Schedule schedule = session.load(Schedule.class, newSchedule.getScheduleDoctorId());
+		schedule.setOffDate(newSchedule.getOffDate());
+		schedule.setDayOfWeek(newSchedule.getDayOfWeek());
+		schedule.setTimePeriod(newSchedule.getTimePeriod());
+		schedule.setOff(newSchedule.getOff());
+		return 1;
 	}
 
 	@Override
-	public int update(Schedule pojo) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Schedule selectById(Integer scheduleDoctorId) {
+		return session.get(Schedule.class, scheduleDoctorId);
 	}
-
-	@Override
-	public Schedule selectById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
+	//一定要override但應該用不到
 	@Override
 	public List<Schedule> selectAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return session.createQuery("FROM Schedule", Schedule.class).list();
+	}
+
+	@Override
+	public List<Schedule> selectByClinicIdAndDoctorId(Integer clinicId, Integer doctorId) {
+		return session.createQuery("FROM Schedule s WHERE s.clinic.clinicId = :clinicId AND s.doctor.doctorId", Schedule.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("doctorId", doctorId)
+                .getResultList();
 	}
 
 }
