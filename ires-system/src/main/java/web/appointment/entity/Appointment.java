@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import web.clinic.entity.Clinic;
 import web.doctor.entity.Doctor;
+import web.major.entity.Major;
 import web.patient.entity.Patient;
 
 @Entity
@@ -58,9 +59,21 @@ public class Appointment {
     @Column(name = "major_id")
     private Integer majorId;
 
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", insertable = false, updatable = false)
     private Patient patient;
+=======
+	@Column(name = "major_id")
+	private Integer majorId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "major_id", insertable = false, updatable = false)
+	private Major major;
+
+	@Column(name = "reserve_no")
+	private Integer reserveNo;
+>>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
 
     @Column(name = "reserve_no")
     private Integer reserveNo;
@@ -85,8 +98,21 @@ public class Appointment {
     @Column(name = "update_time", insertable = false)
     private Timestamp updateTime;
 
+<<<<<<< HEAD
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+=======
+	@Column(name = "appointment_type")
+	private Integer appointmentType;  // 0: 醫師診間, 1: 線上看診
+
+	@Column(name = "self_condition")
+	private Integer selfCondition;  // 0: 近期發病, 1: 長期病症, 2: 報告查詢
+
+	@Transient
+	public String getDoctorName() {
+		return (doctor != null) ? doctor.getDoctorName() : null;
+	}
+>>>>>>> 9f921c2ef6f4a147b5a7625996f47b0f7854eaf6
 
     @Column(name = "appointment_type")
     private Integer appointmentType;

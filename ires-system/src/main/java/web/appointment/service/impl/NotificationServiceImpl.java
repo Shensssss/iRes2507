@@ -53,6 +53,12 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDAO.update(n);
         }
     }
+
+	@Override
+	@Transactional
+	public boolean remove(String notificationId) {
+		return notificationDAO.deleteById(notificationId) > 0;
+	}
 }
 
 

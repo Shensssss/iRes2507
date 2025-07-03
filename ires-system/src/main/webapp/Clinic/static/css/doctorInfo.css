@@ -74,12 +74,16 @@
         background-color: #4CAF50;
         top: 10px;
         right: 70px;
+        border-radius: 5px;
+        font-size: 14px;
     }
 
     .deleteBtn {
         background-color: #f44336;
         top: 10px;
         right: 10px;
+        border-radius: 5px;
+        font-size: 14px;
     }
 
     .deleteBtn:hover, .editBtn:hover {

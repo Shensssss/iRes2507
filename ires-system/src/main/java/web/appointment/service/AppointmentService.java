@@ -28,4 +28,6 @@ public interface AppointmentService {
     boolean deleteAppointment(String id);
 
     void reserveAppointments(Integer clinicId, List<Appointment> appointments);
+    
+    List<Appointment> findByPatientId(Integer patientId);
 }
