@@ -20,7 +20,7 @@ import web.appointment.entity.Notification;
 import web.appointment.service.NotificationService;
 import web.patient.entity.Patient;
 
-@RestController
+@RestController("patientNotificationController")
 @RequestMapping("/notification")
 public class NotificationController {
 
@@ -62,9 +62,11 @@ public class NotificationController {
 		if (notificationService.remove(notificationId)) {
 			core.setStatusCode(200);
 			core.setMessage("刪除成功");
+			core.setSuccessful(true);
 		} else {
 			core.setStatusCode(404);
 			core.setMessage("找不到通知");
+			core.setSuccessful(false);
 		}
 
 		return core;
