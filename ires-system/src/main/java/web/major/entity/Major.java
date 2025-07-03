@@ -26,6 +26,15 @@ public class Major{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "major_id")
     private Integer majorId;
+	
+	@Column(name = "symptom")
+	private String symptom;
+
+	@Column(name = "description")
+	private String description;
+	
+	@Column(name = "profile_picture")
+	private byte[] image;
 
     @Column(name = "major_name", nullable = false, unique = true)
     private String majorName;

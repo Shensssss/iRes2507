@@ -227,7 +227,7 @@
                         </ul>
                     </li>
                     <li class="nav-dropdown">
-                        <a href="#" title="PatientInfo">
+                        <a href="patientInfo.html" title="PatientInfo">
                             <i class="fa  fa-fw fa-edit"></i> 病患資料
                         </a>
                     </li>
@@ -247,12 +247,12 @@
                         </a>
                         <ul class="nav-sub">
                             <li>
-                                <a href="#" title="ClinicInfo">
+                                <a href="clinicInfo.html" title="ClinicInfo">
                                     診所資料
                                 </a>
                             </li>
                             <li>
-                                <a href="#" title="DocInfo">
+                                <a href="doctorInfo.html" title="DocInfo">
                                     醫生資料
                                 </a>
                             </li>
@@ -366,11 +366,12 @@
                     }
 
                     grouped[doctorName].push({
-                        number: String(app.reserveNo ?? "--").padStart(2, '0'),
+                        number: String(app.reserveNo ?? "--"),
                         name: app.patient?.name ?? "匿名",
                         status: translateStatus(app.status),
                         appointmentId: app.appointmentId,
-                        patientId: app.patient?.patientId
+                        patientId: app.patient?.patientId,
+                        agencyId: app.clinic?.agencyId ?? "0000000000"
                     });
                 });
 
@@ -415,7 +416,7 @@
                 const card = document.createElement("div");
                 card.className = "room-card";
                 card.innerHTML = `
-                                    <div class="room-card-header">診間 ${idx + 1} - ${room.doctor}</div>
+                                    <div class="room-card-header">${room.doctor}</div>
                                     <div class="room-card-body">
                                     <div style="overflow-y: auto; max-height: 300px;">
                                         <table>
@@ -448,14 +449,22 @@
         }
 
         function showQRCode(doctorName) {
-            const match = doctorName.match(/\d+/);
-            const roomNumber = match ? match[0].padStart(3, '0') : "000";
+            const room = allData.find(r => r.doctor === doctorName);
+            if (!room) return alert("找不到該診間資料");
+
+            const agencyId = room.patients?.[0]?.agencyId || room.agencyId || "0000000000"; // 預設10碼錯誤碼
+
+            // 時段代碼：早上=1、下午=2、晚上=3
+            const timePeriodMap = { morning: "1", afternoon: "2", evening: "3" };
+            const periodCode = timePeriodMap[currentTime] || "1";
 
             const now = new Date();
             const yyyy = now.getFullYear();
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
-            const qrValue = `${yyyy}${mm}${dd}${roomNumber}`;
+            const dateCode = `${yyyy}${mm}${dd}`;
+
+            const qrValue = `${dateCode}${agencyId}${periodCode}`;
 
             localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
             window.open("qrcode.html", "_blank");
@@ -496,7 +505,7 @@
                     if (p.status === '未報到') {
                         patients.push({
                             date: new Date().toISOString().slice(0, 10),
-                            room: `診間 ${index + 1}`,
+                            // room: `診間 ${index + 1}`,
                             number: p.number,
                             name: p.name,
                             doctor: room.doctor,

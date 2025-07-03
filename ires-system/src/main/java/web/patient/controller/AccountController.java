@@ -1,5 +1,7 @@
 package web.patient.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,9 +28,13 @@ public class AccountController {
 
 	// 回傳更新後的病患資料
 	@PutMapping("patient")
-	public Patient edit(@SessionAttribute("patient") Patient patient, @RequestBody Patient reqPatient) {
-		final Integer patientId = patient.getPatientId();
-		reqPatient.setPatientId(patientId);
-		return patientService.edit(reqPatient);
+	public Patient edit(@SessionAttribute("patient") Patient patient,
+	                    @RequestBody Patient reqPatient,
+	                    HttpSession session) {
+	    reqPatient.setPatientId(patient.getPatientId());
+	    patientService.edit(reqPatient);
+	    Patient updated = patientService.findById(reqPatient.getPatientId());
+	    session.setAttribute("patient", updated);
+	    return updated;
 	}
 }

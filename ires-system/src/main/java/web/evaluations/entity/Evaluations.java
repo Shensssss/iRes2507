@@ -42,6 +42,6 @@ public class Evaluations extends Core {
 	private Integer rating;
 	@Column(name="comment")
 	private String comment;
-	@Column(name="create_time")
+	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;
 }

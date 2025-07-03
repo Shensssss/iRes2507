@@ -1,13 +1,12 @@
 package web.patient.entity;
 
-
 import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import core.pojo.Core;
@@ -22,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "patient")
-public class Patient extends Core{
+public class Patient extends Core {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +37,7 @@ public class Patient extends Core{
 	private String name;
 
 	@Column(name = "gender")
-	private int gender;
+	private Integer gender;
 
 	@Column(name = "birthday")
 	private String birthday;
@@ -59,24 +58,23 @@ public class Patient extends Core{
 	private String emergencyName;
 
 	@Column(name = "relation")
-	private int relation;
+	private Integer relation;
 
 	@Column(name = "blood_type")
-	private int bloodType;
+	private Integer bloodType;
 
 	@Column(name = "notes")
 	private String notes;
 
-	@Lob
-	@Column(name = "profile_picture", columnDefinition = "LONGTEXT")
-	private String profilePicture;
+	@Column(name = "profile_picture")
+	private byte[] profilePicture;
 
 	@Column(name = "status")
-	private int status;
+	private Integer status;
 
 	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;
-	
-	@Column(name = "update_time",insertable = false)
+
+	@Column(name = "update_time", insertable = false)
 	private String updateTime;
 }

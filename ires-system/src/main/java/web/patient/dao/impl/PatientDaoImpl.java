@@ -2,7 +2,6 @@ package web.patient.dao.impl;
 
 import java.util.List;
 
-
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -55,8 +54,8 @@ public class PatientDaoImpl implements PatientDao {
 			.append("relation = :relation,")
 			.append("blood_type = :blood_type,")
 			.append("notes = :notes,")
-			.append("profile_picture = :profile_picture,")
-			.append("update_time = NOW() ")
+			.append("profile_picture = :profile_picture, ")
+			.append("update_time = :updateTime ")
 			.append("WHERE email = :email");
 
 		Query<?> query = session.createQuery(hql.toString());
@@ -74,6 +73,8 @@ public class PatientDaoImpl implements PatientDao {
 					.setParameter("blood_type", patient.getBloodType())
 					.setParameter("notes", patient.getNotes())
 					.setParameter("profile_picture", patient.getProfilePicture())
+					.setParameter("updateTime", patient.getUpdateTime())
+					.setParameter("email", patient.getEmail())
 					.executeUpdate();
 	}
 
@@ -115,4 +116,79 @@ public class PatientDaoImpl implements PatientDao {
 	    return selectById(patientId);
 	}
 
+	@Override
+	public List<Patient> searchedByNameAndBirthday(String name, String birthday) {
+	    String hql = "FROM Patient WHERE name = :name AND birthday = :birthday";
+	    System.out.println("Searching for birthday: " + birthday);
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("birthday", birthday)
+	                  .getResultList();
+	}
+	
+	@Override
+	public List<Patient> searchedByNameAndPhone(String name, String phone) {
+		String hql = "FROM Patient WHERE name = :name AND phone = :phone";
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("phone", phone)
+	                  .getResultList();
+	}
+
+	@Override
+	public List<Patient> searchedByNameAndBirthdayAndPhone(String name, String birthday, String phone) {
+		String hql = "FROM Patient WHERE name = :name AND birthday = :birthday AND phone = :phone";
+
+	    return session.createQuery(hql, Patient.class)
+	                  .setParameter("name", name)
+	                  .setParameter("birthday", birthday)
+	                  .setParameter("phone", phone)
+	                  .getResultList();
+	}
+
+	public List<Patient> findReservedPatientsByKeyword(String keyword, int offset, int pageSize, int clinicId) {
+		String hql = "SELECT DISTINCT a.patient FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) " +
+				"ORDER BY a.patient.name ASC";
+
+		return session.createQuery(hql, Patient.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.setFirstResult(offset)
+				.setMaxResults(pageSize)
+				.getResultList();
+	}
+
+	@Override
+	public long countReservedPatientsByKeyword(String keyword, int clinicId) {
+		String hql = "SELECT COUNT(DISTINCT a.patient.id) FROM Appointment a " +
+				"WHERE a.clinic.id = :clinicId " +
+				"AND (a.patient.name LIKE :keyword OR a.patient.phone LIKE :keyword) ";
+
+		return session.createQuery(hql, Long.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("keyword", "%" + keyword + "%")
+				.uniqueResult();
+	}
+
+	//以行動電話取得病患
+	public Patient findByPhone(String phone) {
+		String hql = "FROM Patient p WHERE p.phone = :phone";
+		return session.createQuery(hql, Patient.class)
+				.setParameter("phone", phone)
+				.uniqueResult();
+	}
+	
+	@Override
+	public int updateNotes(Integer patientId, String newNotes) {
+		String hql = "UPDATE Patient p SET p.notes = :notes WHERE p.patientId = :patientId";
+	    session.createQuery(hql)
+	           .setParameter("notes", newNotes)
+	           .setParameter("patientId", patientId)
+	           .executeUpdate();
+	    return 1;
+	}
 }
