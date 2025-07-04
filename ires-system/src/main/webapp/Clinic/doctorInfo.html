@@ -32,7 +32,7 @@
             <!--logo start-->
             <div class="brand">
                 <a href="" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                     <span>OO</span>耳鼻喉科診所</a>
+                    <span id="clinicName"></span></a>
             </div>
             <img src="static/picture/ires.png" style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;" >
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -60,21 +60,21 @@
             </ul>            
         </header> 
         <!--sidebar left start-->
-        <aside class="sidebar sidebar-left" style="position: fixed; display: flex;">
+         <aside class="sidebar sidebar-left">
             <nav>
-                <ul class="nav nav-pills nav-stacked"> 
+                <ul class="nav nav-pills nav-stacked">
                     <li class="nav-dropdown">
                         <a href="#" title="Appointment">
                             <i class="fa  fa-fw fa-cogs"></i> 預約及報到
                         </a>
                         <ul class="nav-sub">
                             <li>
-                                <a href="#" title="AppointmentAndCheckin">
+                                <a href="reservequery.html" title="reservequery">
                                     預約及報到
                                 </a>
                             </li>
                             <li>
-                                <a href="#" title="NewAppointment">
+                                <a href="appointment.html" title="Appointment">
                                     新增預約
                                 </a>
                             </li>
@@ -86,7 +86,7 @@
                         </a>
                     </li>
                     <li class="nav-dropdown">
-                        <a href="#" title="CallNumber">
+                        <a href="callRoom.html" title="callRoom">
                             <i class="fa  fa-fw fa-th-list"></i> 診間叫號
                         </a>
                     </li>
@@ -94,7 +94,7 @@
                         <a href="#" title="FeedbackManagement">
                             <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
                         </a>
-                    </li>  
+                    </li>
                     <li class="nav-dropdown">
                         <a href="#" title="AccountManagement">
                             <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
@@ -116,7 +116,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" title="Password">
+                                <a href="accountupdatepsd.html" title="Password">
                                     修改密碼
                                 </a>
                             </li>
@@ -126,7 +126,8 @@
                         <a href="#" title="Logout">
                             <i class="fa  fa-fw fa-file-text"></i> 登出
                         </a>
-                </ul>                              
+                    </li>
+                </ul>
             </nav>
         </aside>
         <!--main content start-->
@@ -232,6 +233,51 @@
     });
     </script>-->
     <script src="static/js/doctorInfo.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const name = sessionStorage.getItem("clinicName");
+            if (name) {
+              document.getElementById("clinicName").textContent = name;
+             } else {
+           // 未登入或資料遺失，導回登入頁
+               alert("尚未登入");
+              location.href = "/ires-system/Clinic/login.html";
+           }
+        });
+    </script>
+      <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 處理登出點擊
+    const logoutLink = document.querySelector('a[title="Logout"]');
+    if (logoutLink) {
+      logoutLink.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // 彈窗確認
+        if (confirm("確定要登出嗎？")) {
+          // 發送登出請求
+          fetch('/ires-system/clinic/logout', {
+            method: 'DELETE',
+            credentials: 'include' // 確保 session cookie 被送出
+          })
+            .then(response => {
+              if (response.ok) {
+                // 跳轉回登入頁
+                sessionStorage.clear();
+                window.location.href = '/ires-system/Clinic/login.html';
+              } else {
+                alert("登出失敗，請稍後再試");
+              }
+            })
+            .catch(err => {
+              console.error("登出錯誤：", err);
+              alert("無法連線到伺服器");
+            });
+        }
+      });
+    }
+  });
+</script>
 </body>
 
 </html>
