@@ -20,7 +20,10 @@ fetch("/ires-system/notification/patient")
         })
           .then(res => res.json())
           .then(result => {
-            if (result.successful) item.remove();
+            if (result.successful) {
+              item.classList.add("fade-out");
+              setTimeout(() => item.remove(), 500);
+            }
           });
       };
 
