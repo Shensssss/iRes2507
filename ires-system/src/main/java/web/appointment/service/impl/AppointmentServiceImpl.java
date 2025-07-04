@@ -27,7 +27,7 @@ import web.patient.service.PatientService;
 @Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
-	@Autowired
+    @Autowired
     private AppointmentDAO appointmentDAO;
     @Autowired
     private CommonUtil commonUtil;
@@ -85,7 +85,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     public Appointment updateAppointment(Appointment a) {
         Appointment origin = appointmentDAO.selectById(a.getAppointmentId());
-        if (origin == null) return null;
+        if (origin == null) {
+            return null;
+        }
 
         boolean dateChanged = !origin.getAppointmentDate().equals(a.getAppointmentDate());
         boolean periodChanged = !origin.getTimePeriod().equals(a.getTimePeriod());
@@ -111,7 +113,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     public boolean deleteAppointment(String id) {
         Appointment a = appointmentDAO.selectById(id);
-        if (a == null) return false;
+        if (a == null) {
+            return false;
+        }
         appointmentDAO.deleteById(a.getAppointmentId());
         return true;
     }
@@ -119,18 +123,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     public void reserveAppointments(Integer clinicId, List<Appointment> appointments) {
         for (Appointment a : appointments) {
 
-            if (a.getDoctorId() == null)
+            if (a.getDoctorId() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：doctorId");
+            }
 
-            if (a.getPatientId() == null)
+            if (a.getPatientId() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：patientId");
+            }
 
-            if (a.getAppointmentDate() == null)
+            if (a.getAppointmentDate() == null) {
                 throw new IllegalArgumentException("缺少必要欄位：appointmentDate");
+            }
 
             //重複預約判斷
-            if (appointmentDAO.existsDuplicateAppointment(a.getPatientId(), a.getAppointmentDate()))
+            if (appointmentDAO.existsDuplicateAppointment(a.getPatientId(), a.getAppointmentDate())) {
                 throw new IllegalArgumentException("重複預約");
+            }
 
             //超出預約人數判斷
             Long existingCount = appointmentDAO.countAppointmentsByGroup(
@@ -154,13 +162,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                     a.getTimePeriod()
             ));
 
-            a.setFirstVisit(commonUtil.getFirstVisit(
-                    a.getPatientId(),
-                    clinicId
-            ));
+            a.setFirstVisit(appointmentDAO.existsByPatientIdAndClinicId(a.getPatientId(), clinicId) ? 0 : 1);
 
             a.setStatus(0);
-            a.setNotes(null);
 
             appointmentDAO.insert(a);
 
@@ -186,7 +190,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private String getTimePeriod(Integer code) {
-         switch (code) {
+        switch (code) {
             case 1:
                 return "早上";
             case 2:

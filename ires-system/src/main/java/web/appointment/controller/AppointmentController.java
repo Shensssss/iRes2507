@@ -1,26 +1,38 @@
 package web.appointment.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.*;
 import web.clinic.entity.Clinic;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/appointment")
 public class AppointmentController {
+
     @Autowired
     private AppointmentService service;
 
@@ -29,9 +41,22 @@ public class AppointmentController {
 
     @GetMapping("/apiToday")
     @ResponseBody
-    public List<Appointment> getTodayAppointments(@RequestParam(value = "period", required = false) String period) {
-//        Date today = normalizeDate(new Date());
-        java.sql.Date today = new java.sql.Date(normalizeDate(new Date()).getTime());
+    public List<Appointment> getTodayAppointments(
+            @RequestParam(value = "period", required = false) String period,
+            @RequestParam(value = "date", required = false) String dateStr
+    ) {
+        Date baseDate;
+        if (dateStr != null) {
+            try {
+                baseDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            } catch (Exception e) {
+                baseDate = new Date();
+            }
+        } else {
+            baseDate = new Date();
+        }
+
+        java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
 
         int timePeriod = 1;
         if ("afternoon".equalsIgnoreCase(period)) {
@@ -40,7 +65,7 @@ public class AppointmentController {
             timePeriod = 3;
         }
 
-        return service.getAppointmentsByDateAndPeriod(today, timePeriod);
+        return service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
     }
 
 //    @GetMapping("/history")
@@ -63,7 +88,6 @@ public class AppointmentController {
 //
 //        return ResponseEntity.ok(result);
 //    }
-
     @GetMapping("/history")
     @ResponseBody
     public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
@@ -71,22 +95,28 @@ public class AppointmentController {
         return ResponseEntity.ok(list);
     }
 
-
     @PostMapping("/reserve")
     @ResponseBody
     public ResponseEntity<String> reserve(HttpServletRequest request, @RequestBody List<Appointment> appointments) {
         HttpSession session = request.getSession(false);
-        Clinic clinic = (session != null) ? (Clinic) session.getAttribute("clinic") : null;
+        Integer clinicId = null;
+        appointments.forEach(a -> System.out.println(a));
+        if (session != null && session.getAttribute("clinic") != null) {
+            Clinic clinic = (Clinic) session.getAttribute("clinic");
+            clinicId = clinic.getClinicId();
+        } else if (!appointments.isEmpty()) {
+            clinicId = appointments.get(0).getClinicId();
+        }
 
-        if (clinic == null) {
+        if (clinicId == null) {
             return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
+                    .status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
-                    .body("未登入或 session 已過期");
+                    .body("clinicId 不存在");
         }
 
         try {
-            service.reserveAppointments(clinic.getClinicId(), appointments);
+            service.reserveAppointments(clinicId, appointments);
             return ResponseEntity
                     .ok() // 200
                     .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
