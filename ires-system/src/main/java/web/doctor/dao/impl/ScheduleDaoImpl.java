@@ -51,9 +51,8 @@ public class ScheduleDaoImpl implements ScheduleDao{
 	}
 
 	@Override
-	public List<Schedule> selectByClinicIdAndDoctorId(Integer clinicId, Integer doctorId) {
-		return session.createQuery("FROM Schedule s WHERE s.clinic.clinicId = :clinicId AND s.doctor.doctorId", Schedule.class)
-				.setParameter("clinicId", clinicId)
+	public List<Schedule> selectByDoctorId(Integer doctorId) {
+		return session.createQuery("FROM Schedule s WHERE s.doctor.doctorId:doctorId", Schedule.class)
 				.setParameter("doctorId", doctorId)
                 .getResultList();
 	}

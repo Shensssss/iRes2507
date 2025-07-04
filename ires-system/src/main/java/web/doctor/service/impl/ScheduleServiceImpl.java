@@ -20,14 +20,18 @@ public class ScheduleServiceImpl implements ScheduleService{
 
 	@Override
 	public int addSchedule(Schedule schedule) {
-		// TODO Auto-generated method stub
-		return 0;
+		return scheduleDao.insert(schedule);
+	}
+
+	@Override
+	public int editSchedule(Schedule schedule) {
+		return scheduleDao.update(schedule);
 	}
 
 	@Override
 	public List<Schedule> showSchedule(Integer doctorId) {
-		// TODO Auto-generated method stub
-		return null;
+		return scheduleDao.selectByDoctorId(doctorId);
 	}
+
 
 }
