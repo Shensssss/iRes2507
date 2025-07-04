@@ -258,4 +258,127 @@ $(document).ready(function () {
     $("#login-link").removeClass("d-none");
     $("#menu-link").addClass("d-none");
   }
+  $.ajax({
+    url: "/ires-system/major/list",
+    method: "GET",
+    success: function (data) {
+      if (Array.isArray(data)) {
+        const select = $(".major-select");
+        const ul = $(".custom-select-options ul");
+
+        select.empty();
+        ul.empty();
+
+        select.append('<option value="all" selected>全部</option>');
+        ul.append('<li data-value="all" class="is-highlighted">全部</li>');
+
+        data.forEach(function (item) {
+          const option = $("<option>", {
+            value: item.majorId,
+            text: item.majorName,
+          });
+          select.append(option);
+
+          const li = $("<li>", {
+            "data-value": item.majorId,
+            text: item.majorName,
+          });
+          ul.append(li);
+        });
+      }
+    },
+  });
+
+  $(".distance-range").on("input", function () {
+    $(this)
+      .closest(".booking-form-item")
+      .find(".distance-value")
+      .text($(this).val());
+  });
+
+  //-------------time select ---------------
+  flatpickr(".timepicker_start", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    minTime: "00:00",
+    maxTime: "23:59",
+    defaultDate: "00:00",
+  });
+
+  flatpickr(".timepicker_end", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    minTime: "00:00",
+    maxTime: "23:59",
+    defaultDate: "23:59",
+  });
+
+  $(".clinicFilterForm").on("submit", function (e) {
+    e.preventDefault();
+
+    const date = $(".datepicks_val").val();
+    const startTime = $(".timepicker_start").val();
+    const endTime = $(".timepicker_end").val();
+    let majorId = $(".major-select").val();
+    const distance = $(".distance-value").text();
+
+    if (majorId === "all") {
+      majorId = "";
+    }
+
+    const query = new URLSearchParams({
+      date,
+      startTime,
+      endTime,
+      majorId,
+      distance,
+    });
+
+    window.location.href =
+      "/ires-system/Patient/hospital.html?" + query.toString();
+  });
+
+  clinicLinks();
 });
+function clinicLinks() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  date = `${yyyy}-${mm}-${dd}`;
+
+  const startTime = "00:00";
+  const endTime = "23:59";
+  const distance = 10;
+
+  const linkMap = {
+    "#findAll": "",
+    "#findPeds": 1,
+    "#findDds": 2,
+    "#findOph": 3,
+    "#findObgyn": 4,
+    "#findDerm": 5,
+    "#findEnt": 6,
+    "#findPsych": 7,
+    "#findTcm": 8,
+    "#findNutrition": 9,
+    "#findPt": 10,
+  };
+
+  for (const [selector, majorId] of Object.entries(linkMap)) {
+    $(selector).on("click", function (e) {
+      e.preventDefault();
+      const query = new URLSearchParams({
+        date,
+        startTime,
+        endTime,
+        majorId,
+        distance,
+      });
+      window.location.href =
+        "/ires-system/Patient/hospital.html?" + query.toString();
+    });
+  }
+}
