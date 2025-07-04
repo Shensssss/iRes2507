@@ -105,10 +105,13 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 	}
 
 	@Override
-	public Appointment findByClinicIdPatientIdDate(Integer clinicId, Integer patientId, Date appointmentDate) {
-		String hql = "FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId = :patientId AND a.appointmentDate = :appointmentDate";
-		return session.createQuery(hql, Appointment.class).setParameter("clinicId", clinicId)
-				.setParameter("patientId", patientId).setParameter("appointmentDate", appointmentDate)
-				.getSingleResult();
+	public Appointment findByClinicIdPatientIdDateTimePeriod(Integer clinicId, Integer patientId, Date appointmentDate, Integer timePeriod) {
+	    String hql = "FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId = :patientId AND a.appointmentDate = :appointmentDate AND a.timePeriod = :timePeriod";
+	    return session.createQuery(hql, Appointment.class)
+	            .setParameter("clinicId", clinicId)
+	            .setParameter("patientId", patientId)
+	            .setParameter("appointmentDate", appointmentDate)
+	            .setParameter("timePeriod", timePeriod)
+	            .getSingleResult();
 	}
 }

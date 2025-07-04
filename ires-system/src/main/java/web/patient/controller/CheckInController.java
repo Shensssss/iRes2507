@@ -1,5 +1,7 @@
 package web.patient.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,11 +16,12 @@ import web.patient.service.PatientService;
 @RequestMapping("checkIn")
 public class CheckInController {
 
-    @Autowired
-    private PatientService patientService;
+	@Autowired
+	private PatientService patientService;
 
-    @PostMapping
-    public Patient checkIn(@SessionAttribute Patient patient, @RequestBody String code) {
-        return patientService.checkIn(patient, code);
-    }
+	@PostMapping
+	public Patient checkIn(@SessionAttribute Patient patient, @RequestBody Map<String, String> payload) {
+		String code = payload.get("appointmentId");
+		return patientService.checkIn(patient, code);
+	}
 }
