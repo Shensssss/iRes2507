@@ -4,5 +4,10 @@ import web.clinic.entity.Clinic;
 
 public interface ClinicInfoService {
 	
-	String updateInfo(Clinic clinic);
+    int editClinic(Clinic editedClinic);
+    
+    int editBusinessHours(Clinic editedClinic);
+    
+    Clinic getClinicById(Integer clinicId);
+
 }

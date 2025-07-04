@@ -15,52 +15,63 @@ public class ClinicInfoDaoImpl implements ClinicInfoDao {
 	@PersistenceContext
 	private Session session;
 
+	//註冊時即建立，用不到此方法
 	@Override
-	public int insert(Clinic pojo) {
-		throw new RuntimeException("NO-OP");
+	public int insert(Clinic clinic) {
+		session.persist(clinic);
+		return 1;
+	}
+	
+	//診所無權刪除診所，用不到此方法
+	@Override
+	public int deleteById(Integer clinicId) {
+		Clinic clinic = session.get(Clinic.class, clinicId);
+        if (clinic == null) {
+            return 0;
+        }
+        session.remove(clinic);
+        return 1;
+	}
+
+	@Override
+	//更新基本資料
+	public int update(Clinic updatedClinic) {
+		Clinic clinic = session.get(Clinic.class, updatedClinic.getClinicId());
+
+	    clinic.setClinicName(updatedClinic.getClinicName());
+	    clinic.setPhone(updatedClinic.getPhone());
+	    clinic.setAddressCity(updatedClinic.getAddressCity());
+	    clinic.setAddressTown(updatedClinic.getAddressTown());
+	    clinic.setAddressRoad(updatedClinic.getAddressRoad());
+	    clinic.setWeb(updatedClinic.getWeb());
+	    clinic.setRegistrationFee(updatedClinic.getRegistrationFee());
+	    clinic.setMemo(updatedClinic.getMemo());
+	    clinic.setProfilePicture(updatedClinic.getProfilePicture());
+	    return 1;
 	}
 	
 	@Override
-	public int deleteById(String id) {
-		throw new RuntimeException("NO-OP");
+	//更新營業時間
+	public int updateBusinessHours(Clinic updatedClinic) {
+	    Clinic clinic = session.get(Clinic.class, updatedClinic.getClinicId());
+	    
+	    clinic.setMorning(updatedClinic.getMorning());
+	    clinic.setAfternoon(updatedClinic.getAfternoon());
+	    clinic.setNight(updatedClinic.getNight());
+	    clinic.setWeekMorning(updatedClinic.getWeekMorning());
+	    clinic.setWeekAfternoon(updatedClinic.getWeekAfternoon());
+	    clinic.setWeekNight(updatedClinic.getWeekNight());
+	    return 1;
 	}
 
 	@Override
-	public int update(Clinic pojo) {
-		throw new RuntimeException("NO-OP");
-	}
-
-	@Override
-	public Clinic selectById(String id) {
-		throw new RuntimeException("NO-OP");
+	public Clinic selectById(Integer clinicId) {
+		return session.get(Clinic.class, clinicId);
 	}
 
 	@Override
 	public List<Clinic> selectAll() {
-		throw new RuntimeException("NO-OP");
-	}
-
-	@Override
-	public int updateInfo(Clinic clinic) {
-		String hql = "UPDATE Clinic SET clinicName = :clinicName ,agencyId = :agencyId ,phone = :phone ,addressCity = :addressCity , addressTown = :addressTown ,addressRoad = :addressRoad ,web = :web ,registrationFee = :registrationFee ,memo = :memo ,morning = :morning , afternoon = :afternoon ,night = :night ,weekMorning = :weekMorning ,weekAfternoon = :weekAfternoon ,weekNight = :weekNight WHERE account = :account";;
-		return session.createQuery(hql)
-				.setParameter("clinicName", clinic.getClinicName())
-	            .setParameter("agencyId", clinic.getAgencyId())
-	            .setParameter("phone", clinic.getPhone())
-	            .setParameter("addressCity", clinic.getAddressCity())
-	            .setParameter("addressTown", clinic.getAddressTown())
-	            .setParameter("addressRoad", clinic.getAddressRoad())
-	            .setParameter("web", clinic.getWeb())
-	            .setParameter("registrationFee", clinic.getRegistrationFee())
-	            .setParameter("memo", clinic.getMemo())
-	            .setParameter("morning", clinic.getMorning())
-	            .setParameter("afternoon", clinic.getAfternoon())
-	            .setParameter("night", clinic.getNight())
-	            .setParameter("weekMorning", clinic.getWeekMorning())
-	            .setParameter("weekAfternoon", clinic.getWeekAfternoon())
-	            .setParameter("weekNight", clinic.getWeekNight())
-	            .setParameter("account", clinic.getAccount())
-	            .executeUpdate();
+		return session.createQuery("FROM Clinic", Clinic.class).list();
 	}
 
 }
