@@ -6,9 +6,10 @@ import web.doctor.entity.Schedule;
 
 public interface ScheduleService {
 
-	int addSchedule(Schedule schedule);
-	
-	int editSchedule(Schedule schedule);
+	int addDateOff(Schedule schedule);
+    int editDateOff(Schedule schedule);
+    int addWeeklyOff(Schedule schedule);
+    int editWeeklyOff(Schedule schedule);
 
 	List<Schedule> showSchedule(Integer doctorId);
 

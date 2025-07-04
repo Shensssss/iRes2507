@@ -21,10 +21,9 @@ public class ScheduleDaoImpl implements ScheduleDao{
 		return 1;
 	}
 
-	//若只能編輯更新的話可能用不到刪除
 	@Override
-	public int deleteById(Integer scheduleDoctorId) {
-		Schedule schedule = session.load(Schedule.class, scheduleDoctorId);
+	public int deleteById(Integer scheduleId) {
+		Schedule schedule = session.load(Schedule.class, scheduleId);
 		session.remove(schedule);
 		return 1;
 	}
@@ -52,7 +51,7 @@ public class ScheduleDaoImpl implements ScheduleDao{
 
 	@Override
 	public List<Schedule> selectByDoctorId(Integer doctorId) {
-		return session.createQuery("FROM Schedule s WHERE s.doctor.doctorId:doctorId", Schedule.class)
+		return session.createQuery("FROM Schedule s WHERE s.doctor.doctorId = :doctorId", Schedule.class)
 				.setParameter("doctorId", doctorId)
                 .getResultList();
 	}

@@ -19,18 +19,28 @@ public class ScheduleServiceImpl implements ScheduleService{
 	private ScheduleDao scheduleDao;
 
 	@Override
-	public int addSchedule(Schedule schedule) {
+	public List<Schedule> showSchedule(Integer doctorId) {
+		return scheduleDao.selectByDoctorId(doctorId);
+	}
+
+	@Override
+	public int addDateOff(Schedule schedule) {
 		return scheduleDao.insert(schedule);
 	}
 
 	@Override
-	public int editSchedule(Schedule schedule) {
-		return scheduleDao.update(schedule);
+	public int editDateOff(Schedule schedule) {
+		 return scheduleDao.update(schedule);
 	}
 
 	@Override
-	public List<Schedule> showSchedule(Integer doctorId) {
-		return scheduleDao.selectByDoctorId(doctorId);
+	public int addWeeklyOff(Schedule schedule) {
+		return scheduleDao.insert(schedule);
+	}
+
+	@Override
+	public int editWeeklyOff(Schedule schedule) {
+		return scheduleDao.update(schedule);
 	}
 
 
