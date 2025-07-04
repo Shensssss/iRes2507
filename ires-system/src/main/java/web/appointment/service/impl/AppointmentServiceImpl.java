@@ -162,6 +162,8 @@ public class AppointmentServiceImpl implements AppointmentService {
                     a.getTimePeriod()
             ));
 
+            a.setFirstVisit(appointmentDAO.existsByPatientIdAndClinicId(a.getPatientId(), clinicId) ? 0 : 1);
+
             a.setStatus(0);
 
             appointmentDAO.insert(a);
@@ -176,9 +178,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             notification.setNotificationId(UUID.randomUUID().toString());
             notification.setAppointment(appointment);
             notification.setPatient(patient);
-            notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate()
-                    + "、時段：" + getTimePeriod(a.getTimePeriod())
-                    + " 醫師：" + doctor.getDoctorName());
             notification.setMessage("您已成功預約，看診日期：" + sdf.format(a.getAppointmentDate()) +
                     "、時段：" + getTimePeriod(a.getTimePeriod()) +
                     "、醫師：" + doctor.getDoctorName());
