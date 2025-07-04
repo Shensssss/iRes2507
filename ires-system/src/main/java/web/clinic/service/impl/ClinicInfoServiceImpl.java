@@ -1,5 +1,8 @@
 package web.clinic.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
@@ -13,7 +16,7 @@ import web.clinic.service.ClinicInfoService;
 
 @Service
 @Transactional
-public class ClinicInfoServiceImpl implements ClinicInfoService {
+public abstract class ClinicInfoServiceImpl implements ClinicInfoService {
 	@Autowired
 	private ClinicInfoDao clinicInfoDao;
 	
@@ -41,6 +44,20 @@ public class ClinicInfoServiceImpl implements ClinicInfoService {
 	@Override
 	public Clinic getClinicById(Integer clinicId) {
 		return clinicInfoDao.selectById(clinicId);
+	}
+
+	@Override
+	public Map<String, String> getOpenPeriod(Integer clinicId) {
+		Clinic clinic = clinicInfoDao.selectById(clinicId);
+        if (clinic == null) {
+            return null;
+        }
+
+        Map<String, String> periods = new HashMap<>();
+        periods.put("weekMorning", clinic.getWeekMorning());
+        periods.put("weekAfternoon", clinic.getWeekAfternoon());
+        periods.put("weekNight", clinic.getWeekNight());
+        return periods;
 	}
 
 }
