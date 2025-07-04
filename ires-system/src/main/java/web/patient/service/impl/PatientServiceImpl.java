@@ -147,19 +147,24 @@ public class PatientServiceImpl implements PatientService {
 
 		String date = code.substring(0, 8);
 		String agencyId = code.substring(8, 18);
+		Integer timePeriod = Integer.parseInt(code.substring(18));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		sdf.setLenient(false);
+
 		Date appointmentDate;
 		try {
-			appointmentDate = new java.sql.Date(new SimpleDateFormat("yyyyMMdd").parse(date).getTime());
+		    appointmentDate = new java.sql.Date(sdf.parse(date).getTime());
 		} catch (ParseException e) {
-			throw new RuntimeException("Invalid QR code date format.", e);
+		    throw new RuntimeException("Invalid QR code date format: " + date, e);
 		}
+
 
 		Integer clinicId = clinicDAO.findClinicIdByAgencyId(agencyId);
 		if (clinicId == null)
 			return patient;
 
-		Appointment appointment = appointmentDAO.findByClinicIdPatientIdDate(clinicId, patient.getPatientId(),
-				appointmentDate);
+		Appointment appointment = appointmentDAO.findByClinicIdPatientIdDateTimePeriod(clinicId, patient.getPatientId(),
+				appointmentDate, timePeriod);
 
 		if (appointment != null && appointment.getStatus() == 0) {
 			appointment.setStatus(1);
