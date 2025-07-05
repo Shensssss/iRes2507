@@ -1,7 +1,5 @@
 package web.clinic.service.impl;
 
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +87,15 @@ public class RegisterServiceImpl implements RegisterService {
 			clinic.setMemo("");
 		}		
 		if (clinic.getRating() == null) {
-			clinic.setRating(BigDecimal.ZERO);
+			clinic.setRating(0.0);
+		}
+		
+		if (clinic.getQuota() == null) {
+			clinic.setQuota(0);
+		}
+		
+		if (clinic.getQuota() == null) {
+			clinic.setQuota(0);
 		}
 		
 		if (clinic.getQuota() == null) {

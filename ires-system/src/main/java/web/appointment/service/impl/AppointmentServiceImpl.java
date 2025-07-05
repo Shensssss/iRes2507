@@ -178,6 +178,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             notification.setNotificationId(UUID.randomUUID().toString());
             notification.setAppointment(appointment);
             notification.setPatient(patient);
+            notification.setMessage("您已成功預約，看診日期：" + a.getAppointmentDate()
+                    + "、時段：" + getTimePeriod(a.getTimePeriod())
+                    + " 醫師：" + doctor.getDoctorName());
+            notification.setMessage("您已成功預約，看診日期：" + sdf.format(a.getAppointmentDate())
+                    + "、時段：" + getTimePeriod(a.getTimePeriod())
+                    + "、醫師：" + doctor.getDoctorName());
             notification.setMessage("您已成功預約，看診日期：" + sdf.format(a.getAppointmentDate()) +
                     "、時段：" + getTimePeriod(a.getTimePeriod()) +
                     "、醫師：" + doctor.getDoctorName());
@@ -201,6 +207,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 return "未知";
         }
     }
+
     @Override
     public List<Appointment> findByPatientId(Integer patientId) {
         return appointmentDAO.findByPatientId(patientId);
