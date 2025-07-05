@@ -173,6 +173,7 @@
 
 <body>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <section id="main-wrapper" class="theme-default">
         <header id="header">
             <!--logo start-->
@@ -180,6 +181,8 @@
                 <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
                      <span id="clinicName"></span></a>
 =======
+=======
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
 <section id="main-wrapper" class="theme-default">
     <header id="header">
         <!--logo start-->
@@ -194,6 +197,9 @@
             <div class="notification-icon" id="bell">
                 <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
                 <span class="badge"></span>
+<<<<<<< HEAD
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
+=======
 >>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
             </div>
             <div class="notification-dropdown" id="dropdown">
@@ -284,6 +290,7 @@
                 </li>
             </ul>
 <<<<<<< HEAD
+<<<<<<< HEAD
         </header>
         <!--sidebar left start-->
      <aside class="sidebar sidebar-left">
@@ -361,6 +368,8 @@
             <div class="pageheader">
                 <h1>今日預約</h1>
 =======
+=======
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
         </nav>
     </aside>
     <!--main content start-->
@@ -379,6 +388,9 @@
                 <div>
                     <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
                 </div>
+<<<<<<< HEAD
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
+=======
 >>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
             </div>
 
@@ -536,6 +548,7 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     </script>
       <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -580,6 +593,18 @@
         renderData(filtered);
     }
 
+=======
+    function filterPatients() {
+        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+        if (!keyword) return renderData(allData);
+        const filtered = allData.map(room => ({
+            ...room,
+            patients: room.patients.filter(p => p.name.toLowerCase().includes(keyword) || p.number.includes(keyword))
+        })).filter(room => room.patients.length > 0);
+        renderData(filtered);
+    }
+
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
     function showQRCode(doctorName) {
         const room = allData.find(r => r.doctor === doctorName);
         if (!room) return alert("找不到該診間資料");
@@ -712,6 +737,9 @@
             });
         }
     });
+<<<<<<< HEAD
+>>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
+=======
 >>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
 </script>
 </body>

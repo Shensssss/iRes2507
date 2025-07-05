@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import web.clinic.entity.CallNumber;
 import web.clinic.entity.Clinic;
 
 public interface ClinicService {
@@ -17,5 +18,8 @@ public interface ClinicService {
 			Double userLng, LocalDate date, LocalTime startTime, LocalTime endTime);
 
 	Clinic findById(Integer clinicId);
-	
+
+	CallNumber findOrCreateCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date);
+
+	CallNumber saveCallNumber(CallNumber callNumber);
 }

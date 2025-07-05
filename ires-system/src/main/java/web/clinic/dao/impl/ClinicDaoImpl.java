@@ -111,7 +111,4 @@ public class ClinicDaoImpl implements ClinicDAO {
 		session.persist(callNumber);
 		return callNumber;
 	}
-
-
-
 }
