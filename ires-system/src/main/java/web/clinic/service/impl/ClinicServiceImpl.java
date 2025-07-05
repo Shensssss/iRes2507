@@ -15,81 +15,120 @@ import web.clinic.dao.ClinicDAO;
 import web.clinic.entity.Clinic;
 import web.clinic.service.ClinicService;
 import web.major.dao.ClinicMajorDao;
-import web.major.service.ClinicMajorService;
 
 @Service
 @Transactional
 public class ClinicServiceImpl implements ClinicService {
-	@Autowired
-	private ClinicDAO clinicDAO;
 
-	@Autowired
-	private ClinicMajorDao clinicMajorDao;
+    @Autowired
+    private ClinicDAO clinicDAO;
 
-	@Override
-	public String editPsd(Clinic clinic) {
-		clinicDAO.updatePsd(clinic);
-	
-		return "密碼修改完成";
-	}
+    @Autowired
+    private ClinicMajorDao clinicMajorDao;
 
-	@Override
-	public List<Clinic> filterClinics(Integer majorId, LocalDate date, LocalTime startTime, LocalTime endTime) {
-	    int weekday = date.getDayOfWeek().getValue();
-	    List<Clinic> clinics = clinicMajorDao.findClinicsByMajorIdOrAll(majorId);
-	    List<Clinic> result = new ArrayList<>();
+    @Override
+    public String editPsd(Clinic clinic) {
+        clinicDAO.updatePsd(clinic);
 
-	    for (int i = 0; i < clinics.size(); i++)  {
-	        Clinic clinic = clinics.get(i);
-	        System.out.println(clinic.getClinicName());
-	        boolean matched = false;
+        return "密碼修改完成";
+    }
 
-	        if (clinic.getWeekMorning() != null && clinic.getMorning() != null && clinic.getMorning().contains("-")) {
-	            List<String> days = Arrays.asList(clinic.getWeekMorning().split(","));
-	            if (days.contains(String.valueOf(weekday))) {
-	                String[] times = clinic.getMorning().split("-");
-	                LocalTime clinicStart = LocalTime.parse(times[0].trim());
-	                LocalTime clinicEnd = LocalTime.parse(times[1].trim());
-	                if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
-	                    matched = true;
-	                }
-	            }
-	        }
+    @Override
+    public List<Clinic> filterClinics(
+            Integer majorId,
+            String towns,
+            Double minRating,
+            Double maxDistanceKm,
+            Double userLat,
+            Double userLng,
+            LocalDate date,
+            LocalTime startTime,
+            LocalTime endTime
+    ) {
+        int weekday = date.getDayOfWeek().getValue();
+        List<Clinic> clinics = clinicMajorDao.findClinicsByMajorIdOrAll(majorId);
+        List<Clinic> result = new ArrayList<>();
 
-	        if (!matched && clinic.getWeekAfternoon() != null && clinic.getAfternoon() != null && clinic.getAfternoon().contains("-")) {
-	            List<String> days = Arrays.asList(clinic.getWeekAfternoon().split(","));
-	            if (days.contains(String.valueOf(weekday))) {
-	                String[] times = clinic.getAfternoon().split("-");
-	                LocalTime clinicStart = LocalTime.parse(times[0].trim());
-	                LocalTime clinicEnd = LocalTime.parse(times[1].trim());
-	                if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
-	                    matched = true;
-	                }
-	            }
-	        }
+        for (Clinic clinic : clinics) {
+            if (towns != null && !towns.isBlank()) {
+                List<String> selectedTowns = Arrays.asList(towns.split(","));
+                if (clinic.getAddressTown() == null || !selectedTowns.contains(clinic.getAddressTown())) {
+                    continue;
+                }
+            }
 
-	        if (!matched && clinic.getWeekNight() != null && clinic.getNight() != null && clinic.getNight().contains("-")) {
-	            List<String> days = Arrays.asList(clinic.getWeekNight().split(","));
-	            if (days.contains(String.valueOf(weekday))) {
-	                String[] times = clinic.getNight().split("-");
-	                LocalTime clinicStart = LocalTime.parse(times[0].trim());
-	                LocalTime clinicEnd = LocalTime.parse(times[1].trim());
-	                if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
-	                    matched = true;
-	                }
-	            }
-	        }
+            if (minRating != null && clinic.getRating() != null && clinic.getRating() < minRating) {
+                continue;
+            }
 
-	        if (matched) {
-	            result.add(clinic);
-	        }
-	    }
+            if (userLat != null && userLng != null && maxDistanceKm != null
+                    && clinic.getLatitude() != null && clinic.getLongitude() != null) {
+                double distance = haversine(userLat, userLng, clinic.getLatitude(), clinic.getLongitude());
+                if (distance > maxDistanceKm) {
+                    continue;
+                }
+            }
 
-	    return result;
-	}
+            boolean matched = false;
 
-	@Override
-	public Clinic findById(Integer clinicId) {
-		return clinicDAO.selectById(clinicId);
-	}
+            if (clinic.getWeekMorning() != null && clinic.getMorning() != null && clinic.getMorning().contains("-")) {
+                List<String> days = Arrays.asList(clinic.getWeekMorning().split(","));
+                if (days.contains(String.valueOf(weekday))) {
+                    String[] times = clinic.getMorning().split("-");
+                    LocalTime clinicStart = LocalTime.parse(times[0].trim());
+                    LocalTime clinicEnd = LocalTime.parse(times[1].trim());
+                    if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
+                        matched = true;
+                    }
+                }
+            }
+
+            if (!matched && clinic.getWeekAfternoon() != null && clinic.getAfternoon() != null && clinic.getAfternoon().contains("-")) {
+                List<String> days = Arrays.asList(clinic.getWeekAfternoon().split(","));
+                if (days.contains(String.valueOf(weekday))) {
+                    String[] times = clinic.getAfternoon().split("-");
+                    LocalTime clinicStart = LocalTime.parse(times[0].trim());
+                    LocalTime clinicEnd = LocalTime.parse(times[1].trim());
+                    if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
+                        matched = true;
+                    }
+                }
+            }
+
+            if (!matched && clinic.getWeekNight() != null && clinic.getNight() != null && clinic.getNight().contains("-")) {
+                List<String> days = Arrays.asList(clinic.getWeekNight().split(","));
+                if (days.contains(String.valueOf(weekday))) {
+                    String[] times = clinic.getNight().split("-");
+                    LocalTime clinicStart = LocalTime.parse(times[0].trim());
+                    LocalTime clinicEnd = LocalTime.parse(times[1].trim());
+                    if (!(clinicEnd.isBefore(startTime) || clinicStart.isAfter(endTime))) {
+                        matched = true;
+                    }
+                }
+            }
+
+            if (matched) {
+                result.add(clinic);
+            }
+        }
+
+        return result;
+    }
+
+    // 距離公式
+    private double haversine(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371;
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    @Override
+    public Clinic findById(Integer clinicId) {
+        return clinicDAO.selectById(clinicId);
+    }
 }

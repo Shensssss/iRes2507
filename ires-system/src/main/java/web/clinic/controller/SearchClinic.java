@@ -31,11 +31,16 @@ public class SearchClinic {
     @ResponseBody
     public List<Clinic> filterClinics(
             @RequestParam(required = false) Integer majorId,
+            @RequestParam(required = false) String towns,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) Double maxDistanceKm,
+            @RequestParam(required = false) Double userLat,
+            @RequestParam(required = false) Double userLng,  
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date,
             @RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime startTime,
             @RequestParam @DateTimeFormat(pattern = "HH:mm") LocalTime endTime
     ) {
-        return service.filterClinics(majorId, date, startTime, endTime);
+        return service.filterClinics(majorId, towns, minRating, maxDistanceKm, userLat, userLng, date, startTime, endTime);
     }
     
     @GetMapping("/id/{clinicId}")

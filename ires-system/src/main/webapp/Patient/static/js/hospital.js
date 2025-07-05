@@ -1,11 +1,30 @@
+const params = new URLSearchParams(window.location.search);
+
+const date = params.get("date") || "";
+const startTime = params.get("startTime") || "";
+const endTime = params.get("endTime") || "";
+const majorId = params.get("majorId") || "";
+const maxDistanceKm = params.get("maxDistanceKm") || "";
+const towns = params.get("towns") || "";
+const minRating = params.get("minRating") || "";
+const userLat = sessionStorage.getItem("userLat") || "";
+const userLng = sessionStorage.getItem("userLng") || "";
 $(document).ready(function () {
-  const params = new URLSearchParams(window.location.search);
   const date = params.get("date");
   const startTime = params.get("startTime");
   const endTime = params.get("endTime");
   const majorId = params.get("majorId");
-  const distance = params.get("distance");
-
+  const maxDistanceKm = params.get("maxDistanceKm");
+  const userLat = params.get("userLat");
+  const userLng = params.get("userLng");
+  const towns = params.get("towns");
+  $(".ratys").raty({
+    starType: "img",
+    half: false,
+    starOff: "/ires-system/Patient/assets/plugins/raty/images/star-off.png",
+    starOn: "/ires-system/Patient/assets/plugins/raty/images/star-on.png",
+    score: 0,
+  });
   if (date && startTime && endTime) {
     $.ajax({
       url: "/ires-system/clinic/filter",
@@ -15,7 +34,11 @@ $(document).ready(function () {
         startTime,
         endTime,
         majorId,
-        distance,
+        maxDistanceKm,
+        userLat,
+        userLng,
+        towns,
+        minRating,
       },
       success: function (clinics) {
         console.log(clinics);
@@ -43,12 +66,13 @@ $(document).ready(function () {
             select.append(option);
           });
         }
+        ul.append('<li data-value="all" class="is-highlighted">全部</li>');
         if ($("#hospital_major_list")) {
           const select = $("#hospital_major_list");
           const ul = $(".custom-select-options ul");
           select.empty();
           ul.empty();
-          select.append('<option value="all" selected>全部</option>');
+          select.append('<option value="" selected>全部</option>');
           data.forEach(function (item) {
             const option = $("<option>", {
               value: item.majorId,
@@ -56,18 +80,17 @@ $(document).ready(function () {
             });
             select.append(option);
 
-            // const li = $("<li>", {
-            //   "data-value": item.majorId,
-            //   text: item.majorName,
-            // });
-            // ul.append(li);
+            const li = $("<li>", {
+              "data-value": item.majorId,
+              text: item.majorName,
+            });
+            ul.append(li);
           });
         }
-
-        // ul.append('<li data-value="all" class="is-highlighted">全部</li>');
       }
     },
   });
+  // 在 document ready 裡加上這段
 });
 
 function renderAddress(clinics) {
@@ -135,25 +158,29 @@ function renderClinicList(clinics) {
         ? `<span>尚未評論</span>`
         : `   <span class="reviews-stats">${clinic.rating.toFixed(1)}</span>
                 <span class="reviews-count">(${clinic.comments})</span>`;
-    // let selectedRating = 0;
-    // $("#star-rating")
-    //   .off("click")
-    //   .on("click", "i", function () {
-    //     selectedRating = Number($(this).data("value"));
-    //     $("#star-rating i").each(function (idx) {
-    //       if (idx < selectedRating) {
-    //         $(this).removeClass("far").addClass("fas");
-    //       } else {
-    //         $(this).removeClass("fas").addClass("far");
-    //       }
-    //     });
-    //   });
+
     let ratingStarsHtml = "";
     for (let i = 1; i <= 5; i++) {
       const iconClass = i <= Math.round(clinic.rating) ? "fas" : "far";
       ratingStarsHtml += `<i class="${iconClass} fa-star"></i>
     `;
     }
+    let distanceValue = "";
+    if (
+      userLat &&
+      userLng &&
+      clinic.latitude != null &&
+      clinic.longitude != null
+    ) {
+      distanceValue = getDistanceFromLatLonInKm(
+        parseFloat(userLat),
+        parseFloat(userLng),
+        parseFloat(clinic.latitude),
+        parseFloat(clinic.longitude)
+      );
+    }
+    const distanceHtml = distanceValue ? `距離${distanceValue}km` : "距離未知";
+
     const html = `
       <div class="border-0 card mb-3 overflow-hidden rounded card-hover shadow card-hover-sm card-hover">
         <div class="d-sm-flex hospital-list__item">
@@ -164,7 +191,9 @@ function renderClinicList(clinics) {
               clinic.profilePicture
                 ? `data:image/jpeg;base64,${clinic.profilePicture}`
                 : "static/img/1.jpeg"
-            }" alt="${clinic.clinicName}" />
+            }" alt="${
+      clinic.clinicName
+    }" style="aspect-ratio: 4 / 3; object-fit: cover; width: 100%;" />
           </a>
           <div class="flex-grow-1 p-4">
             <div class="align-items-center d-flex fs-13 mb-2 star-rating">
@@ -186,14 +215,14 @@ function renderClinicList(clinics) {
               }${clinic.addressTown}${clinic.addressRoad}
             </address>
             <div class="d-flex flex-wrap mt-3">
-              <a href="#" class="border directions-link fs-13 py-1 rounded-5">
-                <i class="fa-solid fa-compass me-2"></i>路線</a>
+              <a class="border directions-link fs-13 py-1 rounded-5">
+                <i class="fa-solid fa-compass me-2"></i>${distanceHtml}</a>
+                <br/>
               <a href="tel:${
                 clinic.phone
               }" class="border directions-link fs-13 py-1 rounded-5 ms-1">
                 <i class="fa-solid fa-phone me-2"></i>${clinic.phone}</a>
-              <a href="#" class="border directions-link fs-13 py-1 rounded-5 ms-1">
-                <i class="fa-solid fa-calendar-check me-2"></i>預約</a>
+             
             </div>
           </div>
         </div>
@@ -202,3 +231,58 @@ function renderClinicList(clinics) {
     container.append(html);
   });
 }
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c;
+  return d.toFixed(2);
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+$("#sidebar-apply-filter-btn").on("click", function () {
+  const date = params.get("date");
+  const startTime = params.get("startTime");
+  const endTime = params.get("endTime");
+  let majorId = $("#hospital_major").val();
+  const minRating = $(".ratys input[name='score']").val() || "";
+  const maxDistanceKm = parseInt(
+    $(".irs-to")
+      .text()
+      .replace(/[^0-9]/g, ""),
+    10
+  );
+  if (majorId == "all") majorId = "";
+  const selectedTowns = $(".sidebar-filters input[type='checkbox']:checked")
+    .map(function () {
+      return $(this).val();
+    })
+    .get();
+  const town = selectedTowns.filter((t) => t && t.trim() !== "");
+  const towns = town.join(",");
+  const queryParams = new URLSearchParams({
+    date,
+    startTime,
+    endTime,
+    majorId,
+    maxDistanceKm,
+    userLat,
+    userLng,
+    minRating,
+    towns,
+  });
+
+  window.location.href =
+    "/ires-system/Patient/hospital.html?" + queryParams.toString();
+});

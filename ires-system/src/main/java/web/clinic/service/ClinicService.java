@@ -8,6 +8,9 @@ import web.clinic.entity.Clinic;
 
 public interface ClinicService {
 	String editPsd(Clinic clinic);
-	List<Clinic> filterClinics(Integer majorId, LocalDate date, LocalTime startTime, LocalTime endTime);
-	Clinic findById(Integer clinicId); 
+
+	List<Clinic> filterClinics(Integer majorId, String towns, Double minRating, Double maxDistanceKm, Double userLat,
+			Double userLng, LocalDate date, LocalTime startTime, LocalTime endTime);
+
+	Clinic findById(Integer clinicId);
 }
