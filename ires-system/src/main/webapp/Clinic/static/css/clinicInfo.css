@@ -1,14 +1,68 @@
 div.clinicInfo{
-    width: 80%;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    margin-top: 10px;
     padding: 10px;
     margin: 20px;
-    border: 1px solid grey;
     border-radius: 10px;
     box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+span.label {
+    font-size: 14px;
+    color: black;
+}
+
+.img {
+    flex-shrink: 0;
+}
+
+ .editBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#businessHoursTitle{
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.business-hours-display {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.business-hours-display th,
+.business-hours-display td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    min-width: 60px;
+}
+
+.business-hours-display td {
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.business-hours-display td:empty {
+    background-color: #f8f8f8;
+    color: #ccc;
 }
 
 .form-popup {
-    /* display: none; */
+    display: none;
     box-sizing: border-box;
     height: 70%;
     overflow-y: auto;

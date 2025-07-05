@@ -44,7 +44,7 @@ public class DoctorDaoImpl implements DoctorDao{
 		return session.get(Doctor.class, doctorId);
 	}
 
-	//各診所會依clinicId去搜尋資料，似乎用不到此DAO方法
+	// 各診所會依clinicId去搜尋資料，似乎用不到此DAO方法
 	@Override
 	public List<Doctor> selectAll() {
 		return session.createQuery("FROM Doctor", Doctor.class).list();
