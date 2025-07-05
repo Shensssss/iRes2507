@@ -382,3 +382,19 @@ function clinicLinks() {
     });
   }
 }
+
+const routes = {
+  '主頁': 'index.html',
+  '預約紀錄': 'reservation.html',
+  '我的收藏': 'favorites.html',
+  '通知消息': 'notification.html',
+  '帳戶設定': 'account.html',
+};
+
+document.querySelectorAll('.main_links li a').forEach((link) =>
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const url = routes[link.textContent.trim()];
+    if (url) window.location.href = url;
+  })
+);
