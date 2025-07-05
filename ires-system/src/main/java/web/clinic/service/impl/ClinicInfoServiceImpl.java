@@ -29,7 +29,17 @@ public abstract class ClinicInfoServiceImpl implements ClinicInfoService {
         if (existing == null) {
             return 0;
         }
-        return clinicInfoDao.update(editedClinic);
+        if (editedClinic.getClinicName() != null) existing.setClinicName(editedClinic.getClinicName());
+        if (editedClinic.getPhone() != null) existing.setPhone(editedClinic.getPhone());
+        if (editedClinic.getAddressCity() != null) existing.setAddressCity(editedClinic.getAddressCity());
+        if (editedClinic.getAddressTown() != null) existing.setAddressTown(editedClinic.getAddressTown());
+        if (editedClinic.getAddressRoad() != null) existing.setAddressRoad(editedClinic.getAddressRoad());
+        if (editedClinic.getWeb() != null) existing.setWeb(editedClinic.getWeb());
+        if (editedClinic.getRegistrationFee() != null) existing.setRegistrationFee(editedClinic.getRegistrationFee());
+        if (editedClinic.getMemo() != null) existing.setMemo(editedClinic.getMemo());
+        if (editedClinic.getProfilePicture() != null) existing.setProfilePicture(editedClinic.getProfilePicture());
+
+        return clinicInfoDao.update(existing);
 	}
 
 	@Override

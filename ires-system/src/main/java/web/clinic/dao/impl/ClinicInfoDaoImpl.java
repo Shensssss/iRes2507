@@ -35,32 +35,22 @@ public class ClinicInfoDaoImpl implements ClinicInfoDao {
 
 	@Override
 	//更新基本資料
-	public int update(Clinic updatedClinic) {
-		Clinic clinic = session.get(Clinic.class, updatedClinic.getClinicId());
-
-	    clinic.setClinicName(updatedClinic.getClinicName());
-	    clinic.setPhone(updatedClinic.getPhone());
-	    clinic.setAddressCity(updatedClinic.getAddressCity());
-	    clinic.setAddressTown(updatedClinic.getAddressTown());
-	    clinic.setAddressRoad(updatedClinic.getAddressRoad());
-	    clinic.setWeb(updatedClinic.getWeb());
-	    clinic.setRegistrationFee(updatedClinic.getRegistrationFee());
-	    clinic.setMemo(updatedClinic.getMemo());
-	    clinic.setProfilePicture(updatedClinic.getProfilePicture());
+	public int update(Clinic editedClinic) {
+		session.update(editedClinic);
 	    return 1;
 	}
 	
 	@Override
 	//更新營業時間
-	public int updateBusinessHours(Clinic updatedClinic) {
-	    Clinic clinic = session.get(Clinic.class, updatedClinic.getClinicId());
+	public int updateBusinessHours(Clinic editedClinic) {
+	    Clinic clinic = session.get(Clinic.class, editedClinic.getClinicId());
 	    
-	    clinic.setMorning(updatedClinic.getMorning());
-	    clinic.setAfternoon(updatedClinic.getAfternoon());
-	    clinic.setNight(updatedClinic.getNight());
-	    clinic.setWeekMorning(updatedClinic.getWeekMorning());
-	    clinic.setWeekAfternoon(updatedClinic.getWeekAfternoon());
-	    clinic.setWeekNight(updatedClinic.getWeekNight());
+	    clinic.setMorning(editedClinic.getMorning());
+	    clinic.setAfternoon(editedClinic.getAfternoon());
+	    clinic.setNight(editedClinic.getNight());
+	    clinic.setWeekMorning(editedClinic.getWeekMorning());
+	    clinic.setWeekAfternoon(editedClinic.getWeekAfternoon());
+	    clinic.setWeekNight(editedClinic.getWeekNight());
 	    return 1;
 	}
 
