@@ -25,8 +25,8 @@ public class DoctorController {
 	// 新增醫師
     @PostMapping("add")
     public ResponseEntity<Core> addDoctor(@RequestBody Doctor doctor, HttpSession session) {
-        Core core = new Core();
-
+        
+    	Core core = new Core();
         Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
         if (loggedInClinic == null) {
         	//模擬登入
@@ -40,10 +40,10 @@ public class DoctorController {
         doctor.setClinic(loggedInClinic);
         int result = doctorService.addDoctor(doctor);
         if (result == 1) {
-            core.setStatusCode(201);
+            core.setStatusCode(200);
             core.setMessage("新增成功");
             core.setData(doctorService.showAllDoctors(loggedInClinic.getClinicId()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(core);
+            return ResponseEntity.ok(core);
         } else {
             core.setStatusCode(400);
             core.setMessage("新增失敗");
@@ -139,8 +139,6 @@ public class DoctorController {
 	    }
         
 	    clinicId = loggedInClinic.getClinicId();
-	    
-	
 	    List<Doctor> doctors = doctorService.showAllDoctors(clinicId);
 	    core.setStatusCode(200);
 	    core.setMessage("載入成功");

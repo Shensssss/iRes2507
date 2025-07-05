@@ -18,4 +18,5 @@ public interface DoctorService {
 	List<Doctor> showSearchedByName(Integer clinicId, String doctorName);
 
 	public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize);
+
 }

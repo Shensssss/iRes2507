@@ -212,3 +212,15 @@
     });
   });
 })();
+
+window.initDropdownHighlight = function (
+  ulSelector = ".custom-select-options ul"
+) {
+  const ul = document.querySelector(ulSelector);
+  if (!ul) return;
+
+  const firstItem = ul.querySelector("li[data-value]");
+  if (firstItem) {
+    firstItem.classList.add("is-highlighted");
+  }
+};
