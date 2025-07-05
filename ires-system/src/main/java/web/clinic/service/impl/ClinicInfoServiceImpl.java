@@ -1,5 +1,11 @@
 package web.clinic.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,26 +19,92 @@ import web.clinic.service.ClinicInfoService;
 public class ClinicInfoServiceImpl implements ClinicInfoService {
 	@Autowired
 	private ClinicInfoDao clinicInfoDao;
+	
+	@PersistenceContext
+	private Session session;
 
-@Override
-	public String updateInfo(Clinic clinic) {
-	    if (clinic.getAccount() == null || clinic.getAccount().isBlank()) return "帳號錯誤";
-	    if (clinic.getClinicName() == null || clinic.getClinicName().isBlank()) return "診所名字未輸入";
-	    if (clinic.getAgencyId() == null || clinic.getAgencyId().isBlank()) return "代碼未輸入";
-	    if (clinic.getPhone() == null || clinic.getPhone().isBlank()) return "電話未輸入";
-	    if (clinic.getAddressCity() == null || clinic.getAddressCity().isBlank()) return "縣市未輸入";
-	    if (clinic.getAddressTown() == null || clinic.getAddressTown().isBlank()) return "鄉鎮未輸入";
-	    if (clinic.getAddressRoad() == null || clinic.getAddressRoad().isBlank()) return "道路未輸入";
-	    //if (clinic.getWeb() == null) return "官網錯誤";
-	    if (clinic.getRegistrationFee() == null) return "掛號費錯誤";
-	    //if (clinic.getMemo() == null) return "備註錯誤";
-	    if (clinic.getMorning() == null || clinic.getAfternoon() == null || clinic.getNight() == null ||
-	        clinic.getWeekMorning() == null || clinic.getWeekAfternoon() == null || clinic.getWeekNight() == null) {
-	        return "營業時間錯誤";
-	    }
+	@Override
+	public int editClinic(Clinic editedClinic) {
+		Clinic existing = clinicInfoDao.selectById(editedClinic.getClinicId());
+        if(existing == null) {
+            return 0;
+        }
+        if(editedClinic.getClinicName() != null) {
+        	existing.setClinicName(editedClinic.getClinicName());
+        }
+        if(editedClinic.getPhone() != null) {
+        	existing.setPhone(editedClinic.getPhone());
+        }
+        if(editedClinic.getAddressCity() != null) {
+        	existing.setAddressCity(editedClinic.getAddressCity());
+        } 
+        if(editedClinic.getAddressTown() != null) {
+        	existing.setAddressTown(editedClinic.getAddressTown());
+        }
+        if(editedClinic.getAddressRoad() != null) {
+        	existing.setAddressRoad(editedClinic.getAddressRoad());
+        } 
+        if(editedClinic.getWeb() != null) {
+        	existing.setWeb(editedClinic.getWeb());
+        } 
+        if(editedClinic.getRegistrationFee() != null) {
+        	existing.setRegistrationFee(editedClinic.getRegistrationFee());
+        } 
+        if(editedClinic.getMemo() != null) {
+        	existing.setMemo(editedClinic.getMemo());
+        }
+        if(editedClinic.getProfilePicture() != null) {
+        	existing.setProfilePicture(editedClinic.getProfilePicture());
+        }
 
-	    int result = clinicInfoDao.updateInfo(clinic);
-	    return result == 1 ? null : "更新失敗";
+        return clinicInfoDao.update(existing);
+	}
+
+	@Override
+	public int editBusinessHours(Clinic editedClinic) {
+		Clinic existing = clinicInfoDao.selectById(editedClinic.getClinicId());
+        if (existing == null) {
+            return 0;
+        }
+        if(editedClinic.getMorning() != null) {
+        	existing.setMorning(editedClinic.getMorning());
+        }
+        if(editedClinic.getAfternoon() != null) {
+        	existing.setAfternoon(editedClinic.getAfternoon());
+        }
+        if(editedClinic.getNight() != null) {
+        	existing.setNight(editedClinic.getNight());
+        }
+        if(editedClinic.getWeekMorning() != null) {
+        	existing.setWeekMorning(editedClinic.getWeekMorning());
+        }
+        if(editedClinic.getWeekAfternoon() != null) {
+        	existing.setWeekAfternoon(editedClinic.getWeekAfternoon());
+        }
+        if(editedClinic.getWeekNight() != null) {
+        	existing.setWeekNight(editedClinic.getWeekNight());
+        }
+        
+        return clinicInfoDao.update(existing);
+	}
+
+	@Override
+	public Clinic getClinicById(Integer clinicId) {
+		return clinicInfoDao.selectById(clinicId);
+	}
+
+	@Override
+	public Map<String, String> getOpenPeriod(Integer clinicId) {
+		Clinic clinic = clinicInfoDao.selectById(clinicId);
+        if (clinic == null) {
+            return null;
+        }
+
+        Map<String, String> periods = new HashMap<>();
+        periods.put("weekMorning", clinic.getWeekMorning());
+        periods.put("weekAfternoon", clinic.getWeekAfternoon());
+        periods.put("weekNight", clinic.getWeekNight());
+        return periods;
 	}
 
 }
