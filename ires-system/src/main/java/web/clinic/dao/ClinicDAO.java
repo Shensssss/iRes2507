@@ -10,7 +10,13 @@ import java.util.List;
 import core.dao.CoreDao;
 
 public interface ClinicDAO extends CoreDao<Clinic, Integer> {
+//public interface ClinicDAO extends CoreDao<Clinic, String> {	// 衝突 
     int updatePsd(Clinic clinic);
     
     Integer findClinicIdByAgencyId(String agencyId);
+    
+	Clinic selectById(int clinic_id);
+
+	List<Clinic> getClinicByAccount(String clinic_account);
+
 }
