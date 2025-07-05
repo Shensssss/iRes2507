@@ -19,4 +19,5 @@ public interface DoctorService{
 
     public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize);
 
+
 }
