@@ -1,7 +1,9 @@
 package web.clinic.dao.impl;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.PersistenceContext;
 
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import web.appointment.entity.Appointment;
 import web.clinic.dao.ClinicDAO;
+import web.clinic.entity.CallNumber;
 import web.clinic.entity.Clinic;
 
 @Repository
@@ -91,5 +94,24 @@ public class ClinicDaoImpl implements ClinicDAO {
 		return session.get(Clinic.class, clinic_id);
 		
 	}
+
+	@Override
+	public Optional<CallNumber> findCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date) {
+		String hql = "FROM CallNumber c WHERE c.clinicId = :clinicId AND c.doctorId = :doctorId AND c.timePeriod = :timePeriod AND c.appointmentDate = :date";
+		return session.createQuery(hql, CallNumber.class)
+				.setParameter("clinicId", clinicId)
+				.setParameter("doctorId", doctorId)
+				.setParameter("timePeriod", timePeriod)
+				.setParameter("date", date)
+				.uniqueResultOptional();
+	}
+
+	@Override
+	public CallNumber save(CallNumber callNumber) {
+		session.persist(callNumber);
+		return callNumber;
+	}
+
+
 
 }

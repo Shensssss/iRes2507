@@ -93,6 +93,10 @@ public class RegisterServiceImpl implements RegisterService {
 		if (clinic.getQuota() == null) {
 			clinic.setQuota(0);
 		}
+		
+		if (clinic.getQuota() == null) {
+			clinic.setQuota(0);
+		}
 
 		int count = dao.insert(clinic);
 		if (count < 1) {
