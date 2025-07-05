@@ -16,7 +16,7 @@ import web.clinic.service.ClinicInfoService;
 
 @Service
 @Transactional
-public abstract class ClinicInfoServiceImpl implements ClinicInfoService {
+public class ClinicInfoServiceImpl implements ClinicInfoService {
 	@Autowired
 	private ClinicInfoDao clinicInfoDao;
 	
@@ -26,18 +26,36 @@ public abstract class ClinicInfoServiceImpl implements ClinicInfoService {
 	@Override
 	public int editClinic(Clinic editedClinic) {
 		Clinic existing = clinicInfoDao.selectById(editedClinic.getClinicId());
-        if (existing == null) {
+        if(existing == null) {
             return 0;
         }
-        if (editedClinic.getClinicName() != null) existing.setClinicName(editedClinic.getClinicName());
-        if (editedClinic.getPhone() != null) existing.setPhone(editedClinic.getPhone());
-        if (editedClinic.getAddressCity() != null) existing.setAddressCity(editedClinic.getAddressCity());
-        if (editedClinic.getAddressTown() != null) existing.setAddressTown(editedClinic.getAddressTown());
-        if (editedClinic.getAddressRoad() != null) existing.setAddressRoad(editedClinic.getAddressRoad());
-        if (editedClinic.getWeb() != null) existing.setWeb(editedClinic.getWeb());
-        if (editedClinic.getRegistrationFee() != null) existing.setRegistrationFee(editedClinic.getRegistrationFee());
-        if (editedClinic.getMemo() != null) existing.setMemo(editedClinic.getMemo());
-        if (editedClinic.getProfilePicture() != null) existing.setProfilePicture(editedClinic.getProfilePicture());
+        if(editedClinic.getClinicName() != null) {
+        	existing.setClinicName(editedClinic.getClinicName());
+        }
+        if(editedClinic.getPhone() != null) {
+        	existing.setPhone(editedClinic.getPhone());
+        }
+        if(editedClinic.getAddressCity() != null) {
+        	existing.setAddressCity(editedClinic.getAddressCity());
+        } 
+        if(editedClinic.getAddressTown() != null) {
+        	existing.setAddressTown(editedClinic.getAddressTown());
+        }
+        if(editedClinic.getAddressRoad() != null) {
+        	existing.setAddressRoad(editedClinic.getAddressRoad());
+        } 
+        if(editedClinic.getWeb() != null) {
+        	existing.setWeb(editedClinic.getWeb());
+        } 
+        if(editedClinic.getRegistrationFee() != null) {
+        	existing.setRegistrationFee(editedClinic.getRegistrationFee());
+        } 
+        if(editedClinic.getMemo() != null) {
+        	existing.setMemo(editedClinic.getMemo());
+        }
+        if(editedClinic.getProfilePicture() != null) {
+        	existing.setProfilePicture(editedClinic.getProfilePicture());
+        }
 
         return clinicInfoDao.update(existing);
 	}
@@ -48,7 +66,26 @@ public abstract class ClinicInfoServiceImpl implements ClinicInfoService {
         if (existing == null) {
             return 0;
         }
-        return clinicInfoDao.updateBusinessHours(editedClinic);
+        if(editedClinic.getMorning() != null) {
+        	existing.setMorning(editedClinic.getMorning());
+        }
+        if(editedClinic.getAfternoon() != null) {
+        	existing.setAfternoon(editedClinic.getAfternoon());
+        }
+        if(editedClinic.getNight() != null) {
+        	existing.setNight(editedClinic.getNight());
+        }
+        if(editedClinic.getWeekMorning() != null) {
+        	existing.setWeekMorning(editedClinic.getWeekMorning());
+        }
+        if(editedClinic.getWeekAfternoon() != null) {
+        	existing.setWeekAfternoon(editedClinic.getWeekAfternoon());
+        }
+        if(editedClinic.getWeekNight() != null) {
+        	existing.setWeekNight(editedClinic.getWeekNight());
+        }
+        
+        return clinicInfoDao.update(existing);
 	}
 
 	@Override

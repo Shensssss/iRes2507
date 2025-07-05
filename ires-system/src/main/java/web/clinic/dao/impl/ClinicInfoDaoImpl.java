@@ -34,23 +34,8 @@ public class ClinicInfoDaoImpl implements ClinicInfoDao {
 	}
 
 	@Override
-	//更新基本資料
 	public int update(Clinic editedClinic) {
 		session.update(editedClinic);
-	    return 1;
-	}
-	
-	@Override
-	//更新營業時間
-	public int updateBusinessHours(Clinic editedClinic) {
-	    Clinic clinic = session.get(Clinic.class, editedClinic.getClinicId());
-	    
-	    clinic.setMorning(editedClinic.getMorning());
-	    clinic.setAfternoon(editedClinic.getAfternoon());
-	    clinic.setNight(editedClinic.getNight());
-	    clinic.setWeekMorning(editedClinic.getWeekMorning());
-	    clinic.setWeekAfternoon(editedClinic.getWeekAfternoon());
-	    clinic.setWeekNight(editedClinic.getWeekNight());
 	    return 1;
 	}
 
