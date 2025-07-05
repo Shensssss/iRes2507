@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import web.doctor.dao.DoctorDao;
 import web.doctor.entity.Doctor;
+import web.doctor.entity.Schedule;
 import web.doctor.service.DoctorService;
 
 @Service
@@ -118,6 +119,4 @@ public class DoctorServiceImpl implements DoctorService{
 		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
 		return response;
 	}
-
-
 }

@@ -86,7 +86,7 @@ public class Appointment {
     private Timestamp createTime;
 
     @UpdateTimestamp
-    @Column(name = "update_time", insertable = false)
+    @Column(name = "update_time")
     private Timestamp updateTime;
 
     @Column(name = "notes", columnDefinition = "TEXT")
