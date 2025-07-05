@@ -48,7 +48,7 @@ public class reservequeryDAOImpl implements reservequeryDAO {
 		return session.createQuery(hql, Appointment.class).getResultList();
 	}
 
-	@Override // 為什麼用不到？ helen bug
+	@Override // 為什麼用不到？ helen bug 待處理
 	public List<Object[]> findByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date date,
 			int timePeriod) {
 
