@@ -1,5 +1,6 @@
 package web.appointment.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.Date;
 //import java.sql.Date;
 import java.util.List;
@@ -26,8 +27,23 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
 	@Override
 	public int update(Appointment appointment) {
-		session.update(appointment);
-		return 1;
+	    Appointment original = session.get(Appointment.class, appointment.getAppointmentId());
+	    if (original == null) return 0;
+
+	    // 安全地更新每個欄位
+	    if (appointment.getAppointmentDate() != null)
+	        original.setAppointmentDate(appointment.getAppointmentDate());
+
+	    if (appointment.getTimePeriod() != null)
+	        original.setTimePeriod(appointment.getTimePeriod());
+
+	    if (appointment.getDoctorId() != null)
+	        original.setDoctorId(appointment.getDoctorId());
+
+	    original.setUpdateTime(new Timestamp(new Date().getTime()));
+
+	    session.update(original);
+	    return 1;
 	}
 
 	@Override

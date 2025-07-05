@@ -16,7 +16,7 @@ import web.doctor.service.DoctorService;
 
 @Service
 @Transactional
-public class DoctorServiceImpl implements DoctorService{
+public class DoctorServiceImpl implements DoctorService {
 
 	@Autowired
 	private DoctorDao doctorDao;
@@ -27,7 +27,7 @@ public class DoctorServiceImpl implements DoctorService{
 		if (doctor.getDoctorName() == null || doctor.getDoctorName().isEmpty()) {
 			throw new IllegalArgumentException("醫師姓名為空");
 		}
-		
+
 		// 2. name不可以重複
 		Integer clinicId = doctor.getClinic().getClinicId();
 		List<Doctor> existed = doctorDao.selectByClinicIdAndDoctorName(clinicId, doctor.getDoctorName());
@@ -35,9 +35,9 @@ public class DoctorServiceImpl implements DoctorService{
 			throw new IllegalArgumentException("醫師姓名重複");
 		}
 
-	    //clinicId若是前端傳來的doctor物件參數之一需要驗證避免被攻擊?或是可以直接從servlet加上這個屬性?
-		
-		//一定要設定時間(不可為null)避免出錯
+		// clinicId若是前端傳來的doctor物件參數之一需要驗證避免被攻擊?或是可以直接從servlet加上這個屬性?
+
+		// 一定要設定時間(不可為null)避免出錯
 		doctor.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		doctor.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		// 3. 執行insert
@@ -46,7 +46,7 @@ public class DoctorServiceImpl implements DoctorService{
 
 	@Override
 	public int deleteDoctor(Integer doctorId, Integer clinicId) {
-		if(doctorId == null) {
+		if (doctorId == null) {
 			return 0;
 		}
 		Doctor doctor = doctorDao.selectById(doctorId);
@@ -55,7 +55,6 @@ public class DoctorServiceImpl implements DoctorService{
 		}
 		return doctorDao.deleteById(doctorId);
 	}
-
 
 	@Override
 	public int editDoctor(Doctor doctor) {
@@ -70,18 +69,17 @@ public class DoctorServiceImpl implements DoctorService{
 
 		boolean isDuplicate = false;
 		for (int i = 0; i < existed.size(); i++) {
-		    Doctor d = existed.get(i);
-		    if (!d.getDoctorId().equals(doctor.getDoctorId()) 
-		        && d.getDoctorName().equals(doctor.getDoctorName())) {
-		        isDuplicate = true;
-		        break;
-		    }
+			Doctor d = existed.get(i);
+			if (!d.getDoctorId().equals(doctor.getDoctorId()) && d.getDoctorName().equals(doctor.getDoctorName())) {
+				isDuplicate = true;
+				break;
+			}
 		}
 
 		if (isDuplicate) {
-		    throw new IllegalArgumentException("醫師姓名重複");
-		}else {
-		// 3. 執行update
+			throw new IllegalArgumentException("醫師姓名重複");
+		} else {
+			// 3. 執行update
 			doctor.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 			return doctorDao.update(doctor);
 		}
@@ -118,6 +116,4 @@ public class DoctorServiceImpl implements DoctorService{
 		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
 		return response;
 	}
-
-
 }
