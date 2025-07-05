@@ -28,9 +28,16 @@ public class ClinicServiceImpl implements ClinicService {
 
 	@Override
 	public String editPsd(Clinic clinic) {
-		clinicDAO.updatePsd(clinic);
-	
-		return "密碼修改完成";
+		final Clinic oclinic = clinicDAO.selectById(clinic.getClinicId());
+
+		clinic.setClinicName(oclinic.getClinicName());
+		clinic.setAgencyId(oclinic.getAgencyId());
+		clinic.setAccount(oclinic.getAccount());
+		clinic.setPhone(oclinic.getPhone());
+		final int resultCount = clinicDAO.updatePsd(clinic);
+		String strReturn = (resultCount > 0 ? "密碼修改成功" : "密碼修改失敗");
+
+		return strReturn;
 	}
 
 	@Override
@@ -88,6 +95,16 @@ public class ClinicServiceImpl implements ClinicService {
 	    return result;
 	}
 
+	@Override
+	public Clinic selectById(int clinic_id) {
+		return clinicDAO.selectById(clinic_id);
+	}
+	
+	@Override
+	public List<Clinic> getClinicByAccount(String clinic_account) {
+		return clinicDAO.getClinicByAccount(clinic_account);
+	}
+	
 	@Override
 	public Clinic findById(Integer clinicId) {
 		return clinicDAO.selectById(clinicId);

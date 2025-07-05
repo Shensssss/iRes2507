@@ -118,17 +118,19 @@
         <div class="container">
           <div class="booking-wrapper">
             <div class="booking-form-container">
-              <form id="bookingForm" class="booking-form" action="#">
+              <form
+                class="booking-form clinicFilterForm"
+                action="javascript:void(0)"
+              >
                 <div class="booking-form-row">
                   <div class="booking-form-item">
                     <label>預約日期</label>
                     <br />
                     <input
-                      name="check_in_time"
-                      id="datepicks1"
-                      class="datepicker form-control"
+                      name="date"
+                      class="datepicker form-control datepicks_val"
                       placeholder="mm / dd / yyyy"
-                      type="text"
+                      type="date"
                     />
                   </div>
                   <span>|</span>
@@ -138,16 +140,16 @@
                     <div class="parent" style="display: flex; gap: 10px">
                       <div>
                         <input
-                          id="timepicker_start"
-                          type="text"
-                          placeholder="00:00"
+                          class="timepicker_start"
+                          type="time"
+                          value="08:00"
                         />
                       </div>
                       <div>
                         <input
-                          id="timepicker_end"
-                          type="text"
-                          placeholder="24:00"
+                          class="timepicker_end"
+                          type="time"
+                          value="12:00"
                         />
                       </div>
                     </div>
@@ -157,19 +159,14 @@
                     <label>診所類別</label> <br />
                     <div class="parent">
                       <div class="custom-select">
-                        <select name="category">
+                        <select name="category" class="major-select">
                           <option value="all" selected="">全部</option>
-                          <option value="pec">小兒科</option>
-                          <option value="dc">牙科</option>
-                          <option value="oc">眼科</option>
-                          <option value="ob">婦產科</option>
-                          <option value="dermc">皮膚科</option>
-                          <option value="ent">耳鼻喉科</option>
-                          <option value="psychc">身心科</option>
-                          <option value="tcm">中醫</option>
-                          <option value="nutc">營養科</option>
-                          <option value="ptc">物理治療</option>
                         </select>
+                      </div>
+                      <div class="custom-select-options">
+                        <ul>
+                          <li data-value="all">全部</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -177,25 +174,26 @@
                 <span>|</span>
                 <div class="booking-form-row">
                   <div class="booking-form-item">
-                    <label>距離</label> <br />
-                    <div class="parent">
-                      <div class="custom-select">
-                        <select name="distance">
-                          <option value="01" selected="">1公里</option>
-                          <option value="02">3公里</option>
-                          <option value="03">5公里</option>
-                          <option value="04">7公里</option>
-                          <option value="05">9公里</option>
-                          <option value="06">不限制</option>
-                        </select>
+                    <label>
+                      <span class="distance-value">1</span> 公里
+                      <br />
+                      <div class="parent">
+                        <input
+                          type="range"
+                          class="modern-slider distance-range"
+                          name="distance"
+                          min="1"
+                          max="9"
+                          step="1"
+                          value="1"
+                        />
                       </div>
-                    </div>
+                    </label>
                   </div>
                 </div>
                 <div class="booking-form-row full-width">
                   <div class="booking-form-item full-width">
                     <button type="submit" class="book-now-btn">立即搜尋</button>
-                    <p id="emailjs-response" class="emailjs_response"></p>
                   </div>
                 </div>
               </form>
@@ -354,39 +352,6 @@
                 距離: 近到遠
               </label>
             </div>
-            <div class="form-check mb-1">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="flexRadioDefault"
-                id="sortRadioFour"
-              />
-              <label class="form-check-label" for="sortRadioFour">
-                掛號費: 低到高</label
-              >
-            </div>
-            <div class="form-check mb-1">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="flexRadioDefault"
-                id="sortRadioFive"
-              />
-              <label class="form-check-label" for="sortRadioFive">
-                地區/城市
-              </label>
-            </div>
-            <div class="form-check mb-0">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="flexRadioDefault"
-                id="sortRadioSix"
-              />
-              <label class="form-check-label" for="sortRadioSix">
-                可預約時間
-              </label>
-            </div>
           </div>
         </div>
       </div>
@@ -419,51 +384,7 @@
                       >重置</a
                     >
                   </div>
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="localityOne"
-                    />
-                    <label class="form-check-label" for="localityOne">
-                      內湖區<span class="count ms-1">(15)</span>
-                    </label>
-                  </div>
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="localityTwo"
-                      checked=""
-                    />
-                    <label class="form-check-label" for="localityTwo">
-                      南港區<span class="count ms-1">(56)</span>
-                    </label>
-                  </div>
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="localityThree"
-                    />
-                    <label class="form-check-label" for="localityThree">
-                      大安區<span class="count ms-1">(17)</span>
-                    </label>
-                  </div>
-                  <div class="form-check mb-0">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="localityFour"
-                    />
-                    <label class="form-check-label" for="localityFour">
-                      信義區<span class="count ms-1">(21)</span>
-                    </label>
-                  </div>
+                  <div id="address_town"></div>
                 </div>
                 <div class="mb-4">
                   <div
@@ -489,19 +410,11 @@
                       >重置</a
                     >
                   </div>
-                  <select class="form-control select2" multiple="multiple">
-                    <option value="all" selected="">全部</option>
-                    <option value="pec">小兒科</option>
-                    <option value="dc">牙科</option>
-                    <option value="oc">眼科</option>
-                    <option value="ob">婦產科</option>
-                    <option value="dermc">皮膚科</option>
-                    <option value="ent">耳鼻喉科</option>
-                    <option value="psychc">身心科</option>
-                    <option value="tcm">中醫</option>
-                    <option value="nutc">營養科</option>
-                    <option value="ptc">物理治療</option>
-                  </select>
+                  <select
+                    class="form-control select2"
+                    multiple="multiple"
+                    id="hospital_major"
+                  ></select>
                 </div>
                 <div>
                   <div
@@ -548,39 +461,6 @@
                       距離: 近到遠
                     </label>
                   </div>
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="sortRadioFour"
-                    />
-                    <label class="form-check-label" for="sortRadioFour">
-                      掛號費: 低到高</label
-                    >
-                  </div>
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="sortRadioFive"
-                    />
-                    <label class="form-check-label" for="sortRadioFive">
-                      地區/城市
-                    </label>
-                  </div>
-                  <div class="form-check mb-0">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="flexRadioDefault"
-                      id="sortRadioSix"
-                    />
-                    <label class="form-check-label" for="sortRadioSix">
-                      可預約時間
-                    </label>
-                  </div>
                 </div>
               </div>
             </aside>
@@ -610,7 +490,7 @@
     </div>
     <script src="static/js/jquery-3.7.1.min.js"></script>
     <script src="static/js/wow.min.js"></script>
-    <script src="static/js/bootstrap-datepicker.js"></script>
+    <!-- <script src="static/js/bootstrap-datepicker.js"></script> -->
     <script src="static/js/select2.min.js"></script>
     <script src="static/js/theia-sticky-sidebar.min.js"></script>
     <script src="static/js/owl.carousel.min.js"></script>
@@ -632,7 +512,6 @@
     <script src="static/js/gps.js"></script>
 
     <script src="static/js/hero-input-dropdown.js"></script>
-    <script src="static/js/datepicker.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="static/js/gps.js"></script>
     <script src="static/js/hospital.js"></script>

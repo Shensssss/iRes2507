@@ -59,22 +59,3 @@ $(document).ready(function () {
     window.open(mapsUrl, "_blank");
   });
 });
-
-//-------------time select ---------------
-flatpickr("#timepicker_start", {
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: "H:i",
-  minTime: "00:00",
-  maxTime: "23:59",
-  defaultDate: "00:00",
-});
-
-flatpickr("#timepicker_end", {
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: "H:i",
-  minTime: "00:00",
-  maxTime: "23:59",
-  defaultDate: "23:59",
-});

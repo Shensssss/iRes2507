@@ -26,4 +26,5 @@ public interface PatientService {
 	
 	int clinicEditPatientNotes(int patientId, String newNotes);
 
+	Patient checkIn(Patient patient, String code);
 }

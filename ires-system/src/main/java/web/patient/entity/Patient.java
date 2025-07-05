@@ -1,30 +1,29 @@
 package web.patient.entity;
 
-
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import core.pojo.Core;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "patient")
-public class Patient extends Core{
+public class Patient extends Core {
 
 	private static final long serialVersionUID = 1L;
 
@@ -77,7 +76,7 @@ public class Patient extends Core{
 
 	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;
-	
-	@Column(name = "update_time",insertable = false)
+
+	@Column(name = "update_time", insertable = false)
 	private String updateTime;
 }

@@ -70,3 +70,13 @@
     border-radius: 10px;
     text-align: center;
 }
+
+#msg.info {
+    color: green;
+    font-weight: bold;
+}
+
+#msg.error {
+    color: red;
+    font-weight: bold;
+}
