@@ -49,7 +49,7 @@ public class ClinicMajorController {
 	    int result = service.editClinicMajor(loggedinClinic.getClinicId(), selectedMajorIds);
 	    if(result == 1) {
 	    	core.setStatusCode(200);
-		    core.setMessage("更新診所專科成功");
+		    core.setMessage("診所專科更新成功");
 		    return core;
 	    }else {
 	    	core.setStatusCode(400);

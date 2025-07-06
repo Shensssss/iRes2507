@@ -30,7 +30,7 @@ public class ClinicMajorDaoImpl implements ClinicMajorDao{
 
 	@Override
 	public List<Major> findMajorByClinicsId(Integer clinicId) {
-		String hql = "select cm.major from ClinicMajor cm join cm.clinic join cm.major where cm.clinic.clinicId = :clinicId";
+		String hql = "select cm.major from ClinicMajor cm join cm.clinic c join cm.major m where c.clinicId = :clinicId";
 		return session.createQuery(hql, Major.class).setParameter("clinicId", clinicId).getResultList();
 	}
 
