@@ -20,8 +20,12 @@ public class CheckInController {
 	private PatientService patientService;
 
 	@PostMapping
-	public Patient checkIn(@SessionAttribute Patient patient, @RequestBody Map<String, String> payload) {
-		String code = payload.get("appointmentId");
-		return patientService.checkIn(patient, code);
+	public Map<String, Object> checkIn(@SessionAttribute Patient patient, @RequestBody Map<String, String> payload) {
+	    String code = payload.get("appointmentId");
+	    boolean updated = patientService.checkIn(patient, code);
+	    return Map.of(
+	        "success", updated,
+	        "message", updated ? "報到成功" : "報到失敗，可能預約不存在或已報到"
+	    );
 	}
 }
