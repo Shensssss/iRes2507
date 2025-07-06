@@ -2,7 +2,7 @@
 function fetchPatients() {
     $.get('/ires-system/account/patient')
         .done(function (res) {
-           
+
             var patient = res;
             $('#name').val(patient.name);
             $('#gender').val(patient.gender);
@@ -30,10 +30,7 @@ fetchPatients();
 $("#infoForm").on("submit", function (e) {
     e.preventDefault();
     const get = id => $(`#${id}`).val();
-<<<<<<< HEAD
-=======
-    
->>>>>>> 4e0a7265d37df809011d4a6ef0d2c4a84d8125eb
+
     // 取得 preview 圖片的 src
     const src = $('#preview').attr('src');
     let base64Data = null;
@@ -42,10 +39,6 @@ $("#infoForm").on("submit", function (e) {
         // 將 base64 data 從 data URL 中分離出來
         base64Data = src.split(',')[1];
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e0a7265d37df809011d4a6ef0d2c4a84d8125eb
     const patientData = {
         name: get("name"),
         gender: get("gender"),
@@ -73,7 +66,8 @@ function sendPatientData(data) {
         data: JSON.stringify(data),
         success: res => {
             alert('資料已儲存！');
-            fetchPatients();},
+            fetchPatients();
+        },
         error: xhr => {
             const msg = xhr.responseJSON?.message || `錯誤：${xhr.status}`;
             alert('送出失敗：' + msg);

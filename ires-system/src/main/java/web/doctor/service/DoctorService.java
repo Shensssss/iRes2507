@@ -5,19 +5,18 @@ import java.util.Map;
 
 import web.doctor.entity.Doctor;
 
-public interface DoctorService{
-	
+public interface DoctorService {
+
 	int addDoctor(Doctor doctor);
 
-    int deleteDoctor(Integer doctorId, Integer clinicId);
+	int deleteDoctor(Integer doctorId, Integer clinicId);
 
-    int editDoctor(Doctor doctor);
+	int editDoctor(Doctor doctor);
 
-    List<Doctor> showAllDoctors(Integer clinicId);
+	List<Doctor> showAllDoctors(Integer clinicId);
 
-    List<Doctor> showSearchedByName(Integer clinicId, String doctorName);
+	List<Doctor> showSearchedByName(Integer clinicId, String doctorName);
 
-    public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize);
-
+	public Map<String, Object> getDoctorsByKeyword(Integer clinicId, String keyword, int page, int pageSize);
 
 }

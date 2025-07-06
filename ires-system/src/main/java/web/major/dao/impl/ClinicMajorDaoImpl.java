@@ -17,7 +17,7 @@ public class ClinicMajorDaoImpl implements ClinicMajorDao{
 	private Session session;
 	  @Override
 	  public List<Clinic> findClinicsByMajorIdOrAll(Integer majorId) {
-		    if (majorId != null) {
+		    if (majorId != null ) {
 				String hql = "select cm.clinic from ClinicMajor cm join cm.clinic join cm.major where cm.major.majorId = :majorId";
 				return session.createQuery(hql, Clinic.class)
 		                      .setParameter("majorId", majorId)
