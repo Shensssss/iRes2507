@@ -1,4 +1,4 @@
-//報到按鈕啟動掃碼
+// 報到按鈕啟動掃碼邏輯
 document.addEventListener("click", e => {
   if (!e.target.classList.contains("checkIn")) return;
 
@@ -15,19 +15,20 @@ document.addEventListener("click", e => {
       video.muted = true;
       video.autoplay = true;
 
-      video.style.position = "fixed";
-      video.style.top = "0";
-      video.style.left = "0";
-      video.style.width = "100vw";
-      video.style.height = "100vh";
-      video.style.zIndex = "9999";
+      Object.assign(video.style, {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        zIndex: "9999"
+      });
 
       document.body.appendChild(video);
-
       video.play().catch(err => console.error("video 播放失敗", err));
 
       const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
       video.addEventListener("loadedmetadata", () => {
         canvas.width = video.videoWidth || 640;
@@ -45,7 +46,7 @@ document.addEventListener("click", e => {
           const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const code = jsQR(imgData.data, canvas.width, canvas.height);
 
-          if (code) {
+          if (code && typeof code.data === "string" && code.data.length === 19) {
             console.log("掃描成功:", code.data);
 
             fetch("/ires-system/checkIn", {
@@ -54,26 +55,34 @@ document.addEventListener("click", e => {
               body: JSON.stringify({ appointmentId: code.data })
             })
               .then(res => res.json())
-              .then(() => {
+              .then(data => {
+                if (!data.success) {
+                  alert(data.message || "報到失敗");
+                  return;
+                }
+
                 const actions = e.target.closest(".actions");
-                const btnGroup = actions.querySelector(".group.checkIn");
+                let btnGroup = actions.querySelector(".group.checkIn");
+                if (!btnGroup) {
+                  btnGroup = document.createElement("div");
+                  btnGroup.className = "group checkIn";
+                  actions.appendChild(btnGroup);
+                }
 
                 btnGroup.hidden = false;
 
-                btnGroup.querySelector("button.checkIn")?.remove();
+                const checkInBtn = e.target.closest(".checkIn");
+                if (checkInBtn) checkInBtn.remove();
 
-                const cancelBtn = document.createElement("button");
-                cancelBtn.className = "cancel";
-                cancelBtn.textContent = "取消報到";
-                cancelBtn.dataset.id = e.target.dataset.id;
-
-                btnGroup.appendChild(cancelBtn);
+                localStorage.setItem("justCheckedInId", code.data);
+                location.reload();
+              })
+              .finally(() => {
+                stream.getTracks().forEach(t => t.stop());
+                video.remove();
               });
-
-            // 停止攝影機並移除畫面元素
-            stream.getTracks().forEach(t => t.stop());
-            video.remove();
           } else {
+            console.log("沒有掃到有效 QRCode");
             requestAnimationFrame(scan);
           }
         };
