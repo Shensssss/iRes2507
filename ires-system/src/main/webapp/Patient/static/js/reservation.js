@@ -51,6 +51,7 @@ function loadDoctors(clinicId, date, timePeriod, selectedDoctorId = null) {
 }
 
 // 載入預約資料清單
+function renderAppointments() {
 fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
   .then(res => res.json())
   .then(data => {
@@ -63,7 +64,7 @@ fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
       const item = template.content.cloneNode(true);
       const el = item.querySelector(".appointment");
       el.dataset.id = appt.appointmentId;
-
+      el.dataset.clinicId = appt.clinic.clinicId;
       item.querySelector(".clinic").textContent = appt.clinic.clinicName;
       item.querySelector(".time").textContent =
         `預約時間: ${formatDate(appt.appointmentDate)} ${timePeriodText[appt.timePeriod]}`;
@@ -76,21 +77,57 @@ fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
       const futureTime = new Date(appt.appointmentDate);
       futureTime.setHours(getCutoffHour(appt.timePeriod), 0, 0, 0);
 
-      if (appt.status === 0 && now < futureTime) {
-        ["修改預約", "加入收藏", "報到"].forEach((text, i) => {
-          const btn = document.createElement("button");
-          btn.className = ["edit", "favorite", "checkIn"][i];
-          btn.textContent = text;
-          if (i === 0) btn.dataset.id = appt.appointmentId;
-          actions.appendChild(btn);
-        });
-      } else {
-        actions.remove();
-      }
+      appointmentsList.appendChild(item); // ✅ 卡片先加入 DOM
 
-      appointmentsList.appendChild(item);
+      // 🔧 渲染按鈕：依照 status 與收藏狀態判斷
+      const showButtons = () => {
+  if (now < futureTime) {
+    const btnEdit = document.createElement("button");
+    btnEdit.className = "edit";
+    btnEdit.textContent = "修改預約";
+    btnEdit.dataset.id = appt.appointmentId;
+    actions.appendChild(btnEdit);
+  }
+
+  if (!favoritedClinics.has(appt.clinic.clinicId)) {
+    const btnFav = document.createElement("button");
+    btnFav.className = "favorite";
+    btnFav.textContent = "加入收藏";
+    actions.appendChild(btnFav);
+  }
+
+  if (appt.status === 0 && now < futureTime) {
+    const btnCheckIn = document.createElement("button");
+    btnCheckIn.className = "checkIn";
+    btnCheckIn.textContent = "報到";
+    actions.appendChild(btnCheckIn);
+  }
+};
+
+      showButtons(); // ✨ 呼叫按鈕生成
     });
     moveCheckedInCardToTop();
+  });
+}
+
+const favoritedClinics = new Set();
+
+fetch('/ires-system/favorites/all', { credentials: 'include' })
+  .then(res => {
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return res.json();
+    } else {
+      throw new Error("伺服器未回傳 JSON，實際回傳為：" + contentType);
+    }
+  })
+  .then(data => {
+    (Array.isArray(data) ? data : []).forEach(fav => favoritedClinics.add(fav.clinicId));
+    renderAppointments();
+  })
+  .catch(err => {
+    console.error("取得收藏清單失敗", err);
+    renderAppointments(); // 即使失敗也繼續顯示預約
   });
 
 // 開啟/關閉彈窗 + 載入預約資訊
@@ -163,4 +200,46 @@ form.addEventListener("submit", e => {
       }
     })
     .catch(err => showError("更新失敗", err));
+});
+
+/*加入收藏*/
+document.addEventListener("click", e => {
+    const favBtn = e.target.closest(".favorite");
+    if (favBtn) {
+        const apptEl = favBtn.closest(".appointment");
+        const clinicId = apptEl?.dataset?.clinicId || apptEl?.querySelector(".clinicId")?.textContent;
+      console.log("送出的 clinicId = ", clinicId);
+        fetch("/ires-system/favorites/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ clinicId })
+            
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("已加入收藏");
+                    favoritedClinics.add(clinicId);
+                    favBtn.remove(); // 或 favBtn.hidden = true;
+
+                    // 若 favorites 頁面有掛載，可直接新增
+                    const favoritesList = document.getElementById("favoritesList");
+                    if (favoritesList) {
+                        const card = apptEl.cloneNode(true);
+                        card.classList.add("favoriteCard");
+                        favoritesList.appendChild(card);
+                    }
+
+                    // optional: localStorage 通知其他頁面
+                    localStorage.setItem("favoritesUpdated", Date.now());
+                } else {
+                    alert(data.message || "收藏失敗");
+                }
+            })
+            .catch(err => {
+                console.error("加入收藏時發生錯誤", err);
+                alert("收藏失敗，請稍後再試");
+            });
+    }
 });

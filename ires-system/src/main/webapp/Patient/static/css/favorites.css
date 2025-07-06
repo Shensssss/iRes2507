@@ -57,76 +57,111 @@ body {
 }
 
 /*主要內容*/
-.div1{
-  color: #000000;  
+.favoritesTitle{
+  color: #000000;
   text-align: left;
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 900;
   position: absolute;
-  left: 224px;
+  left: 45%;
   top: -30px;
 }
-
-#clinic-list {
-  position:absolute;
-  max-width: 800px;
-  margin:0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50%;
+#favoritesList {
+  position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
 }
 
-.clinic-row {
-  position:relative;
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  height: 150px;
-  width: 100%;
-
+.favoriteCard {
+  position: relative;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid #888;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      opacity: 1;
+}
+.favoriteCard.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.favoriteCard:hover {
+  transform: scale(1.02);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* 增加互動感 */
 }
 
-.clinic-image img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-right: 20px;
-  border-radius: 5px;
+.favoriteCard h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: #222;
 }
 
-.clinic-info {
-  flex-grow: 1;
+/* 統一段落資訊樣式 */
+.favoriteCard p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  color: #000000;
+  line-height: 1.4;
 }
 
-.clinic-info p {
-  margin: 5px 0;
-  color: #333;
+/* 電話連結樣式 */
+.favoriteCard a[href^="tel:"] {
+  color: #2196f3;
+  text-decoration: none;
 }
 
-.details-link {
-  color: blue;
+.favoriteCard a[href^="tel:"]:hover {
   text-decoration: underline;
-  cursor: pointer;
 }
 
-.delete-button {
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 5px;
-  cursor: pointer;
+.removeBtn {
   position: absolute;
   top: 10px;
   right: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.removeBtn:hover {
+  background-color: #d32f2f;
+}
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+/* .notification-wrapper {
+    position: relative;
+    display: inline-block;
 }
 
-.delete-button:hover {
-  background-color: black;
+.notification-wrapper .badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    display: block; 
 }
+
+.notification-wrapper i.fas.fa-bell {
+    font-size: 24px;
+    color: #333;
+}
+
+.notification-wrapper i.fas.fa-bell:hover {
+    color: orange;
+} */
