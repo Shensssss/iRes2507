@@ -27,23 +27,26 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
 	@Override
 	public int update(Appointment appointment) {
-	    Appointment original = session.get(Appointment.class, appointment.getAppointmentId());
-	    if (original == null) return 0;
+		Appointment original = session.get(Appointment.class, appointment.getAppointmentId());
+		if (original == null)
+			return 0;
 
-	    // 安全地更新每個欄位
-	    if (appointment.getAppointmentDate() != null)
-	        original.setAppointmentDate(appointment.getAppointmentDate());
+		if (appointment.getAppointmentDate() != null)
+			original.setAppointmentDate(appointment.getAppointmentDate());
 
-	    if (appointment.getTimePeriod() != null)
-	        original.setTimePeriod(appointment.getTimePeriod());
+		if (appointment.getTimePeriod() != null)
+			original.setTimePeriod(appointment.getTimePeriod());
 
-	    if (appointment.getDoctorId() != null)
-	        original.setDoctorId(appointment.getDoctorId());
+		if (appointment.getDoctorId() != null)
+			original.setDoctorId(appointment.getDoctorId());
+		
+		if (appointment.getStatus() != null)
+	        original.setStatus(appointment.getStatus());
 
-	    original.setUpdateTime(new Timestamp(new Date().getTime()));
+		original.setUpdateTime(new Timestamp(new Date().getTime()));
 
-	    session.update(original);
-	    return 1;
+		session.update(original);
+		return 1;
 	}
 
 	@Override
@@ -121,13 +124,16 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 	}
 
 	@Override
-	public Appointment findByClinicIdPatientIdDateTimePeriod(Integer clinicId, Integer patientId, Date appointmentDate, Integer timePeriod) {
-	    String hql = "FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId = :patientId AND a.appointmentDate = :appointmentDate AND a.timePeriod = :timePeriod";
-	    return session.createQuery(hql, Appointment.class)
-	            .setParameter("clinicId", clinicId)
-	            .setParameter("patientId", patientId)
-	            .setParameter("appointmentDate", appointmentDate)
-	            .setParameter("timePeriod", timePeriod)
-	            .getSingleResult();
+	public Appointment findByClinicIdPatientIdDateTimePeriod(Integer clinicId, Integer patientId, Date appointmentDate,
+			Integer timePeriod) {
+
+		String hql = "FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId = :patientId "
+				+ "AND a.appointmentDate = :appointmentDate AND a.timePeriod = :timePeriod";
+
+		List<Appointment> results = session.createQuery(hql, Appointment.class).setParameter("clinicId", clinicId)
+				.setParameter("patientId", patientId).setParameter("appointmentDate", appointmentDate)
+				.setParameter("timePeriod", timePeriod).getResultList();
+
+		return results.isEmpty() ? null : results.get(0);
 	}
 }

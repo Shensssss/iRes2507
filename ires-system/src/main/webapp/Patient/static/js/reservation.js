@@ -1,3 +1,18 @@
+// 封裝：移動報到成功的卡片
+function moveCheckedInCardToTop() {
+  const justId = localStorage.getItem("justCheckedInId");
+  if (!justId) return;
+
+  const list = document.querySelector("#appointmentList");
+  const target = list?.querySelector(`.appointment[data-id="${justId}"]`);
+  if (target) {
+    list.prepend(target);
+    target.classList.add("highlight");
+    target.scrollIntoView({ behavior: "smooth", block: "start" }); // 可選：捲動到上方
+  }
+
+  localStorage.removeItem("justCheckedInId");
+}
 // 顯示來自 appointment 的資料
 const appointmentsList = document.getElementById("appointmentList");
 const template = document.getElementById("appointmentTemplate");
@@ -10,7 +25,7 @@ const timePeriodText = { 1: "上午時段", 2: "下午時段", 3: "晚上時段"
 const checkInStatus = { 0: "未報到", 1: "已報到", 2: "取消報到" };
 
 const formatDate = date => new Date(date).toLocaleDateString("zh-TW");
-const getCutoffHour = period => ({ 1: 12, 2: 18, 3: 22 }[period] || 0);
+const getCutoffHour = period => ({ 1: 12, 2: 18, 3: 23 }[period] || 0);
 const showError = (title, err) => {
   console.error(`${title}：`, err);
   alert(`${title}，請稍後再試`);
@@ -75,6 +90,7 @@ fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
 
       appointmentsList.appendChild(item);
     });
+    moveCheckedInCardToTop();
   });
 
 // 開啟/關閉彈窗 + 載入預約資訊
@@ -143,6 +159,7 @@ form.addEventListener("submit", e => {
         const period = (timePeriodText[form.timePeriod.value] || "").replace("時段", "");
         const doctor = doctorSelect.options[doctorSelect.selectedIndex]?.text || "";
         apptEl.querySelector(".time").textContent = `預約時間: ${form.date.value} ${period} ${doctor}`;
+        apptEl.querySelector(".status").textContent = `狀態: ${checkInStatus[d.status] || "未知"}`;
       }
     })
     .catch(err => showError("更新失敗", err));
