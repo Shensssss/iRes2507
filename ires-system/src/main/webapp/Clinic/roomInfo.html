@@ -172,17 +172,6 @@
 </head>
 
 <body>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <section id="main-wrapper" class="theme-default">
-        <header id="header">
-            <!--logo start-->
-            <div class="brand">
-                <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                     <span id="clinicName"></span></a>
-=======
-=======
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
 <section id="main-wrapper" class="theme-default">
     <header id="header">
         <!--logo start-->
@@ -197,10 +186,6 @@
             <div class="notification-icon" id="bell">
                 <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
                 <span class="badge"></span>
-<<<<<<< HEAD
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
-=======
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
             </div>
             <div class="notification-dropdown" id="dropdown">
                 <p>📬 您有新通知</p>
@@ -289,87 +274,6 @@
                     </a>
                 </li>
             </ul>
-<<<<<<< HEAD
-<<<<<<< HEAD
-        </header>
-        <!--sidebar left start-->
-     <aside class="sidebar sidebar-left">
-            <nav>
-                <ul class="nav nav-pills nav-stacked">
-                    <li class="nav-dropdown">
-                        <a href="#" title="Appointment">
-                            <i class="fa  fa-fw fa-cogs"></i> 預約管理
-                        </a>
-                        <ul class="nav-sub">
-                            <li>
-                                <a href="reservequery.html" title="reservequery">
-                                    預約查詢
-                                </a>
-                            </li>
-                            <li>
-                                <a href="appointment.html" title="Appointment">
-                                    新增預約
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-dropdown">
-                        <a href="patientInfo.html" title="PatientInfo">
-                            <i class="fa  fa-fw fa-edit"></i> 病患資料
-                        </a>
-                    </li>
-                    <li class="nav-dropdown hidden">
-                        <a href="callRoom.html" title="callRoom">
-                            <i class="fa  fa-fw fa-th-list"></i> 診間叫號
-                        </a>
-                    </li>
-                    <li class="nav-dropdown hidden">
-                        <a href="#" title="FeedbackManagement">
-                            <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
-                        </a>
-                    </li>
-                    <li class="nav-dropdown">
-                        <a href="#" title="AccountManagement">
-                            <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
-                        </a>
-                        <ul class="nav-sub">
-                            <li>
-                                <a href="clinicInfo.html" title="ClinicInfo">
-                                    診所資料
-                                </a>
-                            </li>
-                            <li>
-                                <a href="doctorInfo.html" title="DocInfo">
-                                    醫生資料
-                                </a>
-                            </li>
-                            <li hidden>
-                                <a href="#" title="Feedback">
-                                    意見回饋
-                                </a>
-                            </li>
-                            <li>
-                                <a href="accountupdatepsd.html" title="Password">
-                                    修改密碼
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-dropdown">
-                        <a href="#" title="Logout">
-                            <i class="fa  fa-fw fa-file-text"></i> 登出
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <!--main content start-->
-        <section class="main-content-wrapper">
-            <div class="pageheader">
-                <h1>今日預約</h1>
-=======
-=======
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
         </nav>
     </aside>
     <!--main content start-->
@@ -388,10 +292,6 @@
                 <div>
                     <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
                 </div>
-<<<<<<< HEAD
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
-=======
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
             </div>
 
             <div class="search-box" style="display: none;">
@@ -547,42 +447,6 @@
         clinicInfo.appendChild(wrapper);
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    </script>
-      <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 處理登出點擊
-    const logoutLink = document.querySelector('a[title="Logout"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", function (e) {
-        e.preventDefault();
-
-        // 彈窗確認
-        if (confirm("確定要登出嗎？")) {
-          // 發送登出請求
-          fetch('/ires-system/clinic/logout', {
-            method: 'DELETE',
-            credentials: 'include' // 確保 session cookie 被送出
-          })
-            .then(response => {
-              if (response.ok) {
-                // 跳轉回登入頁
-                sessionStorage.clear();
-                window.location.href = '/ires-system/Clinic/login.html';
-              } else {
-                alert("登出失敗，請稍後再試");
-              }
-            })
-            .catch(err => {
-              console.error("登出錯誤：", err);
-              alert("無法連線到伺服器");
-            });
-        }
-      });
-    }
-  });
-=======
     function filterPatients() {
         const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
         if (!keyword) return renderData(allData);
@@ -593,18 +457,6 @@
         renderData(filtered);
     }
 
-=======
-    function filterPatients() {
-        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-        if (!keyword) return renderData(allData);
-        const filtered = allData.map(room => ({
-            ...room,
-            patients: room.patients.filter(p => p.name.toLowerCase().includes(keyword) || p.number.includes(keyword))
-        })).filter(room => room.patients.length > 0);
-        renderData(filtered);
-    }
-
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
     function showQRCode(doctorName) {
         const room = allData.find(r => r.doctor === doctorName);
         if (!room) return alert("找不到該診間資料");
@@ -737,10 +589,6 @@
             });
         }
     });
-<<<<<<< HEAD
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
-=======
->>>>>>> b746e2eac9255d8b782a4368aa08eef294300b80
 </script>
 </body>
 
