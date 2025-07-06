@@ -1,6 +1,8 @@
 package web.clinic.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class CallNumber {
     @Column(name = "number")
     private Integer number;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "appointment_date")
     private LocalDate appointmentDate;
 
@@ -39,12 +42,14 @@ public class CallNumber {
     @Column(name = "create_id")
     private String createId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
     @Column(name = "update_id")
     private String updateId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 }
