@@ -131,10 +131,8 @@ $(function () {
 });
 
 function loadClinics(selector, majorId = null) {
-  const rawLat =
-    sessionStorage.getItem("userLat") || localStorage.getItem("userLat");
-  const rawLng =
-    sessionStorage.getItem("userLng") || localStorage.getItem("userLng");
+  const rawLat = sessionStorage.getItem("userLat");
+  const rawLng = sessionStorage.getItem("userLng");
 
   const userLat = rawLat && !isNaN(rawLat) ? parseFloat(rawLat) : null;
   const userLng = rawLng && !isNaN(rawLng) ? parseFloat(rawLng) : null;

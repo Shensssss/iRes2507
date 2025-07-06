@@ -296,6 +296,12 @@ $(document).ready(function () {
       .text($(this).val());
   });
 
+  flatpickr(".datepicks_val", {
+    dateFormat: "Y-m-d",
+    defaultDate: new Date(),
+    minDate: "today",
+  });
+
   //-------------time select ---------------
   flatpickr(".timepicker_start", {
     enableTime: true,
@@ -322,8 +328,9 @@ $(document).ready(function () {
     const startTime = $(".timepicker_start").val();
     const endTime = $(".timepicker_end").val();
     let majorId = $(".major-select").val();
-    const distance = $(".distance-value").text();
-
+    const maxDistanceKm = $(".distance-value").text();
+    const userLat = sessionStorage.getItem("userLat") || "";
+    const userLng = sessionStorage.getItem("userLng") || "";
     if (majorId === "all") {
       majorId = "";
     }
@@ -333,7 +340,9 @@ $(document).ready(function () {
       startTime,
       endTime,
       majorId,
-      distance,
+      maxDistanceKm,
+      userLat,
+      userLng,
     });
 
     window.location.href =
