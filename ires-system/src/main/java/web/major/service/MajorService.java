@@ -6,4 +6,7 @@ import web.major.entity.Major;
 
 public interface MajorService {
 	List<Major> findAllMajor();
+
+	Major findById(Integer majorId);
+
 }

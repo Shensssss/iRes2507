@@ -36,9 +36,16 @@ public class ClinicMajor {
     @JoinColumn(name = "major_id")
     private Major major;
 
+    @Column(name="create_id")
     private Integer createId;
+    
+    @Column(name="create_time")
     private Timestamp createTime;
+    
+    @Column(name="update_id")
     private Integer updateId;
+    
+    @Column(name="update_time")
     private Timestamp updateTime;
 
 }
