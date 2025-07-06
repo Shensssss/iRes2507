@@ -58,13 +58,13 @@
         })
         .then(resp => resp.json())
         .then(result => {
-            if (result.statusCode === 201) {
+            if (result.statusCode === 200) {
                 alert(result.message);
-                $("#addForm").hide();
+                $("#addOverlay").hide();
                 fetchShowAll();
             } else {
                 alert(result.message + "，請稍後再試！");
-                $("#addForm").hide();
+                $("#addOverlay").hide();
             }
         });
     }
@@ -81,11 +81,11 @@
         .then(result => {
             if (result.statusCode === 200) {
                 alert(result.message);
-                $("#editForm").hide();
+                $("#editOverlay").hide();
                 fetchShowAll();
             } else {
                 alert(result.message + "，請稍後再試！");
-                $("#editForm").hide();
+                $("#editOverlay").hide();
             }
         });
     }
@@ -165,23 +165,43 @@
             return;
         }
 
+
         // 不重複後開始新增，顯示新增表單(帶入輸入的姓名)
-        $("#addForm").show();
         clearFormValues("add");
         $("#addName").val(name);
+        $("#addOverlay").addClass("show");
+
+        // 滾到表單內部頂部，並強制視窗到最上方
+        $("#addOverlay .form-popup").scrollTop(0);
+        $("html, body").scrollTop(0);
     });
 
     // 按下取消則清空欄位並隱藏表單
     $("#cancelAddBtn").on("click", function () {
         clearFormValues("add");
-        $("#addForm").hide();
+        $("#addOverlay").removeClass("show");
     });    
 
     // 按下儲存將填入的資料送至後端，重發請求取得所有醫師資料
     $("#saveAddBtn").on("click", function () {
+
         const { name, edu, exp, memo, time } = getFormValues("add");
         if (!name) {
             alert("姓名不可為空白！");
+            return;
+        }
+
+        // 檢查網頁上是否已存在
+        let duplicate = false;
+        $(".card .name").each(function () {
+            if ($(this).text().trim() === name && name !== "") {
+                duplicate = true;
+                return false;
+            }
+        });
+
+        if (duplicate) {
+            alert("此位醫師已存在，請勿重複新增！");
             return;
         }
 
@@ -241,13 +261,20 @@
         $("#editMemo3").val(memo[2] || "");
         $("#editTime").val(time);
 
-        $("#editForm").show();
-    });
+        $("#editOverlay").addClass("show");
+        // 滾動表單內部到頂部
+        $("#editOverlay .form-popup").scrollTop(0);
+        // 視窗自動滾動至表單頂部
+        setTimeout(function () {
+            const offsetTop = $("#editOverlay .form-popup").offset().top;
+            $("html, body").animate({ scrollTop: offsetTop - 20 }, 300);
+        }, 100);
+    })
 
     // 取消編輯
     $("#cancelEditBtn").on("click", function () {
         clearFormValues("edit");
-        $("#editForm").hide();
+        $("#editOverlay").removeClass("show");
 
     });
 
