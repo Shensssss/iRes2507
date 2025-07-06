@@ -55,6 +55,17 @@ public class RegisterServiceImpl implements RegisterService {
 		if (password == null || password.length() < 1 || password.length() > 50) {
 			return "password長度介於1~50";
 		}
+		
+		Double longitude = clinic.getLongitude();
+		if (longitude == null || longitude < -180 || longitude > 180) {
+			return "經度格式錯誤";
+		}
+		
+		Double latitude = clinic.getLatitude();
+		if (latitude == null || latitude < -90 || latitude > 90) {
+			return "緯度格式錯誤";
+		}
+		
 
 		if (dao.selectbyAccount(account) != null) {
 			return "此email已被註冊";
