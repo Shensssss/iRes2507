@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ import web.patient.service.PatientService;
 @Service
 @Transactional
 public class PatientServiceImpl implements PatientService {
+	private static final Logger log = LoggerFactory.getLogger(PatientServiceImpl.class);
+	
 	@Autowired
 	private PatientDao dao;
 
@@ -143,35 +148,45 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public Patient checkIn(Patient patient, String code) {
+	public boolean checkIn(Patient patient, String code) {
+		Objects.requireNonNull(code, "QR code 不可為 null");
 
 		String date = code.substring(0, 8);
 		String agencyId = code.substring(8, 18);
-		Integer timePeriod = Integer.parseInt(code.substring(18));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		sdf.setLenient(false);
+		int timePeriod = Integer.parseInt(code.substring(18));
 
 		Date appointmentDate;
 		try {
-		    appointmentDate = new java.sql.Date(sdf.parse(date).getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			sdf.setLenient(false);
+			appointmentDate = new java.sql.Date(sdf.parse(date).getTime());
 		} catch (ParseException e) {
-		    throw new RuntimeException("Invalid QR code date format: " + date, e);
+			throw new RuntimeException("Invalid QR code date format: " + date, e);
 		}
-
 
 		Integer clinicId = clinicDAO.findClinicIdByAgencyId(agencyId);
 		if (clinicId == null)
-			return patient;
+			throw new IllegalArgumentException("找不到對應診所");
 
 		Appointment appointment = appointmentDAO.findByClinicIdPatientIdDateTimePeriod(clinicId, patient.getPatientId(),
 				appointmentDate, timePeriod);
+		if (appointment == null) {
+		    log.info("報到失敗：查無預約，clinicId={}, patientId={}, date={}, timePeriod={}",
+		        clinicId, patient.getPatientId(), appointmentDate, timePeriod);
+		} else {
+		    log.info("查到預約：appointmentId={}, status={}", appointment.getAppointmentId(), appointment.getStatus());
+
+		    if (appointment.getStatus() != 0) {
+		        log.info("報到失敗：該預約已經是 status={}, 無法報到", appointment.getStatus());
+		    }
+		}
 
 		if (appointment != null && appointment.getStatus() == 0) {
 			appointment.setStatus(1);
 			appointmentDAO.update(appointment);
+			return true;
 		}
-
-		return patient;
+		return false;
 	}
 
 	public int clinicEditPatientNotes(int patientId, String newNotes) {
