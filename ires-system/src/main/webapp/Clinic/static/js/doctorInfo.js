@@ -292,7 +292,7 @@
         if(file){
             const fileReader = new FileReader();
             fileReader.addEventListener("load", function(e){
-                const imageBase64 = e.target.result.split(',')[1];
+                const imageBase64 = e.target.result.split(",")[1];
                 fetchEdit({
                     doctorId: doctorId,
                     doctorName: name,

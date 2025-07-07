@@ -114,23 +114,25 @@ function fetchShowInfo(){
         })
 }
 
-// 網頁開啟就呼叫顯示基本資料並且預覽圖片
+// 網頁開啟就呼叫顯示基本資料
 $(document).ready(function(){
     fetchShowInfo();
-
-    $("#editProfilePicture").on("change", function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                $("#editProfilePicturePreview").attr("src", e.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
 });
 
-// 從後端取得所有major長出checkbox
+// 編輯表單的圖片預覽
+$("#editProfilePicture").on("change", function () {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $("#editProfilePicturePreview").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
+// 從後端取得所有major長出checkbox全部選項
 function renderMajorCheckboxes(selectedMajors) {
     // 一定邀先清空否則每按一次編輯會長出一次
     $("#editClinicMajors").empty();
@@ -163,10 +165,68 @@ function renderMajorCheckboxes(selectedMajors) {
         })  
 }
 
+// AJAX請求：編輯基本資料存入
+function fetchEditBasicInfo(profilePicture){
+    const name = $("#editName").val().trim();
+    const phone = $("#editPhone").val().trim();
+    const city = $("#editAddressCity").val().trim();
+    const town = $("#editAddressTown").val().trim();
+    const road = $("#editAddressRoad").val().trim();
+    const web = $("#editWeb").val().trim();
+    const registrationFee= $("#editRegistrationFee").val().trim();
+    const memo = $("#editMemo").val().trim();
+
+    // 收集所有打勾的 majorId放入陣列
+    const selectedMajorIds = [];
+
+    $("#editClinicMajors input[type='checkbox']:checked").each(function () {
+        const majorId = parseInt($(this).attr("id").split("_")[1]);
+        selectedMajorIds.push(majorId);
+    });
+
+    if( selectedMajorIds.length === 0){
+        alert("請至少勾選一個專科！")
+        return;
+    }
+
+    fetch("/ires-system/clinic/clinicInfo/editBasicInfo", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            clinicName: name,
+            profilePicture: profilePicture,
+            phone: phone,
+            addressCity: city,
+            addressTown: town,
+            addressRoad: road,
+            web: web,
+            registrationFee: registrationFee,
+            memo: memo
+        })
+    })
+        .then(resp => resp.json())
+        .then(result => {
+            alert(result.message);
+            if (result.statusCode === 200) {
+                return editClinicMajors(selectedMajorIds);
+            }
+        })
+
+        .then(majorResult => {
+            // 這裡是 editClinicMajors 成功後
+            alert(majorResult.message);
+            if (majorResult.statusCode === 200) {
+                $('#editOverlay').removeClass('show');
+                $('#editBasicInfoForm').hide();
+                fetchShowInfo();
+            }
+        })
+}
+
 // 一、編輯基本資訊
 // 按下編輯按鈕
 $("#editBasicInfoBtn").on("click",function(){
-// 帶入原有資料，顯示編輯表單
+    // 帶入原有資料，顯示編輯表單
     $("#editName").val($("#name").text());
     $("#editAgencyId").val($("#agencyId").text());
     $("#editProfilePicturePreview").attr("src", $("#profilePicture").attr("src")).show();
@@ -188,7 +248,7 @@ $('#cancelEditBtn').on('click', function() {
     // 清除檔案選擇欄位（input type="file"）
     $("#editProfilePicture").val("");
     // 清除圖片預覽
-    $("#editProfilePicturePreview").attr("src", '#').hide();
+    $("#editProfilePicturePreview").attr("src", "").hide();
     $("#editPhone").val("");
     $("#editAddressCity").val("");
     $("#editAddressTown").val("");
@@ -197,80 +257,26 @@ $('#cancelEditBtn').on('click', function() {
     $("#editRegistrationFee").val("");
     $("#editMemo").val("");
 
-    $('#editOverlay').removeClass('show');
+    $('#editOverlay').removeClass("show");
     $('#editBasicInfoForm').hide();
 });
 
 // 按下儲存按鈕
 $('#saveEditBtn').on('click', function() {
-    const name = $("#editName").val().trim();
-    const phone = $("#editPhone").val().trim();
-    const city = $("#editAddressCity").val().trim();
-    const town = $("#editAddressTown").val().trim();
-    const road = $("#editAddressRoad").val().trim();
-    const web = $("#editWeb").val().trim();
-    const registrationFee= $("#editRegistrationFee").val().trim();
-    const memo = $("#editMemo").val().trim();
 
-    if(!name){
-        alert("診所名稱必填！")
-    }
-
-    if(!phone){
-        alert("電話號碼必填！")
-    }
-
-    if(!city || !town || !road){
-        alert("地址必填！")
-    }
-
-    // 收集所有打勾的 majorId放入陣列
-    const selectedMajorIds = [];
-
-    $("#editClinicMajors input[type='checkbox']:checked").each(function () {
-        const majorId = parseInt($(this).attr("id").split("_")[1]);
-        selectedMajorIds.push(majorId);
-    });
-
-    if( selectedMajorIds.length === 0){
-        alert("請至少勾選一個專科！")
-        return;
-    }
-
-
-    fetch("/ires-system/clinic/clinicInfo/editBasicInfo", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            clinicName: name,
-            phone: phone,
-            addressCity: city,
-            addressTown: town,
-            addressRoad: road,
-            web: web,
-            registrationFee: registrationFee,
-            memo: memo
-            // 如果需要圖片，你要先把圖片轉成Base64或其他方式傳給後端
-            // profilePicture: yourBase64String
-        })
-    })
-        .then(resp => resp.json())
-        .then(result => {
-            alert(result.message);
-            if (result.statusCode === 200) {
-                return editClinicMajors(selectedMajorIds);
-            }
-        })
-
-        .then(majorResult => {
-            // 這裡是 editClinicMajors 成功後
-            alert(majorResult.message);
-            if (majorResult.statusCode === 200) {
-                $('#editOverlay').removeClass('show');
-                $('#editBasicInfoForm').hide();
-                fetchShowInfo();
-            }
-        })
+    const file = document.querySelector("#editProfilePicture").files[0];
+        if(file){
+            const fileReader = new FileReader();
+            fileReader.addEventListener("load", function(e){
+                const base64profilePicture = e.target.result.split(",")[1];
+                fetchEditBasicInfo(base64profilePicture);
+            })
+            fileReader.readAsDataURL(file);
+        }else{
+            const src = $("#profilePicture").attr("src");
+            const originalProfilePicture = src ? src.split(",")[1] : "";
+            fetchEditBasicInfo(originalProfilePicture);
+        }
 })
     
 
