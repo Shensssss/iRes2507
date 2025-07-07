@@ -72,7 +72,9 @@ function renderRoomData() {
 
     const current = notArrived[0];
     if (current) {
-        document.getElementById("currentNumber").innerText = `號碼：${current.number}`;
+        const currentNumberEl = document.getElementById("currentNumber");
+        currentNumberEl.innerText = `號碼：${current.number}`;
+        currentNumberEl.dataset.number = current.number;
         document.getElementById("currentName").innerText = `姓名：${current.name}`;
 
         const row = document.querySelector(`tr[data-number='${current.number}']`);
@@ -86,16 +88,50 @@ function renderRoomData() {
         : `<li class="list-group-item text-muted">無將來號碼</li>`;
 }
 
-function updateCallNumberOnServer(number) {
-    const room = JSON.parse(localStorage.getItem("callRoom"));
-    if (!room) return;
+function getSelectedConsultationStatus() {
+    const selected = document.querySelector('input[name="statusOption"]:checked');
+    return selected ? parseInt(selected.value) : null;
+}
 
-    fetch(`/ires-system/callNumber/init?doctorId=${room.doctorId}&timePeriod=${room.timePeriod}&date=${room.date}&number=${number}`, {
+function getCurrentNumber() {
+    const el = document.getElementById("currentNumber");
+    if (!el) {
+        console.warn("找不到 #currentNumber 元素");
+        return null;
+    }
+
+    const raw = el.dataset.number;
+    const number = parseInt(raw);
+
+    if (isNaN(number)) {
+        console.warn("解析 data-number 失敗", raw);
+        return null;
+    }
+
+    return number;
+}
+
+function updateCallNumberOnServer(number, consultationStatus) {
+    const room = JSON.parse(localStorage.getItem("callRoom"));
+    if (!room) {
+        console.warn("未找到 callRoom 設定");
+        return;
+    }
+
+    const query = new URLSearchParams({
+        doctorId: room.doctorId,
+        timePeriod: room.timePeriod,
+        date: room.date,
+        number: number,
+        consultationStatus: consultationStatus
+    });
+
+    fetch(`/ires-system/callNumber/init?${query.toString()}`, {
         method: 'GET'
     })
         .then(res => res.json())
-        .then(data => console.log("已同步更新號碼至後端", data))
-        .catch(err => console.error("後端更新號碼失敗", err));
+        .then(data => console.log("已同步更新號碼與看診狀態：", data))
+        .catch(err => console.error("後端更新失敗", err));
 }
 
 function insertNumber() {
@@ -133,7 +169,8 @@ function prevNumber() {
     if (currentIndex > 0) {
         const prev = uncalled[currentIndex - 1].number;
         highlightRow(prev);
-        updateCallNumberOnServer(prev);
+        const status = getSelectedConsultationStatus();
+        updateCallNumberOnServer(prev, status);
     }
 }
 
@@ -145,7 +182,8 @@ function nextNumber() {
     if (currentIndex < uncalled.length - 1) {
         const next = uncalled[currentIndex + 1].number;
         highlightRow(next);
-        updateCallNumberOnServer(next);
+        const status = getSelectedConsultationStatus();
+        updateCallNumberOnServer(next, status);
     }
 }
 
@@ -166,7 +204,9 @@ function highlightRow(number) {
     const room = JSON.parse(localStorage.getItem("callRoom"));
     const current = room.patients.find(p => p.number === numStr);
     if (current) {
-        document.getElementById("currentNumber").innerText = `號碼：${current.number}`;
+        const currentNumberEl = document.getElementById("currentNumber");
+        currentNumberEl.innerText = `號碼：${current.number}`;
+        currentNumberEl.dataset.number = current.number;
         document.getElementById("currentName").innerText = `姓名：${current.name}`;
         sendNumberToDevice(current.number);
     }
@@ -198,12 +238,8 @@ window.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 console.log("診間叫號初始化成功", data);
 
-                // highlight 到目前號碼
-                if (data.number) {
-                    highlightRow(data.number);
-                }
+                if (data.number) highlightRow(data.number);
 
-                // 設定看診狀態
                 switch (data.consultationStatus) {
                     case 0: document.getElementById("status1").checked = true; break;
                     case 1: document.getElementById("status2").checked = true; break;
@@ -213,6 +249,21 @@ window.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => console.error("診間叫號初始化失敗", err));
     }
+
+    const radios = document.querySelectorAll('input[name="statusOption"]');
+
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            const status = parseInt(radio.value);
+            const number = getCurrentNumber();
+
+            if (!isNaN(number) && !isNaN(status)) {
+                updateCallNumberOnServer(number, status);
+            } else {
+                console.warn("略過不合法請求", { number, status });
+            }
+        });
+    });
 
     setTimeout(() => {
         const leftCard = document.querySelector("#roomCardContainer .card");

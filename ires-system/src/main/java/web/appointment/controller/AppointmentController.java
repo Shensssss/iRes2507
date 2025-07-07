@@ -94,6 +94,7 @@ public class AppointmentController {
 
         response.put("status", "success");
         response.put("message", "查詢成功");
+        response.put("timePeriod", timePeriod);
         response.put("data", appointments);
         return ResponseEntity.ok(response);
     }
