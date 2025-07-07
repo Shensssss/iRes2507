@@ -161,3 +161,10 @@ label {
 #editBusinessHoursForm input[type="checkbox"] {
     margin: 5px 5px;  /* 增加 checkbox 之間的間距 */
 }
+
+#mapPreview{
+    width:200px; 
+    height:150px; 
+    border:1px solid #ccc;
+    margin: 5px
+}

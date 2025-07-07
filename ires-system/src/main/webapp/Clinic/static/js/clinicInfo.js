@@ -74,14 +74,15 @@ function fetchClinicMajor(clinicId){
             }else{
                 const clinicMajors = majors.map(major => major.majorName).join('，');
                 $("#clinicMajors").text(clinicMajors);
+            }
 
-                // 取得已勾選的majaorId陣列，有值的話傳給 renderMajorCheckboxes
-                // 點擊編輯按鈕時才能取得已經勾選的major，再設法預設打勾
-                const selectedMajors = majors.map(major => major.majorId);
-                if(selectedMajors.length > 0){
-                    renderMajorCheckboxes(selectedMajors);
-                }
-                
+            // 取得已勾選的majaorId陣列，有值的話傳給 renderMajorCheckboxes
+            // 點擊編輯按鈕時才能取得已經勾選的major，再設法預設打勾
+            const selectedMajors = majors.map(major => major.majorId);
+            if(selectedMajors.length > 0){
+                renderMajorCheckboxes(selectedMajors);
+            }else{
+                renderMajorCheckboxes([]);
             }
         })
 }
@@ -104,7 +105,6 @@ function fetchShowInfo(){
     })
         .then(resp => resp.json())
         .then(result => {
-            // console.log(result);
             if (result.statusCode === 200) {
                 const clinic = result.data;
                 $("#basicInfo").attr("data-clinic-id", clinic.clinicId);
@@ -114,12 +114,13 @@ function fetchShowInfo(){
                 $("#addressCity").text(clinic.addressCity);
                 $("#addressTown").text(clinic.addressTown);
                 $("#addressRoad").text(clinic.addressRoad);
+                $("#latitude").text(clinic.latitude);
+                $("#longitude").text(clinic.longitude);
                 $("#web").text(clinic.web);
                 $("#registrationFee").text(clinic.registrationFee);
                 $("#memo").text(clinic.memo);
                 $("#profilePicture").attr("src", "data:image/png;base64,"+clinic.profilePicture);
                 renderBusinessHours(clinic);
-
                 const clinicId = $("#basicInfo").attr("data-clinic-id");
                 fetchClinicMajor(clinicId);
             }
@@ -129,6 +130,7 @@ function fetchShowInfo(){
 // 網頁開啟就呼叫顯示基本資料
 $(document).ready(function(){
     fetchShowInfo();
+    
 });
 
 // 編輯表單的圖片預覽
@@ -164,10 +166,6 @@ function renderMajorCheckboxes(selectedMajors) {
                 `;
 
                 $("#editClinicMajors").append(htmlText);
-                if (selectedMajors.includes(major.majorId)) {
-                    $(`#major_${major.majorId}`).prop("checked", true);
-                }
-
                 // 根據 selectedMajors 陣列來預設勾選
                 if (selectedMajors.includes(major.majorId)) {
                     $(`#major_${major.majorId}`).prop("checked", true);
@@ -184,6 +182,8 @@ function fetchEditBasicInfo(profilePicture){
     const city = $("#editAddressCity").val().trim();
     const town = $("#editAddressTown").val().trim();
     const road = $("#editAddressRoad").val().trim();
+    const lat = $("#editLatitude").val();
+    const lng = $("#editLongitude").val();
     const web = $("#editWeb").val().trim();
     const registrationFee= $("#editRegistrationFee").val().trim();
     const memo = $("#editMemo").val().trim();
@@ -211,6 +211,8 @@ function fetchEditBasicInfo(profilePicture){
             addressCity: city,
             addressTown: town,
             addressRoad: road,
+            latitude: lat,
+            longitude: lng,
             web: web,
             registrationFee: registrationFee,
             memo: memo
@@ -228,12 +230,62 @@ function fetchEditBasicInfo(profilePicture){
             // 這裡是 editClinicMajors 成功後
             alert(majorResult.message);
             if (majorResult.statusCode === 200) {
-                $('#editOverlay').removeClass('show');
-                $('#editBasicInfoForm').hide();
+                $("#editBasicOverlay").removeClass("show");
+                $("#editBasicInfoForm").hide();
                 fetchShowInfo();
             }
         })
 }
+
+// 取得經緯度資料
+$("#geolocationBtn").on("click", function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                $("#editLatitude").val(lat);
+                $("#editLongitude").val(lng);
+                showMapPreview(lat, lng);
+                alert("更新地圖成功！");
+        }, function(error){
+            let message = "發生未知錯誤";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "您拒絕提供位置資訊";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "無法取得位置資訊";
+                    break;
+                case error.TIMEOUT:
+                    message = "取得位置資訊逾時";
+                    break;
+            }
+            alert(message);
+        })
+    }else {
+        alert("您的瀏覽器不支援地理定位功能");
+    }
+});
+
+// 地圖預覽
+function showMapPreview(lat, lng) {
+    if (!lat || !lng) {
+        $("#mapPreview").html("<p style='color:red;'>無法顯示，請點擊「更新地圖」</p>");
+        return;
+    }
+
+    const iframe = `
+        <iframe
+        width="100%"
+        height="100%"
+        frameborder="0"
+        style="border:0"
+        src="https://www.google.com/maps?q=${lat},${lng}&hl=zh-TW&z=16&output=embed"
+        allowfullscreen>
+        </iframe>`;
+    $("#mapPreview").html(iframe);
+}
+
 
 // 一、編輯基本資訊
 // 按下編輯按鈕
@@ -241,11 +293,18 @@ $("#editBasicInfoBtn").on("click",function(){
     // 帶入原有資料，顯示編輯表單
     $("#editName").val($("#name").text());
     $("#editAgencyId").val($("#agencyId").text());
+    const clinicId = $("#basicInfo").attr("data-clinic-id");
+    fetchClinicMajor(clinicId);
     $("#editProfilePicturePreview").attr("src", $("#profilePicture").attr("src")).show();
     $("#editPhone").val($("#phone").text());
     $("#editAddressCity").val($("#addressCity").text());
     $("#editAddressTown").val($("#addressTown").text());
     $("#editAddressRoad").val($("#addressRoad").text());
+    const lat = $("#latitude").text();
+    const lng = $("#longitutde").text();
+    $("#editLatitude").val(lat);
+    $("#editLontitude").val(lng);
+    showMapPreview(lat, lng);
     $("#editWeb").val($("#web").text());
     $("#editRegistrationFee").val($("#registrationFee").text());
     $("#editMemo").val($("#memo").text());
@@ -274,7 +333,7 @@ $('#cancelEditBtn').on("click", function() {
 });
 
 // 按下儲存按鈕
-$('#saveEditBtn').on("click", function() {
+$("#saveEditBtn").on("click", function() {
 
     const file = document.querySelector("#editProfilePicture").files[0];
         if(file){
@@ -289,6 +348,7 @@ $('#saveEditBtn').on("click", function() {
             const originalProfilePicture = src ? src.split(",")[1] : "";
             fetchEditBasicInfo(originalProfilePicture);
         }
+
 })
 
 // 二、編輯營業時間
@@ -354,7 +414,7 @@ $("#saveEditHoursBtn").on("click", function(){
     const weekAfternoon = getSelectedDays("weekAfternoon");
     const weekNight = getSelectedDays("weekNight");
 
-    if (!weekMorning || !weekAfternoon || !weekNight) {
+    if (!weekMorning && !weekAfternoon && !weekNight) {
         alert("營業時段不可為空！");
         return;
     }

@@ -155,6 +155,10 @@
                         <span id="addressTown"></span>
                         <span id="addressRoad"></span>
                     </p>
+                    <p>
+                        <span id="latitude" style="display: none;"></span>
+                        <span id="longitude" style="display: none;"></span>
+                    </p>
                     <p><label for="web">官方網址：</label><span id="web"></span></p>
                     <p><label for="registrationFee">掛號費用：</label><span id="registrationFee"></span></p>
                     <p><label for="memo">備註：</label><span id="memo"></span></p>
@@ -252,6 +256,13 @@
                             <input type="text" id="editAddressTown" placeholder="請輸入相/鎮/市/區，此為必填欄位" required>
                             <input type="text" id="editAddressRoad" name="address" placeholder="請輸入路名及門牌號碼，此為必填欄位" required>
                         </p>
+                        <p>
+                            <label>若變更地址請點擊此按鈕更新地圖位置：</label>
+                            <input type="hidden" id="editLatitude">
+                            <input type="hidden" id="editLongitude">
+                            <button id="geolocationBtn">更新地圖</button>
+                        </p>
+                        <div id="mapPreview"></div>
                         <p>
                             <label for="web">官方網址：</label>
                             <input type="text" id="editWeb">
