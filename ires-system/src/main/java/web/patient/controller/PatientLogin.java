@@ -29,6 +29,8 @@ public class PatientLogin {
     		HttpSession session = request.getSession();
     		session.setAttribute("loggedin", true);
     		session.setAttribute("patient", patient);
+    		session.setAttribute("patientId", patient.getPatientId());
+    		System.out.println("🟢 登入成功，patientId 已寫入 session: " + patient.getPatientId());
     	}
     	return patient;
     }

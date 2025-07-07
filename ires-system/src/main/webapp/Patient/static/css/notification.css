@@ -110,7 +110,7 @@ body {
     }
 
 /* 通知鈴鐺 */
-.notification-wrapper {
+/* .notification-wrapper {
     position: relative;
     display: inline-block;
 }
@@ -134,4 +134,4 @@ body {
 
 .notification-wrapper i.fas.fa-bell:hover {
     color: orange;
-}
+} */
