@@ -43,7 +43,7 @@ public class ClinicInfoController{
             return ResponseEntity.ok(core);
         } else {
             core.setStatusCode(400);
-            core.setMessage("基本資料更新失敗");
+            core.setMessage("基本資料更新失敗, 請聯絡管理員");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(core);
         }
     }
