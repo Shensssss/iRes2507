@@ -4,14 +4,14 @@ function renderBusinessHours(clinic) {
     const afternoonTime = clinic.afternoon;
     const nightTime = clinic.night;
 
-    const weekMorning = clinic.weekMorning?.split(',').map(d => d.trim());
-    const weekAfternoon = clinic.weekAfternoon?.split(',').map(d => d.trim());
-    const weekNight = clinic.weekNight?.split(',').map(d => d.trim());
+    const weekMorning = clinic.weekMorning?.split(",").map(d => d.trim());
+    const weekAfternoon = clinic.weekAfternoon?.split(",").map(d => d.trim());
+    const weekNight = clinic.weekNight?.split(",").map(d => d.trim());
 
     // 設定早中晚時間
-    $("#morning").text(`早上 ${morningTime}`);
-    $("#afternoon").text(`下午 ${afternoonTime}`);
-    $("#night").text(`早上 ${nightTime}`);
+    $("#morning").text(`${morningTime}`);
+    $("#afternoon").text(`${afternoonTime}`);
+    $("#night").text(`${nightTime}`);
 
     // 清除先前勾勾
     for (let i = 1; i <= 7; i++) {
@@ -47,6 +47,18 @@ function renderBusinessHours(clinic) {
             }
         });
     }
+}
+
+// 取得勾選的(早/中/晚有營業的)星期幾字串陣列
+function getSelectedDays(timePeriod) {
+    const selectedDays = [];
+    for (let i = 1; i <= 7; i++) {
+        const checkbox = document.getElementById(`${timePeriod}${i}`);
+        if (checkbox && checkbox.checked) {
+            selectedDays.push(i);
+        }
+    }
+    return selectedDays.join(",");
 }
 
 // AJAX請求：clinicMajor
@@ -238,12 +250,12 @@ $("#editBasicInfoBtn").on("click",function(){
     $("#editRegistrationFee").val($("#registrationFee").text());
     $("#editMemo").val($("#memo").text());
 
-    $('#editOverlay').addClass('show');
+    $("#editBasicOverlay").addClass("show");
     $("#editBasicInfoForm").show();
 })
 
-//按下取消按鈕
-$('#cancelEditBtn').on('click', function() {
+// 按下取消按鈕
+$('#cancelEditBtn').on("click", function() {
     $("#editName").val("");
     // 清除檔案選擇欄位（input type="file"）
     $("#editProfilePicture").val("");
@@ -257,12 +269,12 @@ $('#cancelEditBtn').on('click', function() {
     $("#editRegistrationFee").val("");
     $("#editMemo").val("");
 
-    $('#editOverlay').removeClass("show");
-    $('#editBasicInfoForm').hide();
+    $("#editBasicOverlay").removeClass("show");
+    $("#editBasicInfoForm").hide();
 });
 
 // 按下儲存按鈕
-$('#saveEditBtn').on('click', function() {
+$('#saveEditBtn').on("click", function() {
 
     const file = document.querySelector("#editProfilePicture").files[0];
         if(file){
@@ -278,5 +290,101 @@ $('#saveEditBtn').on('click', function() {
             fetchEditBasicInfo(originalProfilePicture);
         }
 })
+
+// 二、編輯營業時間
+// 按下編輯按鈕
+$("#editBusinessHoursBtn").on("click", function(){
+    $("#editMorning").val($("#morning").text());
+    $("#editAfternoon").val($("#afternoon").text());
+    $("#editNight").val($("#night").text());
+
+     // 將每天的勾選狀態填進編輯表單的 checkbox
+    for (let i = 1; i <= 7; i++) {
+        // 有✔號標註就checked
+        if ($("#morning-" + i).text() === "✔") {
+            $("#weekMorning" + i).prop("checked", true);
+        }
+        if ($("#afternoon-" + i).text() === "✔") {
+            $("#weekAfternoon" + i).prop("checked", true);
+        }
+        if ($("#night-" + i).text() === "✔") {
+            $("#weekNight" + i).prop("checked", true);
+        }
+    }
+
+    // 滾到表單內部頂部，並強制視窗到最上方
+    $("#addOverlay .form-popup").scrollTop(0);
+    $("html, body").scrollTop(0);
+
+    $("#editHoursOverlay").addClass('show');
+    $("#editBusinessHoursForm").show();
+})
+
+// 按下取消按鈕
+$("#cancelEditHoursBtn").on("click", function(){
+    $("#editMornig").val("");
+    $("#editAfternoon").val("");
+    $("#editNight").val("");
+
+    for (let i = 1; i <= 7; i++) {
+        $("#weekMorning" + i).prop("checked", false);
+        $("#weekAfternoon" + i).prop("checked", false);
+        $("#weekNight" + i).prop("checked", false);
+    }
+
+    $("#editHoursOverlay").removeClass("show");
+    $("#editBusinessHoursForm").hide();
+})
+
+
+// 按下儲存按鈕
+$("#saveEditHoursBtn").on("click", function(){
+    const morning = $("#editMorning").val().trim();
+    const afternoon = $("#editAfternoon").val().trim();
+    const night = $("#editNight").val().trim();
+
+    const timePattern = /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])-(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/;
+
+    if (!timePattern.test(morning) || !timePattern.test(afternoon) || !timePattern.test(night)) {
+        alert("請填入正確時間，格式為 HH:mm-HH:mm");
+        return;
+    }
+
+    const weekMorning = getSelectedDays("weekMorning");
+    const weekAfternoon = getSelectedDays("weekAfternoon");
+    const weekNight = getSelectedDays("weekNight");
+
+    if (!weekMorning || !weekAfternoon || !weekNight) {
+        alert("營業時段不可為空！");
+        return;
+    }
+
+    fetch("/ires-system/clinic/clinicInfo/editBusinessHours", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            morning: morning,
+            afternoon: afternoon,
+            night: night,
+            weekMorning: weekMorning,
+            weekAfternoon: weekAfternoon,
+            weekNight: weekNight
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        alert(result.message);
+        if (result.statusCode === 200) {
+            fetchShowInfo();
+        }
+        $("#editHoursOverlay").removeClass("show");
+        $("#editBusinessHoursForm").hide();
+    })
+})
+
+
+
     
 

@@ -18,7 +18,7 @@ label {
     flex-shrink: 0;
 }
 
- .editBtn {
+.editBtn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -45,6 +45,7 @@ label {
 
 .business-hours-display th,
 .business-hours-display td {
+    text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
     min-width: 60px;
@@ -93,7 +94,7 @@ label {
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 9998;
     overflow: auto;
 }
 
@@ -105,10 +106,11 @@ label {
 /* 表單置中 */
 .form-popup {
     display: none;
+    z-index: 9999;
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 80vw;
+    width: 90vw;
     max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
@@ -123,4 +125,39 @@ label {
 
 #basicInfo{
     padding: 30px;
+}
+
+/* 針對表單內的表格樣式進行設定 */
+#editBusinessHoursForm table {
+    width: 100%; /* 表格寬度為 100% */
+    border-collapse: collapse; /* 合併表格邊框 */
+    margin-top: 10px;
+}
+
+/* 表格的標題列 */
+#editBusinessHoursForm th {
+    background-color: #f0f0f0; /* 標題列背景色 */
+    font-weight: bold;  /* 加粗字體 */
+    padding: 10px;  /* 上下內邊距 */
+    text-align: center;  /* 文字置中 */
+    border: 1px solid #ccc;  /* 邊框顏色 */
+}
+
+/* 表格內容列 */
+#editBusinessHoursForm td {
+    text-align: center;  /* 文字置中 */
+    padding: 10px;  /* 內邊距 */
+    border: 1px solid #ccc;  /* 邊框顏色 */
+    vertical-align: middle; /* 垂直置中 */
+}
+
+/* 設定不同時間段的背景顏色 */
+#editBusinessHoursForm td p {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* 讓checkbox間距拉開一點 */
+#editBusinessHoursForm input[type="checkbox"] {
+    margin: 5px 5px;  /* 增加 checkbox 之間的間距 */
 }

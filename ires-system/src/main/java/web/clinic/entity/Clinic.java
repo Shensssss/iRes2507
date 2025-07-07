@@ -1,6 +1,5 @@
 package web.clinic.entity;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
