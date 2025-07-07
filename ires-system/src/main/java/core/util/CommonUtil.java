@@ -5,6 +5,8 @@ import static core.util.Constants.JSON_MIME_TYPE;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 import javax.persistence.PersistenceContext;
@@ -16,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -26,6 +27,40 @@ public class CommonUtil {
 	private Session session;
 
 	private static final Logger logger = LogManager.getLogger(CommonUtil.class);
+
+	public static TimeRange parseTimeRange(String range) {
+		if (range == null || !range.contains("-")) {
+			throw new IllegalArgumentException("時間範圍格式錯誤，應為 HH:mm-HH:mm");
+		}
+
+		String[] parts = range.split("-");
+		if (parts.length != 2) {
+			throw new IllegalArgumentException("時間範圍格式錯誤，應為 HH:mm-HH:mm");
+		}
+
+		try {
+			LocalTime start = LocalTime.parse(parts[0].trim());
+			LocalTime end = LocalTime.parse(parts[1].trim());
+			return new TimeRange(start, end);
+		} catch (DateTimeParseException e) {
+			throw new IllegalArgumentException("無法解析時間：" + range);
+		}
+	}
+
+	public static class TimeRange {
+		public final LocalTime start;
+		public final LocalTime end;
+
+		public TimeRange(LocalTime start, LocalTime end) {
+			this.start = start;
+			this.end = end;
+		}
+
+		@Override
+		public String toString() {
+			return start + " ~ " + end;
+		}
+	}
 
 	public static <T> T getBean(ServletContext sc, Class<T> clazz) {
 		ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);

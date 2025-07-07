@@ -50,13 +50,13 @@ public class CallNumberController {
                 clinicService.saveCallNumber(result);
             }
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("callNumberId", result.getCallNumberId());
-            response.put("number", result.getNumber());
-            response.put("appointmentDate", result.getAppointmentDate().toString());
-            response.put("timePeriod", result.getTimePeriod());
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("callNumberId", result.getCallNumberId());
+//            response.put("number", result.getNumber());
+//            response.put("appointmentDate", result.getAppointmentDate().toString());
+//            response.put("timePeriod", result.getTimePeriod());
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             e.printStackTrace();

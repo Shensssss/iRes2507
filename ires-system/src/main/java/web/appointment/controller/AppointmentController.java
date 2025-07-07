@@ -1,6 +1,7 @@
 package web.appointment.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import web.appointment.dao.AppointmentDAO;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
 import web.clinic.entity.Clinic;
+import web.clinic.service.ClinicService;
 
 @Controller
 @RequestMapping("/appointment")
@@ -39,18 +41,27 @@ public class AppointmentController {
     @Autowired
     private AppointmentDAO appointmentDAO;
 
+    @Autowired
+    private ClinicService clinicService;
+
     @GetMapping("/apiToday")
     @ResponseBody
-    public List<Appointment> getTodayAppointments(
+    public ResponseEntity<Map<String, Object>> getTodayAppointments(
             @RequestParam(value = "period", required = false) String period,
-            @RequestParam(value = "date", required = false) String dateStr
+            @RequestParam(value = "date", required = false) String dateStr,
+            HttpSession session
     ) {
+        Map<String, Object> response = new HashMap<>();
         Date baseDate;
+
+        // 解析日期參數
         if (dateStr != null) {
             try {
                 baseDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
             } catch (Exception e) {
-                baseDate = new Date();
+                response.put("status", "error");
+                response.put("message", "日期格式錯誤，應為 yyyy-MM-dd");
+                return ResponseEntity.badRequest().body(response);
             }
         } else {
             baseDate = new Date();
@@ -58,36 +69,35 @@ public class AppointmentController {
 
         java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
 
-        int timePeriod = 1;
-        if ("afternoon".equalsIgnoreCase(period)) {
-            timePeriod = 2;
-        } else if ("evening".equalsIgnoreCase(period)) {
-            timePeriod = 3;
+        int timePeriod = 1; // 預設上午診
+
+        // 解析 period 參數或自動判斷
+        if (period != null && !period.isBlank()) {
+            if ("afternoon".equalsIgnoreCase(period)) {
+                timePeriod = 2;
+            } else if ("evening".equalsIgnoreCase(period)) {
+                timePeriod = 3;
+            }
+        } else {
+            Integer clinicId;
+            Clinic clinic = (Clinic) session.getAttribute("clinic");
+            clinicId = clinic.getClinicId();
+            if (clinicId == null) {
+                response.put("status", "error");
+                response.put("message", "Session 未包含 clinicId，請重新登入");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            timePeriod = service.resolveTimePeriod(clinic, LocalTime.now());
         }
 
-        return service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+        List<Appointment> appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+
+        response.put("status", "success");
+        response.put("message", "查詢成功");
+        response.put("data", appointments);
+        return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/history")
-//    @ResponseBody
-//    public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
-//        List<Appointment> list = service.getHistoryByPatientId(patientId);
-//        List<Map<String, Object>> result = list.stream().map(a -> {
-//            Map<String, Object> map = new HashMap<>();
-//            map.put("appointmentId", a.getAppointmentId());
-//            map.put("appointmentDate", a.getAppointmentDate().toString()); // yyyy-MM-dd
-//            map.put("timePeriod", a.getTimePeriod());
-//            map.put("doctorId", a.getDoctorId());
-//            map.put("doctorName", a.getDoctor().getDoctorName());
-//            map.put("reserveNo", a.getReserveNo());
-//            map.put("status", a.getStatus());
-//            map.put("createTime", a.getCreateTime());
-//            map.put("updateTime", a.getUpdateTime());
-//            return map;
-//        }).collect(Collectors.toList());
-//
-//        return ResponseEntity.ok(result);
-//    }
     @GetMapping("/history")
     @ResponseBody
     public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {

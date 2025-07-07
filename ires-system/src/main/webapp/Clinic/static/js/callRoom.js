@@ -195,7 +195,22 @@ window.addEventListener("DOMContentLoaded", () => {
             method: 'GET'
         })
             .then(res => res.json())
-            .then(data => console.log("診間叫號初始化成功", data))
+            .then(data => {
+                console.log("診間叫號初始化成功", data);
+
+                // highlight 到目前號碼
+                if (data.number) {
+                    highlightRow(data.number);
+                }
+
+                // 設定看診狀態
+                switch (data.consultationStatus) {
+                    case 0: document.getElementById("status1").checked = true; break;
+                    case 1: document.getElementById("status2").checked = true; break;
+                    case 2: document.getElementById("status3").checked = true; break;
+                    default: console.warn("未知 consultationStatus：", data.consultationStatus);
+                }
+            })
             .catch(err => console.error("診間叫號初始化失敗", err));
     }
 

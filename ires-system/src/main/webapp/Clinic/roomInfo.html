@@ -401,11 +401,45 @@
     }
 
     async function selectTime(time) {
-        currentTime = time;
+        currentTime = time || null;
         document.getElementById("searchInput").value = "";
         const clinicInfo = document.getElementById("clinic-info");
         clinicInfo.innerHTML = "<p>載入中...</p>";
-        const data = await fetchData(time);
+
+        const url = time ? `/ires-system/appointment/apiToday?period=${time}` : `/ires-system/appointment/apiToday`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.status !== "success") {
+            alert(result.message || "查詢失敗");
+            return;
+        }
+
+        const appointments = result.data || [];
+        const grouped = {};
+
+        appointments.forEach(app => {
+            const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
+            if (!grouped[doctorName]) {
+                grouped[doctorName] = [];
+            }
+            grouped[doctorName].push({
+                number: String(app.reserveNo ?? "--"),
+                name: app.patient?.name ?? "匿名",
+                status: translateStatus(app.status),
+                appointmentId: app.appointmentId,
+                patientId: app.patient?.patientId,
+                doctorId: app.doctor?.doctorId,
+                agencyId: app.clinic?.agencyId ?? "0000000000",
+                timePeriod: app.timePeriod
+            });
+        });
+
+        const data = Object.entries(grouped).map(([doctor, patients]) => ({
+            doctor,
+            patients
+        }));
+
         allData = data;
         renderData(data);
     }
@@ -549,6 +583,7 @@
         const name = sessionStorage.getItem("clinicName");
         if (name) {
             document.getElementById("clinicName").textContent = name;
+            selectTime();
         } else {
             // 未登入或資料遺失，導回登入頁
             alert("尚未登入");
