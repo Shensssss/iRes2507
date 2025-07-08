@@ -468,7 +468,11 @@
     }
 
     function getStatusClass(status) {
-        return status === '已報到' ? 'status-arrived' : status === '未報到' ? 'status-not-arrived' : 'status-cancelled';
+        if (status === '已報到') return 'status-arrived';
+        if (status === '未報到') return 'status-not-arrived';
+        if (status === '已取消') return 'status-cancelled';
+        if (status === '已完成') return 'status-finished';
+        return '';
     }
 
     function renderData(data) {

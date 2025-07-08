@@ -15,6 +15,7 @@ function getStatusClass(status) {
         case '已報到': return 'status-arrived';
         case '未報到': return 'status-not-arrived';
         case '已取消': return 'status-cancelled';
+        case '已完成': return 'status-finished';
         default: return '';
     }
 }
@@ -158,7 +159,8 @@ function insertNumber() {
     modal.hide();
 
     highlightRow(formattedNumber);
-    updateCallNumberOnServer(number);
+    const status = getSelectedConsultationStatus();
+    updateCallNumberOnServer(formattedNumber, status);
 }
 
 function prevNumber() {
@@ -187,6 +189,59 @@ function nextNumber() {
     }
 }
 
+function completeConsultation() {
+    const number = getCurrentNumber();
+    const room = JSON.parse(localStorage.getItem("callRoom"));
+
+    if (!room || !number) {
+        alert("無法取得目前叫號資訊");
+        return;
+    }
+
+    const current = room.patients.find(p => p.number === number.toString());
+    if (!current || !current.appointmentId) {
+        alert("找不到該病患的 appointmentId");
+        return;
+    }
+
+    const payload = {
+        appointmentId: current.appointmentId,
+        status: 3,
+        doctorId: room.doctorId,
+        timePeriod: room.timePeriod,
+        appointmentDate: room.date
+    };
+
+    fetch("/ires-system/appointment/update", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("HTTP Error " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log("完成看診成功：", data);
+
+            // 更新本地狀態
+            const idx = room.patients.findIndex(p => p.number === number.toString());
+            if (idx !== -1) {
+                room.patients[idx].status = "完成看診";
+            }
+
+            localStorage.setItem("callRoom", JSON.stringify(room));
+
+            // 跳下一號
+            nextNumber();
+        })
+        .catch(err => {
+            console.error("完成看診失敗：", err);
+            alert("完成看診失敗");
+        });
+}
 function highlightRow(number) {
     const numStr = number.toString();
 

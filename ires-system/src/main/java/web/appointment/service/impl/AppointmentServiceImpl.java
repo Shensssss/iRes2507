@@ -85,19 +85,27 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDAO.insert(appointment);
     }
 
+    @Override
     public Appointment updateAppointment(Appointment a) {
+        if (a.getAppointmentId() == null) return null;
+
         Appointment origin = appointmentDAO.selectById(a.getAppointmentId());
-        if (origin == null) {
-            return null;
+        if (origin == null) return null;
+
+        boolean dateChanged = false, periodChanged = false, doctorChanged = false;
+
+        if (a.getAppointmentDate() != null && !a.getAppointmentDate().equals(origin.getAppointmentDate())) {
+            dateChanged = true;
+            origin.setAppointmentDate(a.getAppointmentDate());
         }
-
-        boolean dateChanged = !origin.getAppointmentDate().equals(a.getAppointmentDate());
-        boolean periodChanged = !origin.getTimePeriod().equals(a.getTimePeriod());
-        boolean doctorChanged = !origin.getDoctorId().equals(a.getDoctorId());
-
-        origin.setAppointmentDate(a.getAppointmentDate());
-        origin.setTimePeriod(a.getTimePeriod());
-        origin.setDoctorId(a.getDoctorId());
+        if (a.getTimePeriod() != null && !a.getTimePeriod().equals(origin.getTimePeriod())) {
+            periodChanged = true;
+            origin.setTimePeriod(a.getTimePeriod());
+        }
+        if (a.getDoctorId() != null && !a.getDoctorId().equals(origin.getDoctorId())) {
+            doctorChanged = true;
+            origin.setDoctorId(a.getDoctorId());
+        }
 
         if (dateChanged || periodChanged || doctorChanged) {
             int newReserveNo = commonUtil.getNextReserveNo(
@@ -109,9 +117,13 @@ public class AppointmentServiceImpl implements AppointmentService {
             origin.setReserveNo(newReserveNo);
         }
 
+        if (a.getStatus() != null) origin.setStatus(a.getStatus());
+        if (a.getNotes() != null) origin.setNotes(a.getNotes());
+
         appointmentDAO.update(origin);
         return origin;
     }
+
 
     public boolean deleteAppointment(String id) {
         Appointment a = appointmentDAO.selectById(id);
