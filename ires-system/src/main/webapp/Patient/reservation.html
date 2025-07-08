@@ -26,7 +26,6 @@
 	<div class="mouse-cursor cursor-outer"></div>
 	<div class="mouse-cursor cursor-inner"></div>
 
-
 	<!--  菜單頁面  -->
 	<div class="side_overlay"></div>
 	<div class="side_menu">
@@ -34,22 +33,13 @@
 			<div class="row">
 				<div class="main_links">
 					<ul>
-						<li><a href="index.html" class="main_link"> <i class="fas fa-home"></i>
-								主頁
-							</a></li>
-						<li><a href="reservation.html" class="main_link"> <i class="fas fa-calendar-check"></i> 預約紀錄
-							</a></li>
-						<li><a href="favorites.html" class="main_link">
-								<i class="fas fa-heart"></i> 我的收藏</a>
-						</li>
-						<li><a href="notification.html" class="main_link"> <i class="fas fa-bell"></i>
-								通知消息
-							</a></li>
-						<li><a href="account.html" class="main_link"> <i class="fas fa-user-cog"></i> 帳戶設定
-							</a></li>
+						<li><a href="#" class="main_link"> <i class="fas fa-home"></i> 主頁 </a></li>
+						<li><a href="#" class="main_link"> <i class="fas fa-calendar-check"></i> 預約紀錄 </a></li>
+						<li><a href="#" class="main_link"> <i class="fas fa-heart"></i> 我的收藏 </a></li>
+						<li><a href="#" class="main_link"> <i class="fas fa-bell"></i> 通知消息	</a></li>
+						<li><a href="#" class="main_link"> <i class="fas fa-user-cog"></i> 帳戶設定	</a></li>
 					</ul>
 				</div>
-
 			</div>
 		</div>
 		<span class="clss"> <i class="fal fa-times"></i>
@@ -57,9 +47,7 @@
 	</div>
 	<!--  菜單結束  -->
 
-
 	<div id="scrollsmoother-container">
-
 
 		<!--  Appbar  -->
 		<nav class="navbar navbar-expand-lg navbar-light sub-font tc-navbar-st7">
@@ -78,14 +66,14 @@
 							</a></li>
 					</ul>
 					<ul class="navbar-nav">
-						<li class="nav-item">
+						<!-- <li class="nav-item">
 							<a class="nav-link" href="javascript:void(0);" id="notificationBell">
 								<div class="notification-wrapper" style="position: relative;">
 									<i class="fas fa-bell"></i>
 									<span class="badge bg-danger" id="notificationCount" hidden>0</span>
 								</div>
 							</a>
-						</li>
+						</li> -->
 						<li class="nav-item menu-item d-none d-lg-block"><a class="nav-link side_menu_btn" href="#">
 								Menu </a></li>
 					</ul>
@@ -105,32 +93,24 @@
 					<a href="account.html" class="leftmenu">帳戶資訊</a>
 				</div>
 
-
 				<!-- 中間資訊 -->
 				<div class="div1">預約紀錄</div>
 				<div class="appointmentRecord" id="appointmentList"></div>
 
 				<template id="appointmentTemplate">
-					<div class="appointment">
+					<div class="appointment" data-id="">
 						<div class="info">
 							<h3 class="clinic"></h3>
 							<p class="time"></p>
 							<p class="reserveNo"></p>
 							<p class="status"></p>
 						</div>
-						<div class="actions">
-							<div class="group checkIn" id="btnGroup" hidden>
-								<button class="cancel">取消報到</button>
-								<button class="edit">修改預約</button>
-								<button class="favorite">加入收藏</button>
-								<button class="checkIn">報到</button>
-							</div>
-						</div>
+						<div class="actions"></div>
 					</div>
 				</template>
-				<div id="editModal" class="modal" hidden>
-					<div class="modalContent">
-						<span class="closeBtn">&times;</span>
+				<div id="editAppointment" class="editAppointment" hidden>
+					<div class="editContent">
+						<span class="closeBtn">Ｘ</span>
 						<h3>修改預約</h3>
 						<form id="editForm">
 							<label>日期：<input type="date" name="date"></label>
@@ -141,6 +121,7 @@
 									<option value="3">晚上</option>
 								</select>
 							</label>
+							<label>醫生：<select name="doctor" id="doctorSelect"></select></label>
 							<button type="submit">送出</button>
 						</form>
 					</div>
@@ -162,9 +143,7 @@
 				<script src="static/js/jquery.counterup.min.js"></script>
 				<script src="static/js/aos.min.js"></script>
 				<script src="static/js/custom.js"></script>
-				<script src="static/js/editAppointment.js"></script>
 				<script src="static/js/common_js.js"></script>
-
 				<!-- === Gsap === -->
 				<script src="static/js/gsap.min.js"></script>
 				<script src="static/js/ScrollSmoother.min.js"></script>

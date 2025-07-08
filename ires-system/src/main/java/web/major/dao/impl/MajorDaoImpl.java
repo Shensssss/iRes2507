@@ -20,4 +20,13 @@ public class MajorDaoImpl implements MajorDao{
 		        .createQuery(hql, Major.class)
 		        .getResultList();
 	}
+	
+	@Override
+	public Major selectMajorById(Integer majorId) {
+	    String hql = "FROM Major m WHERE m.majorId = :majorId";
+	    return session.createQuery(hql, Major.class)
+	                  .setParameter("majorId", majorId)
+	                  .uniqueResult();
+	}
+	
 }
