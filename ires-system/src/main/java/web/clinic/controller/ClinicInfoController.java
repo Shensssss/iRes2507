@@ -43,13 +43,13 @@ public class ClinicInfoController{
             return ResponseEntity.ok(core);
         } else {
             core.setStatusCode(400);
-            core.setMessage("基本資料更新失敗");
+            core.setMessage("基本資料更新失敗, 請聯絡管理員");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(core);
         }
     }
 	
 	@PutMapping("editBusinessHours")
-	public ResponseEntity<Core> editBusinessHours(@RequestBody Clinic clinic, HttpSession session) {
+	public ResponseEntity<Core> editBusinessHours(@RequestBody Map<String, Object> requestBody, HttpSession session) {
         Core core = new Core();
 
         Clinic loggedInClinic = (Clinic) session.getAttribute("clinic");
@@ -59,7 +59,15 @@ public class ClinicInfoController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(core);
         }
 
+        Clinic clinic = new Clinic();
         clinic.setClinicId(loggedInClinic.getClinicId());
+        clinic.setMorning((String) requestBody.get("morning"));
+        clinic.setAfternoon((String) requestBody.get("afternoon"));
+        clinic.setNight((String) requestBody.get("night"));
+        clinic.setWeekMorning((String) requestBody.get("weekMorning"));
+        clinic.setWeekAfternoon((String) requestBody.get("weekAfternoon"));
+        clinic.setWeekNight((String) requestBody.get("weekNight"));
+
         int result = clinicInfoService.editBusinessHours(clinic);
 
         if (result == 1) {

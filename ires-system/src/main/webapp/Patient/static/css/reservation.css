@@ -108,7 +108,7 @@ button:hover {
 }
 
 /* 通知鈴鐺 */
-.notification-wrapper {
+/* .notification-wrapper {
   position: relative;
   display: inline-block;
 }
@@ -132,7 +132,7 @@ button:hover {
 
 .notification-wrapper i.fas.fa-bell:hover {
   color: orange;
-}
+} */
 
 /* 修改預約 */
 .editAppointment {

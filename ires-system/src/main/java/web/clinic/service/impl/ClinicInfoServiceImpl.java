@@ -44,6 +44,12 @@ public class ClinicInfoServiceImpl implements ClinicInfoService {
         if(editedClinic.getAddressRoad() != null) {
         	existing.setAddressRoad(editedClinic.getAddressRoad());
         } 
+        if(editedClinic.getLatitude() != null) {
+        	existing.setLatitude(editedClinic.getLatitude());
+        }
+        if(editedClinic.getLongitude() != null) {
+        	existing.setLongitude(editedClinic.getLongitude());
+        }
         if(editedClinic.getWeb() != null) {
         	existing.setWeb(editedClinic.getWeb());
         } 

@@ -18,5 +18,10 @@ public class MajorServiceImpl implements MajorService{
 	public List<Major> findAllMajor() {
 		return dao.selectAll();
 	}
+	
+	@Override
+	public Major findById(Integer majorId) {
+		return dao.selectMajorById(majorId);	
+	}
 
 }

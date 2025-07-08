@@ -1,4 +1,4 @@
-// 封裝：移動報到成功的卡片
+// 移動報到成功的卡片到最上方
 function moveCheckedInCardToTop() {
   const justId = localStorage.getItem("justCheckedInId");
   if (!justId) return;
@@ -13,17 +13,15 @@ function moveCheckedInCardToTop() {
 
   localStorage.removeItem("justCheckedInId");
 }
-// 顯示來自 appointment 的資料
+// 顯示來自預約表的資料
 const appointmentsList = document.getElementById("appointmentList");
 const template = document.getElementById("appointmentTemplate");
 const modal = document.getElementById("editAppointment");
 const form = document.getElementById("editForm");
 const doctorSelect = document.getElementById("doctorSelect");
 const doctorLabel = document.getElementById("doctorLabel");
-
 const timePeriodText = { 1: "上午時段", 2: "下午時段", 3: "晚上時段" };
 const checkInStatus = { 0: "未報到", 1: "已報到", 2: "取消報到" };
-
 const formatDate = date => new Date(date).toLocaleDateString("zh-TW");
 const getCutoffHour = period => ({ 1: 12, 2: 18, 3: 23 }[period] || 0);
 const showError = (title, err) => {
@@ -33,7 +31,7 @@ const showError = (title, err) => {
 const getAppointmentElementById = id =>
   document.querySelector(`.appointment[data-id="${id}"]`);
 
-// 載入可預約醫師（可用於後續互動）
+// 載入可預約醫師
 function loadDoctors(clinicId, date, timePeriod, selectedDoctorId = null) {
   fetch(`/ires-system/editAppointment/available?clinicId=${clinicId}&date=${date}&timePeriod=${timePeriod}`)
     .then(r => r.json())
@@ -51,49 +49,108 @@ function loadDoctors(clinicId, date, timePeriod, selectedDoctorId = null) {
 }
 
 // 載入預約資料清單
-fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
-  .then(res => res.json())
-  .then(data => {
-    data.sort((a, b) => b.appointmentDate - a.appointmentDate);
-    const now = new Date();
+function renderAppointments() {
+  fetch('/ires-system/reservation', { method: 'GET', credentials: 'include' })
+    .then(res => res.json())
+    .then(data => {
+      const now = new Date();
 
-    data.forEach(appt => {
-      if (!appt.appointmentId) return;
+      data.sort((a, b) => {
+        const getScore = appt => {
+          const apptDate = new Date(appt.appointmentDate);
+          const cutoffHour = getCutoffHour(appt.timePeriod);
+          apptDate.setHours(cutoffHour, 0, 0, 0);
 
-      const item = template.content.cloneNode(true);
-      const el = item.querySelector(".appointment");
-      el.dataset.id = appt.appointmentId;
+          const isToday = now.toDateString() === apptDate.toDateString();
+          const isFuture = now < apptDate;
+          const notCheckedIn = appt.status === 0;
 
-      item.querySelector(".clinic").textContent = appt.clinic.clinicName;
-      item.querySelector(".time").textContent =
-        `預約時間: ${formatDate(appt.appointmentDate)} ${timePeriodText[appt.timePeriod]}`;
-      item.querySelector(".reserveNo").textContent = `看診號碼: ${appt.reserveNo}`;
-      item.querySelector(".status").textContent = `狀態: ${checkInStatus[appt.status]}`;
+          if (isToday && notCheckedIn && isFuture) return 3;
+          if (appt.status === 1) return 2;
+          return 1;
+        };
 
-      const actions = item.querySelector(".actions");
-      actions.innerHTML = "";
+        const scoreDiff = getScore(b) - getScore(a);
+        if (scoreDiff !== 0) return scoreDiff;
 
-      const futureTime = new Date(appt.appointmentDate);
-      futureTime.setHours(getCutoffHour(appt.timePeriod), 0, 0, 0);
+        return b.appointmentDate - a.appointmentDate;
+      });
 
-      if (appt.status === 0 && now < futureTime) {
-        ["修改預約", "加入收藏", "報到"].forEach((text, i) => {
-          const btn = document.createElement("button");
-          btn.className = ["edit", "favorite", "checkIn"][i];
-          btn.textContent = text;
-          if (i === 0) btn.dataset.id = appt.appointmentId;
-          actions.appendChild(btn);
-        });
-      } else {
-        actions.remove();
-      }
+      const nowTime = new Date();
 
-      appointmentsList.appendChild(item);
+      data.forEach(appt => {
+        if (!appt.appointmentId) return;
+
+        const item = template.content.cloneNode(true);
+        const el = item.querySelector(".appointment");
+        el.dataset.id = appt.appointmentId;
+        el.dataset.clinicId = appt.clinic.clinicId;
+        item.querySelector(".clinic").textContent = appt.clinic.clinicName;
+        item.querySelector(".time").textContent =
+          `預約時間: ${formatDate(appt.appointmentDate)} ${timePeriodText[appt.timePeriod]}`;
+        item.querySelector(".reserveNo").textContent = `看診號碼: ${appt.reserveNo}`;
+        item.querySelector(".status").textContent = `狀態: ${checkInStatus[appt.status]}`;
+
+        const actions = item.querySelector(".actions");
+        actions.innerHTML = "";
+
+        const futureTime = new Date(appt.appointmentDate);
+        futureTime.setHours(getCutoffHour(appt.timePeriod), 0, 0, 0);
+
+        appointmentsList.appendChild(item);
+
+        const showButtons = () => {
+          if (nowTime < futureTime && appt.status !== 1) {
+            const btnEdit = document.createElement("button");
+            btnEdit.className = "edit";
+            btnEdit.textContent = "修改預約";
+            btnEdit.dataset.id = appt.appointmentId;
+            actions.appendChild(btnEdit);
+          }
+
+          if (!favoritedClinics.has(appt.clinic.clinicId)) {
+            const btnFav = document.createElement("button");
+            btnFav.className = "favorite";
+            btnFav.textContent = "加入收藏";
+            actions.appendChild(btnFav);
+          }
+
+          if (appt.status === 0 && nowTime < futureTime) {
+            const btnCheckIn = document.createElement("button");
+            btnCheckIn.className = "checkIn";
+            btnCheckIn.textContent = "報到";
+            actions.appendChild(btnCheckIn);
+          }
+        };
+
+        showButtons();
+      });
+
+      moveCheckedInCardToTop();
     });
-    moveCheckedInCardToTop();
+}
+
+const favoritedClinics = new Set();
+
+fetch('/ires-system/favorites/all', { credentials: 'include' })
+  .then(res => {
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return res.json();
+    } else {
+      throw new Error("伺服器未回傳 JSON，實際回傳為：" + contentType);
+    }
+  })
+  .then(data => {
+    (Array.isArray(data) ? data : []).forEach(fav => favoritedClinics.add(fav.clinicId));
+    renderAppointments();
+  })
+  .catch(err => {
+    console.error("取得收藏清單失敗", err);
+    renderAppointments();
   });
 
-// 開啟/關閉彈窗 + 載入預約資訊
+// 開啟/關閉小彈窗 + 載入預約資訊
 document.addEventListener("click", e => {
   const editBtn = e.target.closest(".edit");
   if (editBtn) {
@@ -113,7 +170,7 @@ document.addEventListener("click", e => {
         form.date.value = new Date(d.appointmentDate).toISOString().split("T")[0];
         form.timePeriod.value = d.timePeriod;
 
-        // 使用從後端傳來的 doctorList 更新下拉選單
+        // 使用從後端傳來的醫生資料更新下拉選單
         doctorSelect.innerHTML = "";
         (Array.isArray(d.doctorList) ? d.doctorList : []).forEach(doc => {
           const opt = document.createElement("option");
@@ -161,6 +218,51 @@ form.addEventListener("submit", e => {
         apptEl.querySelector(".time").textContent = `預約時間: ${form.date.value} ${period} ${doctor}`;
         apptEl.querySelector(".status").textContent = `狀態: ${checkInStatus[d.status] || "未知"}`;
       }
+      localStorage.setItem("justCheckedInId", form.dataset.id);
+      location.reload();
     })
+
     .catch(err => showError("更新失敗", err));
+});
+
+/*加入收藏*/
+document.addEventListener("click", e => {
+  const favBtn = e.target.closest(".favorite");
+  if (favBtn) {
+    const apptEl = favBtn.closest(".appointment");
+    const clinicId = apptEl?.dataset?.clinicId || apptEl?.querySelector(".clinicId")?.textContent;
+    console.log("送出的 clinicId = ", clinicId);
+    fetch("/ires-system/favorites/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ clinicId })
+
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("已加入收藏");
+          favoritedClinics.add(clinicId);
+          favBtn.remove(); // 或 favBtn.hidden = true;
+
+          // 若 favorites 頁面有掛載，可直接新增
+          const favoritesList = document.getElementById("favoritesList");
+          if (favoritesList) {
+            const card = apptEl.cloneNode(true);
+            card.classList.add("favoriteCard");
+            favoritesList.appendChild(card);
+          }
+
+          // optional: localStorage 通知其他頁面
+          localStorage.setItem("favoritesUpdated", Date.now());
+        } else {
+          alert(data.message || "收藏失敗");
+        }
+      })
+      .catch(err => {
+        console.error("加入收藏時發生錯誤", err);
+        alert("收藏失敗，請稍後再試");
+      });
+  }
 });
