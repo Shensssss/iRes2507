@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,8 +20,8 @@
     <link rel="stylesheet" href="static/css/switchery.min.css">
     <!-- Custom styles for this theme -->
     <link rel="stylesheet" href="static/css/main.css">
-     <!-- bell -->
-     <link rel="stylesheet" href="static/css/bell.css">
+    <!-- bell -->
+    <link rel="stylesheet" href="static/css/bell.css">
     <!-- Feature detection -->
     <script src="static/js/modernizr-2.6.2.min.js"></script>
     <link rel="stylesheet" href="static/css/clinicInfo.css">
@@ -32,23 +33,26 @@
             <!--logo start-->
             <div class="brand">
                 <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                      <span id="clinicName"></span></a>
+                    <span id="clinicName"></span></a>
             </div>
-            <img src="static/picture/ires.png" style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;" >
+            <img src="static/picture/ires.png"
+                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div class="notification-wrapper">
-                <div class="notification-icon" id="bell">
-                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
-                    <span class="badge"></span>
-                </div>
-                <div class="notification-dropdown" id="dropdown">
+                <a href="clinicNotification.html">
+                    <div class="notification-icon" id="bell">
+                        <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                        <span class="badge"></span>
+                    </div>
+                </a>
+                <!-- <div class="notification-dropdown" id="dropdown">
                     <p>📬 您有新通知</p>
                     <ul>
-                      <li>✅ 報到通知</li>
-                      <li>💬 評價通知</li>
-                      <li>⚠️ 系統通知</li>
-                    </ul>
-                </div>
+                        <li>✅ 報到通知</li>
+                        <li>💬 評價通知</li>
+                        <li>⚠️ 系統通知</li>
+                    </ul>                    
+                </div> -->
             </div>
             <!--logo end-->
             <ul class="nav navbar-nav navbar-left">
@@ -56,9 +60,9 @@
                     <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
                         <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
                     </button>
-                </li>         
-            </ul>            
-        </header> 
+                </li>
+            </ul>
+        </header>
         <!--sidebar left start-->
         <aside class="sidebar sidebar-left">
             <nav>
@@ -131,9 +135,9 @@
             </nav>
         </aside>
         <!--main content start-->
-        <section class="main-content-wrapper">    
+        <section class="main-content-wrapper">
             <section id="main-content" class="animated fadeInUp">
-            <!--<在此填入主要內容-->
+                <!--<在此填入主要內容-->
                 <h2>診所資料</h2>
                 <div class="clinicInfo" id="basicInfo" data-clinic-id="">
                     <button class="editBtn" id="editBasicInfoBtn">編輯</button>
@@ -147,7 +151,8 @@
                     <p>
                     <p><label for="profilePicture">診所圖片：</label>
                         <br>
-                        <img id="profilePicture" src="" alt="預覽圖"  style="max-width: 100px;"></p>
+                        <img id="profilePicture" src="" alt="預覽圖" style="max-width: 100px;">
+                    </p>
                     <p><label for="phone">電話：</label><span id="phone"></span></p>
                     <p>
                         <label>地址：</label>
@@ -235,16 +240,17 @@
                             <input type="text" id="editAgencyId" readonly>
                         </p>
                         <p>
-                            <label for ="editClinicMajors">專科別：</label>
-                            <div id="editClinicMajors" class="major-grid">
-                                <!-- 這裡放 checkbox -->
-                            </div>
+                            <label for="editClinicMajors">專科別：</label>
+                        <div id="editClinicMajors" class="major-grid">
+                            <!-- 這裡放 checkbox -->
+                        </div>
                         </p>
                         <p>
                             <label for="editProfilePicture">照片：</label>
                             <input type="file" id="editProfilePicture">
                             <br>
-                            <img id="editProfilePicturePreview" src="" alt="預覽圖" style="max-width: 150px; display:block; margin-top: 10px;">
+                            <img id="editProfilePicturePreview" src="" alt="預覽圖"
+                                style="max-width: 150px; display:block; margin-top: 10px;">
                         </p>
                         <p>
                             <label for="phone">電話：</label>
@@ -254,7 +260,8 @@
                             <label>地址：</label>
                             <input type="text" id="editAddressCity" placeholder="請輸入縣市，此為必填欄位" required>
                             <input type="text" id="editAddressTown" placeholder="請輸入相/鎮/市/區，此為必填欄位" required>
-                            <input type="text" id="editAddressRoad" name="address" placeholder="請輸入路名及門牌號碼，此為必填欄位" required>
+                            <input type="text" id="editAddressRoad" name="address" placeholder="請輸入路名及門牌號碼，此為必填欄位"
+                                required>
                         </p>
                         <p>
                             <label>若變更地址請點擊此按鈕更新地圖位置：</label>
@@ -275,81 +282,81 @@
                             <label for="memo">備註：</label>
                             <input type="text" id="editMemo">
                         </p>
-                        
+
                         <button id="saveEditBtn">儲存</button>
                         <button id="cancelEditBtn">取消</button>
                     </div>
                 </div>
 
                 <div class="form-overlay" id="editHoursOverlay"></div>
-                    <div class="form-popup" id="editBusinessHoursForm">
-                        <table class="editBusinessHours">
-                            <thead>
-                                <tr>
-                                    <th>時段/星期</th>
-                                    <th>一</th>
-                                    <th>二</th>
-                                    <th>三</th>
-                                    <th>四</th>
-                                    <th>五</th>
-                                    <th>六</th>
-                                    <th>日</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <p>上午</p>
-                                        <input type="text" id="editMorning" placeholder="格式範例08:00-12:00"/>
-                                    </td>
-                                    <td><input type="checkbox" id="weekMorning1" value="1" /></td>
-                                    <td><input type="checkbox" id="weekMorning2" value="2" /></td>
-                                    <td><input type="checkbox" id="weekMorning3" value="3" /></td>
-                                    <td><input type="checkbox" id="weekMorning4" value="4" /></td>
-                                    <td><input type="checkbox" id="weekMorning5" value="5" /></td>
-                                    <td><input type="checkbox" id="weekMorning6" value="6" /></td>
-                                    <td><input type="checkbox" id="weekMorning7" value="7" /></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <p>下午</p>
-                                        <input type="text" id="editAfternoon" placeholder="格式範例13:00-17:00"/>
-                                    </td>
-                                    <td><input type="checkbox" id="weekAfternoon1" value="1" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon2" value="2" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon3" value="3" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon4" value="4" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon5" value="5" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon6" value="6" /></td>
-                                    <td><input type="checkbox" id="weekAfternoon7" value="7" /></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <p>晚間</p>
-                                        <input type="text" id="editNight" placeholder="格式範例18:00-21:00"/>
-                                    </td>
-                                    <td><input type="checkbox" id="weekNight1" value="1" /></td>
-                                    <td><input type="checkbox" id="weekNight2" value="2" /></td>
-                                    <td><input type="checkbox" id="weekNight3" value="3" /></td>
-                                    <td><input type="checkbox" id="weekNight4" value="4" /></td>
-                                    <td><input type="checkbox" id="weekNight5" value="5" /></td>
-                                    <td><input type="checkbox" id="weekNight6" value="6" /></td>
-                                    <td><input type="checkbox" id="weekNight7" value="7" /></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="form-popup" id="editBusinessHoursForm">
+                    <table class="editBusinessHours">
+                        <thead>
+                            <tr>
+                                <th>時段/星期</th>
+                                <th>一</th>
+                                <th>二</th>
+                                <th>三</th>
+                                <th>四</th>
+                                <th>五</th>
+                                <th>六</th>
+                                <th>日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <p>上午</p>
+                                    <input type="text" id="editMorning" placeholder="格式範例08:00-12:00" />
+                                </td>
+                                <td><input type="checkbox" id="weekMorning1" value="1" /></td>
+                                <td><input type="checkbox" id="weekMorning2" value="2" /></td>
+                                <td><input type="checkbox" id="weekMorning3" value="3" /></td>
+                                <td><input type="checkbox" id="weekMorning4" value="4" /></td>
+                                <td><input type="checkbox" id="weekMorning5" value="5" /></td>
+                                <td><input type="checkbox" id="weekMorning6" value="6" /></td>
+                                <td><input type="checkbox" id="weekMorning7" value="7" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>下午</p>
+                                    <input type="text" id="editAfternoon" placeholder="格式範例13:00-17:00" />
+                                </td>
+                                <td><input type="checkbox" id="weekAfternoon1" value="1" /></td>
+                                <td><input type="checkbox" id="weekAfternoon2" value="2" /></td>
+                                <td><input type="checkbox" id="weekAfternoon3" value="3" /></td>
+                                <td><input type="checkbox" id="weekAfternoon4" value="4" /></td>
+                                <td><input type="checkbox" id="weekAfternoon5" value="5" /></td>
+                                <td><input type="checkbox" id="weekAfternoon6" value="6" /></td>
+                                <td><input type="checkbox" id="weekAfternoon7" value="7" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>晚間</p>
+                                    <input type="text" id="editNight" placeholder="格式範例18:00-21:00" />
+                                </td>
+                                <td><input type="checkbox" id="weekNight1" value="1" /></td>
+                                <td><input type="checkbox" id="weekNight2" value="2" /></td>
+                                <td><input type="checkbox" id="weekNight3" value="3" /></td>
+                                <td><input type="checkbox" id="weekNight4" value="4" /></td>
+                                <td><input type="checkbox" id="weekNight5" value="5" /></td>
+                                <td><input type="checkbox" id="weekNight6" value="6" /></td>
+                                <td><input type="checkbox" id="weekNight7" value="7" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                        <div id="Btn">
-                            <button id="saveEditHoursBtn">儲存</button>
-                            <button id="cancelEditHoursBtn">取消</button>
-                        </div>
-                        
-
+                    <div id="Btn">
+                        <button id="saveEditHoursBtn">儲存</button>
+                        <button id="cancelEditHoursBtn">取消</button>
                     </div>
+
+
                 </div>
-         
+                </div>
+
             </section>
-        </section>       
+        </section>
     </section>
 
 
@@ -376,7 +383,7 @@
     <script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
     <script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
     <!-- Gauge  -->
-   <!--<script src="static/js/gauge.min.js"></script>
+    <!--<script src="static/js/gauge.min.js"></script>
     <script src="static/js/gauge-demo.js"></script>-->
     <!-- Calendar  -->
     <script src="static/js/clndr.js"></script>
@@ -401,51 +408,51 @@
         app.spinStop();
     });
     </script>-->
-      <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const name = sessionStorage.getItem("clinicName");
             if (name) {
-              document.getElementById("clinicName").textContent = name;
-             } else {
-           // 未登入或資料遺失，導回登入頁
-               alert("尚未登入");
-              location.href = "/ires-system/Clinic/login.html";
-           }
+                document.getElementById("clinicName").textContent = name;
+            } else {
+                // 未登入或資料遺失，導回登入頁
+                alert("尚未登入");
+                location.href = "/ires-system/Clinic/login.html";
+            }
         });
     </script>
-      <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 處理登出點擊
-    const logoutLink = document.querySelector('a[title="Logout"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", function (e) {
-        e.preventDefault();
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 處理登出點擊
+            const logoutLink = document.querySelector('a[title="Logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-        // 彈窗確認
-        if (confirm("確定要登出嗎？")) {
-          // 發送登出請求
-          fetch('/ires-system/clinic/logout', {
-            method: 'DELETE',
-            credentials: 'include' // 確保 session cookie 被送出
-          })
-            .then(response => {
-              if (response.ok) {
-                // 跳轉回登入頁
-                sessionStorage.clear();
-                window.location.href = '/ires-system/Clinic/login.html';
-              } else {
-                alert("登出失敗，請稍後再試");
-              }
-            })
-            .catch(err => {
-              console.error("登出錯誤：", err);
-              alert("無法連線到伺服器");
-            });
-        }
-      });
-    }
-  });
-</script>
+                    // 彈窗確認
+                    if (confirm("確定要登出嗎？")) {
+                        // 發送登出請求
+                        fetch('/ires-system/clinic/logout', {
+                            method: 'DELETE',
+                            credentials: 'include' // 確保 session cookie 被送出
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // 跳轉回登入頁
+                                    sessionStorage.clear();
+                                    window.location.href = '/ires-system/Clinic/login.html';
+                                } else {
+                                    alert("登出失敗，請稍後再試");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("登出錯誤：", err);
+                                alert("無法連線到伺服器");
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
