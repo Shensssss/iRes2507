@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,8 +20,8 @@
     <link rel="stylesheet" href="static/css/switchery.min.css">
     <!-- Custom styles for this theme -->
     <link rel="stylesheet" href="static/css/main.css">
-     <!-- bell -->
-     <link rel="stylesheet" href="static/css/bell.css">
+    <!-- bell -->
+    <link rel="stylesheet" href="static/css/bell.css">
     <!-- Feature detection -->
     <script src="static/js/modernizr-2.6.2.min.js"></script>
     <link rel="stylesheet" href="static/css/doctorInfo.css">
@@ -34,21 +35,24 @@
                 <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
                     <span id="clinicName"></span></a>
             </div>
-            <img src="static/picture/ires.png" style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;" >
+            <img src="static/picture/ires.png"
+                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div class="notification-wrapper">
-                <div class="notification-icon" id="bell">
-                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
-                    <span class="badge"></span>
-                </div>
-                <div class="notification-dropdown" id="dropdown">
+                <a href="clinicNotification.html">
+                    <div class="notification-icon" id="bell">
+                        <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                        <span class="badge"></span>
+                    </div>
+                </a>
+                <!-- <div class="notification-dropdown" id="dropdown">
                     <p>📬 您有新通知</p>
                     <ul>
-                      <li>✅ 報到通知</li>
-                      <li>💬 評價通知</li>
-                      <li>⚠️ 系統通知</li>
-                    </ul>
-                </div>
+                        <li>✅ 報到通知</li>
+                        <li>💬 評價通知</li>
+                        <li>⚠️ 系統通知</li>
+                    </ul>                    
+                </div> -->
             </div>
             <!--logo end-->
             <ul class="nav navbar-nav navbar-left">
@@ -56,9 +60,9 @@
                     <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
                         <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
                     </button>
-                </li>         
-            </ul>            
-        </header> 
+                </li>
+            </ul>
+        </header>
         <!--sidebar left start-->
         <aside class="sidebar sidebar-left">
             <nav>
@@ -131,9 +135,9 @@
             </nav>
         </aside>
         <!--main content start-->
-        <section class="main-content-wrapper">    
+        <section class="main-content-wrapper">
             <section id="main-content" class="animated fadeInUp">
-            <!--<在此填入主要內容-->
+                <!--<在此填入主要內容-->
                 <h2>醫師資料管理</h2>
                 <div class="topBar">
                     <input type="text" id="searchName" placeholder="請輸入醫師姓名">
@@ -159,7 +163,6 @@
                         <input type="text" id="addMemo1" placeholder="專長 1">
                         <input type="text" id="addMemo2" placeholder="專長 2">
                         <input type="text" id="addMemo3" placeholder="專長 3">
-                        <input type="text" id="addTime" placeholder="看診時段">
                         <button id="saveAddBtn">儲存</button>
                         <button id="cancelAddBtn">取消</button>
                     </div>
@@ -172,7 +175,7 @@
                         <input type="text" id="editName" placeholder="姓名">
                         <label for="editProfilePicture">照片：</label>
                         <input type="file" id="editProfilePicture">
-                        <img id="editPreview"  class="img-preview">
+                        <img id="editPreview" class="img-preview">
                         <input type="text" id="editEdu1" placeholder="學歷 1">
                         <input type="text" id="editEdu2" placeholder="學歷 2">
                         <input type="text" id="editEdu3" placeholder="學歷 3">
@@ -182,18 +185,17 @@
                         <input type="text" id="editMemo1" placeholder="專長 1">
                         <input type="text" id="editMemo2" placeholder="專長 2">
                         <input type="text" id="editMemo3" placeholder="專長 3">
-                        <input type="text" id="editTime" placeholder="看診時段">
                         <button id="saveEditBtn">儲存</button>
                         <button id="cancelEditBtn">取消</button>
                     </div>
                 </div>
-             
+
             </section>
-        </section>       
+        </section>
     </section>
 
-    
-    
+
+
     <script src="static/js/jquery-3.7.1.min.js"></script>
     <!--/Config demo-->
     <!--Global JS-->
@@ -217,7 +219,7 @@
     <script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
     <script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
     <!-- Gauge  -->
-   <!--<script src="static/js/gauge.min.js"></script>
+    <!--<script src="static/js/gauge.min.js"></script>
     <script src="static/js/gauge-demo.js"></script>-->
     <!-- Calendar  -->
     <script src="static/js/clndr.js"></script>
@@ -241,49 +243,49 @@
         document.addEventListener("DOMContentLoaded", function () {
             const name = sessionStorage.getItem("clinicName");
             if (name) {
-              document.getElementById("clinicName").textContent = name;
-             } else {
-           // 未登入或資料遺失，導回登入頁
-               alert("尚未登入");
-              location.href = "/ires-system/Clinic/login.html";
-           }
+                document.getElementById("clinicName").textContent = name;
+            } else {
+                // 未登入或資料遺失，導回登入頁
+                alert("尚未登入");
+                location.href = "/ires-system/Clinic/login.html";
+            }
         });
     </script>
-      <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 處理登出點擊
-    const logoutLink = document.querySelector('a[title="Logout"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", function (e) {
-        e.preventDefault();
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 處理登出點擊
+            const logoutLink = document.querySelector('a[title="Logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-        // 彈窗確認
-        if (confirm("確定要登出嗎？")) {
-          // 發送登出請求
-          fetch('/ires-system/clinic/logout', {
-            method: 'DELETE',
-            credentials: 'include' // 確保 session cookie 被送出
-          })
-            .then(response => {
-              if (response.ok) {
-                // 跳轉回登入頁
-                sessionStorage.clear();
-                window.location.href = '/ires-system/Clinic/login.html';
-              } else {
-                alert("登出失敗，請稍後再試");
-              }
-            })
-            .catch(err => {
-              console.error("登出錯誤：", err);
-              alert("無法連線到伺服器");
-            });
-        }
-      });
-    }
-  });
-</script>
+                    // 彈窗確認
+                    if (confirm("確定要登出嗎？")) {
+                        // 發送登出請求
+                        fetch('/ires-system/clinic/logout', {
+                            method: 'DELETE',
+                            credentials: 'include' // 確保 session cookie 被送出
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // 跳轉回登入頁
+                                    sessionStorage.clear();
+                                    window.location.href = '/ires-system/Clinic/login.html';
+                                } else {
+                                    alert("登出失敗，請稍後再試");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("登出錯誤：", err);
+                                alert("無法連線到伺服器");
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 
-<script src="static/js/doctorInfo.js"></script>
+    <script src="static/js/doctorInfo.js"></script>
 </body>
 
 </html>

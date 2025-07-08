@@ -353,20 +353,27 @@
     let allData = {};
 
     function fetchData(time) {
-        //return fetch(`${window.location.origin}/ires-system/appointment?action=apiToday&period=${time}`)
         return fetch(`/ires-system/appointment/apiToday?period=${time}`)
             .then(response => response.json())
-            .then(appointments => {
+            .then(result => {
+                if (result.status !== "success") {
+                    throw new Error(result.message || "查詢失敗");
+                }
+
+                const appointments = result.data || [];
                 const grouped = {};
 
                 appointments.forEach(app => {
                     const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
 
                     if (!grouped[doctorName]) {
-                        grouped[doctorName] = [];
+                        grouped[doctorName] = {
+                            timePeriod: result.timePeriod,
+                            patients: []
+                        };
                     }
 
-                    grouped[doctorName].push({
+                    grouped[doctorName].patients.push({
                         number: String(app.reserveNo ?? "--"),
                         name: app.patient?.name ?? "匿名",
                         status: translateStatus(app.status),
@@ -378,9 +385,10 @@
                     });
                 });
 
-                return Object.entries(grouped).map(([doctor, patients]) => ({
+                return Object.entries(grouped).map(([doctor, info]) => ({
                     doctor,
-                    patients
+                    timePeriod: info.timePeriod,
+                    patients: info.patients
                 }));
             });
     }
@@ -392,26 +400,79 @@
             case 0:
                 return "未報到";
             case 2:
-                return "已完成";
-            case 3:
                 return "已取消";
+            case 3:
+                return "已完成";
             default:
                 return "未知狀態";
         }
     }
 
     async function selectTime(time) {
-        currentTime = time;
+        currentTime = time || null;
         document.getElementById("searchInput").value = "";
         const clinicInfo = document.getElementById("clinic-info");
         clinicInfo.innerHTML = "<p>載入中...</p>";
-        const data = await fetchData(time);
-        allData = data;
-        renderData(data);
+
+        const url = time
+            ? `/ires-system/appointment/apiToday?period=${time}`
+            : `/ires-system/appointment/apiToday`;
+
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.status !== "success") {
+                alert(result.message || "查詢失敗");
+                return;
+            }
+
+            const appointments = result.data || [];
+            const grouped = {};
+
+            appointments.forEach(app => {
+                const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
+
+                if (!grouped[doctorName]) {
+                    grouped[doctorName] = {
+                        timePeriod: result.timePeriod,
+                        patients: []
+                    };
+                }
+
+                grouped[doctorName].patients.push({
+                    number: String(app.reserveNo ?? "--"),
+                    name: app.patient?.name ?? "匿名",
+                    status: translateStatus(app.status),
+                    appointmentId: app.appointmentId,
+                    patientId: app.patient?.patientId,
+                    doctorId: app.doctor?.doctorId,
+                    agencyId: app.clinic?.agencyId ?? "0000000000",
+                    timePeriod: app.timePeriod
+                });
+            });
+
+            const data = Object.entries(grouped).map(([doctor, info]) => ({
+                doctor,
+                timePeriod: info.timePeriod,
+                patients: info.patients
+            }));
+
+            allData = data;
+            renderData(data);
+
+        } catch (error) {
+            console.error("查詢失敗：", error);
+            alert("無法取得資料，請稍後再試");
+        }
     }
 
     function getStatusClass(status) {
-        return status === '已報到' ? 'status-arrived' : status === '未報到' ? 'status-not-arrived' : 'status-cancelled';
+        if (status === '已報到') return 'status-arrived';
+        if (status === '未報到') return 'status-not-arrived';
+        if (status === '已取消') return 'status-cancelled';
+        if (status === '已完成') return 'status-finished';
+        return '';
     }
 
     function renderData(data) {
@@ -504,11 +565,12 @@
         const room = allData.find(r => r.doctor === doctorName);
         if (!room) return alert("找不到該診間資料");
 
-        // 時段代碼：早上=1、下午=2、晚上=3
-        const timePeriodMap = {morning: "1", afternoon: "2", evening: "3"};
-        const periodCode = timePeriodMap[currentTime] || "1";
+        const timePeriodMap = { morning: "1", afternoon: "2", evening: "3" };
+        const timePeriod = room.timePeriod ?? timePeriodMap[currentTime] ?? "1";
 
-        const timePeriod = periodCode;
+        console.log("callNext - 後端傳入 timePeriod:", room.timePeriod);
+        console.log("callNext - 最終使用 timePeriod:", timePeriod);
+
         const doctorId = room.patients?.[0]?.doctorId ?? null;
         const today = new Date().toISOString().slice(0, 10);
 
@@ -549,6 +611,7 @@
         const name = sessionStorage.getItem("clinicName");
         if (name) {
             document.getElementById("clinicName").textContent = name;
+            selectTime();
         } else {
             // 未登入或資料遺失，導回登入頁
             alert("尚未登入");

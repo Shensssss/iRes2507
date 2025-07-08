@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -71,6 +72,7 @@ public class Appointment {
 	private Integer reserveNo;
 
     @Column(name = "appointment_date")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Taipei")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date appointmentDate;
 

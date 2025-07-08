@@ -23,8 +23,8 @@
     <!-- bell -->
     <link rel="stylesheet" href="static/css/bell.css">
 
-    <!-- history-reservequery -->
-    <link rel="stylesheet" href="static/css/reservequery.css">
+    <!-- notification -->
+    <link rel="stylesheet" href="static/css/clinicNotification.css">
 
 
     <!-- Feature detection -->
@@ -143,76 +143,19 @@
 
 
         <!--main content start-->
+
         <section class="main-content-wrapper">
             <section id="main-content" class="animated fadeInUp">
-                <!--<在此填入主要內容helen-->
-                <!-- Main content area -->
-                <div class="main-content">
-                    <div class="appointment-search">
-                        <h2>預約及報到</h2>
-                        <form id="searchForm">
-                            <div class="form-row">
-                                <label for="date">日期：</label>
-                                <input type="date" id="dateS" name="dateS" />
-                                <label> 至 </label>
-                                <input type="date" id="dateE" name="dateE" />
-                                <span style="color: red; font-size: 10px;">*必填</span>
-                            </div>
-                            <div class="form-row">
-                                <label for="schedule">時段：</label>
-                                <select id="schedule" name="schedule">
-                                    <option value="">請選擇</option>
-                                    <option value="morning">上午</option>
-                                    <option value="afternoon">下午</option>
-                                    <option value="night">晚上</option>
-                                </select>
-                            </div>
-                            <div class="form-row">
-                                <label for="doctor">醫師：</label>
-                                <select id="doctor" name="doctor">
-                                    <option value="">請選擇</option>
-                                </select>
-                                <button id="btnSearchDoctor" type="button">查詢</button>
-                                <button id="btnExport" type="button">匯出</button>
-                            </div>
-
-                        </form>
-                    </div>
-
-
-                    <div class="search-results">
-                        <h3>查詢結果：</h3>
-                        <div id="msg" class="message"></div>
-                        <!-- 新增的查詢結果表格 -->
-                        <table id="resultTable" class="results-table">
-                            <thead>
-                                <tr>
-                                    <th>預約號碼</th>
-                                    <th>姓名</th>
-                                    <th>看診醫師</th>
-                                    <th>狀態</th>
-                                    <!-- <th>操作</th> -->
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                            </tbody>
-                        </table>
-
-                        <!-- <div class="pagination"> -->
-                        <div class="form-row button-row">
-                            <button>&laquo;</button>
-                            <button>&lsaquo;</button>
-                            <button>&rsaquo;</button>
-                            <button>&raquo;</button>
-                        </div>
+                <div class="notification-panel">
+                    <h2>最新通知</h2>
+                    <div class="notification-list">
+                        <!-- JS 會將通知資料動態插入這裡 -->
                     </div>
                 </div>
-
-
             </section>
         </section>
+
+    </section>
     </section>
     <!--/Config demo-->
     <!--Global JS-->
@@ -246,7 +189,7 @@
     <script src="static/js/switchery.min.js"></script>
     <!--Load these page level functions-->
     <script src="static/js/bell.js"></script>
-    <script src="static/js/reservequery.js"></script>
+    <script src="static/js/clinicNotification.js"></script>
     <!--<script>
     $(document).ready(function() {
         app.dateRangePicker();

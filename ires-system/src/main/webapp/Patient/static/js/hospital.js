@@ -141,7 +141,7 @@ function renderAddress(clinics) {
     });
   });
 }
-function renderClinicList(clinics) {
+async function renderClinicList(clinics) {
   const container = $("#clinic-list");
   container.empty();
 
@@ -152,7 +152,7 @@ function renderClinicList(clinics) {
     return;
   }
 
-  clinics.forEach(function (clinic) {
+  for (const clinic of clinics) {
     const rating =
       clinic.rating == 0 || clinic.rating == null || clinic.rating == undefined
         ? `<span>尚未評論</span>`
@@ -181,6 +181,37 @@ function renderClinicList(clinics) {
     }
     const distanceHtml = distanceValue ? `距離${distanceValue}km` : "距離未知";
 
+    const apiUrl = `/ires-system/callNumber/listByClinic?clinicId=${clinic.clinicId}&date=${date}`;
+    let tableHtml = "";
+
+    await $.ajax({
+      url: apiUrl,
+      method: "GET",
+      async: false,
+      success: function (data) {
+        if (data.length > 0) {
+          tableHtml += `<table style="border-collapse: separate; border-spacing: 0; font-size: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: 100%;">`;
+          tableHtml += "<tr>";
+          data.forEach((item, index) => {
+            const isLast = index === data.length - 1;
+            const borderRightStyle = isLast
+              ? ""
+              : "border-right: 1px solid #ddd;";
+            tableHtml += `<th style="padding: 10px; background-color: #f8f9fa; border-right: ${borderRightStyle} font-weight: 600; color: #333;">${item.doctor.doctorName}</th>`;
+          });
+          tableHtml += "</tr><tr>";
+          data.forEach((item, index) => {
+            const isLast = index === data.length - 1;
+            const borderRightStyle = isLast
+              ? ""
+              : "border-right: 1px solid #ddd;";
+            tableHtml += `<td style="padding: 10px; background-color: #ffffff; border-top: 1px solid #eee; border-right: ${borderRightStyle}; text-align: center;">${item.number}</td>`;
+          });
+          tableHtml += "</tr></table>";
+        }
+      },
+    });
+
     const html = `
       <div class="border-0 card mb-3 overflow-hidden rounded card-hover shadow card-hover-sm card-hover">
         <div class="d-sm-flex hospital-list__item">
@@ -195,41 +226,46 @@ function renderClinicList(clinics) {
       clinic.clinicName
     }" style="aspect-ratio: 4 / 3; object-fit: cover; width: 100%;" />
           </a>
-          <div class="flex-grow-1 p-4">
-            <div class="align-items-center d-flex fs-13 mb-2 star-rating">
-              <div class="d-flex text-warning">
-               ${ratingStarsHtml}
+          <div class="d-flex" style="width: 100%;">
+            <div class="flex-grow-1 p-4">
+              <div class="align-items-center d-flex fs-13 mb-2 star-rating">
+                <div class="d-flex text-warning">
+                 ${ratingStarsHtml}
+                </div>
+                <div class="ms-2 review-numbers">
+                 ${rating}
+                </div>
               </div>
-              <div class="ms-2 review-numbers">
-               ${rating}
+              <h5 class="fs-19 fw-bold h-title mb-1 overflow-hidden text-capitalize">
+                <a class="text-dark" href="hospital-details.html">${
+                  clinic.clinicName
+                }</a>
+              </h5>
+              <address class="fw-medium text-primary">
+                <i class="fa-solid fa-location-dot me-2"></i>${
+                  clinic.addressCity
+                }${clinic.addressTown}${clinic.addressRoad}
+              </address>
+              <div class="d-flex flex-wrap mt-3">
+                <a class="border directions-link fs-13 py-1 rounded-5">
+                  <i class="fa-solid fa-compass me-2"></i>${distanceHtml}</a>
+                  <br/>
+                <a href="tel:${
+                  clinic.phone
+                }" class="border directions-link fs-13 py-1 rounded-5 ms-1">
+                  <i class="fa-solid fa-phone me-2"></i>${clinic.phone}</a>
+               
               </div>
             </div>
-            <h5 class="fs-19 fw-bold h-title mb-1 overflow-hidden text-capitalize">
-              <a class="text-dark" href="hospital-details.html">${
-                clinic.clinicName
-              }</a>
-            </h5>
-            <address class="fw-medium text-primary">
-              <i class="fa-solid fa-location-dot me-2"></i>${
-                clinic.addressCity
-              }${clinic.addressTown}${clinic.addressRoad}
-            </address>
-            <div class="d-flex flex-wrap mt-3">
-              <a class="border directions-link fs-13 py-1 rounded-5">
-                <i class="fa-solid fa-compass me-2"></i>${distanceHtml}</a>
-                <br/>
-              <a href="tel:${
-                clinic.phone
-              }" class="border directions-link fs-13 py-1 rounded-5 ms-1">
-                <i class="fa-solid fa-phone me-2"></i>${clinic.phone}</a>
-             
+            <div class="table-container" style="margin-left: auto; padding: 16px; max-width: 300px; overflow-x: auto;">
+              ${tableHtml}
             </div>
           </div>
         </div>
       </div>
     `;
     container.append(html);
-  });
+  }
 }
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {

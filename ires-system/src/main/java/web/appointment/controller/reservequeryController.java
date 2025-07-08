@@ -42,8 +42,8 @@ public class reservequeryController {
 	    }
 		// 抓回id
 		int clinic_id = reqclinic.get(0).getClinicId();
-
-		// 待改
+		
+		// 秀出此診所的所有醫生
 		List<Doctor>listDoctors = doctorService.showAllDoctors(clinic_id);
 		
 		List<Map<String, Object>> result = new ArrayList<>();
@@ -65,17 +65,20 @@ public class reservequeryController {
 		System.out.println("Clinic ID: " + payload.get("clinic_id"));
 		System.out.println("Doctor ID: " + payload.get("doctor_id"));
 		System.out.println("Time Period: " + payload.get("time_period"));
-		System.out.println("Date: " + payload.get("date"));
-
+		System.out.println("DateS: " + payload.get("dateS"));
+		System.out.println("DateE: " + payload.get("dateE"));
+		
+		// 部分欄位允許無值，因此會帶入0
 		int clinic_id = (int) payload.get("clinic_id");
 		int doctor_id = (int) payload.get("doctor_id");
 		int time_period = (int) payload.get("time_period");
 
 		// string 轉 date
-		Date date = normalizeDate((String) payload.get("date"));
+		Date dateS = normalizeDate((String) payload.get("dateS"));
+		Date dateE = normalizeDate((String) payload.get("dateE"));
 
 //		System.out.println("要跑getAppointmentsByclinicid_doctorid_DateAndPeriod()");
-		return service.getAppointmentsByclinicid_doctorid_DateAndPeriod(clinic_id, doctor_id, date, time_period);
+		return service.getAppointmentsByclinicid_doctorid_DateAndPeriod(clinic_id, doctor_id, dateS,dateE, time_period);
 	}
 
 	// 日期格式轉換

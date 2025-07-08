@@ -189,4 +189,8 @@ public class ClinicServiceImpl implements ClinicService {
 		return clinicDAO.save(callNumber);
 	}
 
+	@Override
+	public List<CallNumber> findCallNumbersByClinicId(Integer clinicId, LocalDate date) {
+	    return clinicDAO.findCallNumbersByClinicIdAndDate(clinicId, date);
+	}
 }
