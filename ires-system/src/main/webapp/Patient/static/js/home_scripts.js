@@ -177,6 +177,45 @@ function loadClinics(selector, majorId = null) {
                 clinic.longitude
               );
             }
+            let callNumbersHtml = "載入中...";
+            const apiUrl = `/ires-system/callNumber/listByClinic?clinicId=${clinic.clinicId}&date=${date}`;
+
+            $.ajax({
+              url: apiUrl,
+              method: "GET",
+              async: false, // 確保同步拿到資料（或可改 async callback 處理）
+              success: function (data) {
+                if (Array.isArray(data) && data.length > 0) {
+                  callNumbersHtml = `
+                  <table style="border-collapse: collapse; border: 1px solid #ccc; font-size: 14px; margin-top: 0px; text-align: center;">
+                    <tr>${data
+                      .map(
+                        (d) =>
+                          `<th style="border: 1px solid #ccc; padding: 4px;">${d.doctor.doctorName}</th>`
+                      )
+                      .join("")}</tr>
+                    <tr>${data
+                      .map(
+                        (d) =>
+                          `<td style="border: 1px solid #ccc; padding: 4px;">${d.number}</td>`
+                      )
+                      .join("")}</tr>
+                  </table>
+                `;
+                } else {
+                  callNumbersHtml = `
+    <div>
+      <table style="border-collapse: collapse; border: 1px solid #ccc; font-size: 14px; margin-top: 0px; text-align: center;">
+        <tr><td style="border: 1px solid #ccc; padding: 4px;">無</td></tr>
+        <tr><td style="border: 1px solid #ccc; padding: 4px;">尚未開診</td></tr>
+      </table>
+    </div>`;
+                }
+              },
+              error: function () {
+                callNumbersHtml = "載入失敗";
+              },
+            });
             groupHtml += `
               <div class="swiper-slide card">
               <a href="hospital-details.html?clinicId=${clinic.clinicId}">
@@ -198,7 +237,7 @@ function loadClinics(selector, majorId = null) {
                         <rect x="4.75" y="6.75" width="22.5" height="20.5" rx="3.25" stroke="black" stroke-width="1.5"/>
                       </svg>
                     </div>
-                    目前號碼: 1
+                    目前號碼: ${callNumbersHtml}
                   </div>
                   <div class="price-and-button">
                     <div>

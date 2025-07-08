@@ -10,6 +10,7 @@
     .status-arrived { color: green; font-weight: bold; }
     .status-not-arrived { color: red; font-weight: bold; }
     .status-cancelled { color: gray; font-weight: bold; }
+    .status-finished { color: gray; font-weight: bold; }
     .patient-table-scroll {
       overflow-y: auto;
       flex-grow: 1;
@@ -53,15 +54,15 @@
         <div class="card-header bg-secondary text-white">看診狀態</div>
         <div class="card-body">
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="statusOption" id="status1">
+            <input class="form-check-input" type="radio" name="statusOption" id="status1" value="0" checked>
             <label class="form-check-label" for="status1">尚未開診</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="statusOption" id="status2">
+            <input class="form-check-input" type="radio" name="statusOption" id="status2" value="1">
             <label class="form-check-label" for="status2">看診中</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="statusOption" id="status3">
+            <input class="form-check-input" type="radio" name="statusOption" id="status3" value="2">
             <label class="form-check-label" for="status3">已關診</label>
           </div>
         </div>
@@ -71,7 +72,7 @@
       <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">目前號碼</div>
         <div class="card-body">
-          <p class="mb-1 fw-bold" id="currentNumber">號碼：-</p>
+          <p class="mb-1 fw-bold" id="currentNumber" data-number="">號碼：-</p>
           <p class="mb-0" id="currentName">姓名：-</p>
         </div>
       </div>
@@ -88,10 +89,10 @@
 
   <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
     <div class="d-flex gap-2 flex-wrap">
-      <button class="btn-call" onclick="prevNumber()">上一號</button>
-      <button class="btn-call" onclick="nextNumber()">下一號</button>
-      <button class="btn-call" data-bs-toggle="modal" data-bs-target="#insertModal">插號</button>
-      <button type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
+      <button id="prevBtn" class="btn-call" onclick="prevNumber()">上一號</button>
+      <button id="nextBtn" class="btn-call" onclick="nextNumber()">下一號</button>
+      <button id="insertBtn" class="btn-call" data-bs-toggle="modal" data-bs-target="#insertModal">插號</button>
+      <button id="completeBtn" type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
     </div>
 
     <button class="btn btn-secondary" onclick="history.back()">

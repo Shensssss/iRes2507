@@ -2,6 +2,9 @@ package core.config;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,22 +33,31 @@ public class SpringMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("/");        // 從 webapp 根目錄找資源
     }
 
-//    @Override
-//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-//        messageConverter.setPrettyPrint(true);
-//        converters.add(messageConverter);
-//    }
-
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(mapper);
         jacksonConverter.setPrettyPrint(true);
-        converters.add(jacksonConverter);
+
+        converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
+
+        converters.add(0, jacksonConverter);
     }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index.jsp");
     }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
+    }
+
 }
