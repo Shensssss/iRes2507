@@ -1,9 +1,33 @@
+const url = `ws://${location.host}${location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1)}call`;
+console.log(url);
+let socket;
+socket = new WebSocket(url);
+
+socket.onopen = () => {
+    console.log("WebSocket 已連線至硬體設備");
+    socket.send("0");
+};
+socket.onerror = (e) => console.error("WebSocket 錯誤", e);
+socket.onclose = () => console.warn("WebSocket 已關閉");
+
 function getStatusClass(status) {
     switch (status) {
         case '已報到': return 'status-arrived';
         case '未報到': return 'status-not-arrived';
         case '已取消': return 'status-cancelled';
         default: return '';
+    }
+}
+
+function sendNumberToDevice(number, retryCount = 0) {
+    if (socket.readyState === WebSocket.OPEN) {
+        socket.send(number);
+        console.log("傳送叫號：", number);
+    } else if (socket.readyState === WebSocket.CONNECTING && retryCount < 5) {
+        console.warn("WebSocket 連線中，等待 300ms 重送");
+        setTimeout(() => sendNumberToDevice(number, retryCount + 1), 300);
+    } else {
+        console.error("WebSocket 無法使用，readyState=", socket.readyState);
     }
 }
 
@@ -62,6 +86,18 @@ function renderRoomData() {
         : `<li class="list-group-item text-muted">無將來號碼</li>`;
 }
 
+function updateCallNumberOnServer(number) {
+    const room = JSON.parse(localStorage.getItem("callRoom"));
+    if (!room) return;
+
+    fetch(`/ires-system/callNumber/init?doctorId=${room.doctorId}&timePeriod=${room.timePeriod}&date=${room.date}&number=${number}`, {
+        method: 'GET'
+    })
+        .then(res => res.json())
+        .then(data => console.log("已同步更新號碼至後端", data))
+        .catch(err => console.error("後端更新號碼失敗", err));
+}
+
 function insertNumber() {
     const input = document.getElementById("insertNumber");
     const value = input.value.trim();
@@ -86,6 +122,7 @@ function insertNumber() {
     modal.hide();
 
     highlightRow(formattedNumber);
+    updateCallNumberOnServer(number);
 }
 
 function prevNumber() {
@@ -96,6 +133,7 @@ function prevNumber() {
     if (currentIndex > 0) {
         const prev = uncalled[currentIndex - 1].number;
         highlightRow(prev);
+        updateCallNumberOnServer(prev);
     }
 }
 
@@ -107,6 +145,7 @@ function nextNumber() {
     if (currentIndex < uncalled.length - 1) {
         const next = uncalled[currentIndex + 1].number;
         highlightRow(next);
+        updateCallNumberOnServer(next);
     }
 }
 
@@ -129,6 +168,7 @@ function highlightRow(number) {
     if (current) {
         document.getElementById("currentNumber").innerText = `號碼：${current.number}`;
         document.getElementById("currentName").innerText = `姓名：${current.name}`;
+        sendNumberToDevice(current.number);
     }
 
     const remaining = room.patients
@@ -144,6 +184,20 @@ function highlightRow(number) {
 // 執行初始化邏輯
 window.addEventListener("DOMContentLoaded", () => {
     renderRoomData();
+
+    const room = JSON.parse(localStorage.getItem("callRoom"));
+    if (room) {
+        console.log("doctorId:", room.doctorId);
+        console.log("timePeriod:", room.timePeriod);
+        console.log("date:", room.date);
+
+        fetch(`/ires-system/callNumber/init?doctorId=${room.doctorId}&timePeriod=${room.timePeriod}&date=${room.date}`, {
+            method: 'GET'
+        })
+            .then(res => res.json())
+            .then(data => console.log("診間叫號初始化成功", data))
+            .catch(err => console.error("診間叫號初始化失敗", err));
+    }
 
     setTimeout(() => {
         const leftCard = document.querySelector("#roomCardContainer .card");

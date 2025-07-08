@@ -123,7 +123,7 @@
   <!--<label for="phone">機構電話</label>-->
   <input type="tel" id="phone" name="phone" placeholder="機構電話" required>
 </div>
-<!-- 地址（拆成 城市、鄉鎮/區、道路） -->
+<!-- 地址（拆成 城市、鄉鎮/區、道路/經緯度） -->
 <div class="form-group">
   <input type="text" id="address_city" name="address_city" placeholder="城市" required>
 </div>
@@ -133,8 +133,14 @@
 <div class="form-group">
   <input type="text" id="address_road" name="address_road" placeholder="道路" required>
 </div>
+<div class="form-group">
+  <input type="number" id="longitude" name="longitude" placeholder="經度"  step="any" readonly>
+</div>
+<div class="form-group">
+  <input type="number" id="latitude" name="latitude" placeholder="緯度"  step="any" readonly>
+  <button class="btn btn-primary" type="button" id="get_position">取得經緯度</button>
+</div>
 
- 
 
 <!-- 機構地址（新增） 
   <div class="form-group">
@@ -199,7 +205,29 @@
 </form>
 <!-- 註冊表單結束 -->
 
-</body>
+
+
+<script>
+//經緯度 
+    
+  document.getElementById("get_position").addEventListener("click", function () {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      const longitude = position.coords.longitude;
+      const latitude = position.coords.latitude;
+
+      // 填進 input 欄位
+      document.getElementById("longitude").value = longitude.toFixed(6);
+      document.getElementById("latitude").value = latitude.toFixed(6);
+    }, function (error) {
+      alert("無法取得定位：" + error.message);
+    });
+  } else {
+    alert("你的瀏覽器不支援地理定位");
+  }
+});
+
+</script>
 
 <script>
   const passwordField = document.getElementById('password');
@@ -232,6 +260,8 @@
   const addressCity = document.getElementById('address_city');
   const addressTown = document.getElementById('address_town');
   const addressRoad = document.getElementById('address_road');
+  const longitude = document.getElementById('longitude');
+  const latitude = document.getElementById('latitude');
   const account = document.getElementById('email');
   const password = document.getElementById('password');
   const confirmPassword = document.getElementById('confirm-password');
@@ -270,6 +300,20 @@
       alert('道路長度需介於 1~50');
       return;
     }
+
+    const longitudeVal = parseFloat(longitude.value);
+    const latitudeVal = parseFloat(latitude.value);
+
+    if (isNaN(longitudeVal) || longitudeVal < -180 || longitudeVal > 180) {
+      alert('經度需介於 -180 ~ 180');
+      return;
+    }
+
+    if (isNaN(latitudeVal) || latitudeVal < -90 || latitudeVal > 90) {
+      alert('緯度需介於 -90 ~ 90');
+      return;
+    }
+
     if (!account.value || account.value.length < 1 || account.value.length > 50) {
       alert('Email 長度需介於 1~50');
       return;
@@ -298,6 +342,8 @@
           addressTown: addressTown.value,
           addressRoad: addressRoad.value,
           account: account.value,
+          longitude: parseFloat(longitude.value),  
+          latitude: parseFloat(latitude.value),
           password: password.value,
           profilePicture: imageBase64
         })
@@ -324,6 +370,11 @@
         });
     }
 
+   
+
+
+
+
     // 圖片處理
     if (image.files.length > 0) {
       const file = image.files[0];
@@ -338,5 +389,7 @@
     }
   });
 </script>
-  </html>
+
+</body>
+</html>
   

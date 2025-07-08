@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -70,6 +71,7 @@ public class Appointment {
 	private Integer reserveNo;
 
     @Column(name = "appointment_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date appointmentDate;
 
     @Column(name = "time_period")

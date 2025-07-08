@@ -696,10 +696,14 @@ Reset Default CSS End
 }
 
 .recommended-rooms .price {
-  font-size: 28px;
+  font-size: 25px;
   font-family: var(--primary-font);
   font-weight: 600;
   color: var(--text-color-1);
+  display: flex;
+  align-items: center;
+  width: 80px; 
+  justify-content: center;
 }
 
 .recommended-rooms .price span {
@@ -720,10 +724,11 @@ Reset Default CSS End
 
 .recommended-rooms .price-and-button .view-room-btn {
   width: 100%;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: rgba(128, 128, 128, 0.2);
   border: 1px solid var(--secondary-color) !important;
-  border: none;
   padding: 8px 8px;
   font-family: var(--secondary-font);
   font-weight: 500 !important;
@@ -731,6 +736,7 @@ Reset Default CSS End
   border-radius: 10px;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  text-align: center;
 }
 
 .recommended-rooms .price-and-button .view-room-btn:hover {

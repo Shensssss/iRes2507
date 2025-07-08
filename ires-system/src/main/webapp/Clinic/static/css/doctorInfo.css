@@ -1,106 +1,120 @@
-    div.card {
-        position: relative;
-        width: 80%;
-        padding: 10px;
-        margin: 20px;
-        border: 1px solid grey;
-        border-radius: 10px;
-        box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
-    }
+/* 背景遮罩 */
+.form-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: auto; 
+}
 
-    .form-popup {
-        display: none;
-        box-sizing: border-box;
-        height: auto;
-        max-height: 80vh;
-        overflow-y: auto;
-        width: 80%;
-        max-width: 600px;
-        bottom: 30px;
-        background: white;
-        border: 1px solid #ccc;
-        padding: 20px;
-        position: fixed;
-        top: 20%;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
+.form-overlay.show {
+    display: flex;
+}
 
-    .form-popup input {
-        box-sizing: border-box;
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px;
-        border: 1px solid #ccc;
-    }
-  
-    .form-popup button {
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        flex: 0 1 100px;
-        padding: 10px 20px;
-        cursor: pointer;
-    }
+/* 表單置中 */
+.form-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80vw;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
 
-    .topBar {
-        margin: 20px;
-    }
+/* 表單輸入框 */
+.form-popup input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+}
 
-    .topBar input {
-        padding: 8px;
-    }
+/* 表單按鈕 */
+.form-popup button {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-right: 10px;
+}
 
-    .topBar button {
-        padding: 8px;
-        margin-left: 10px;
-    }
+/* 卡片按鈕（編輯、刪除） */
+.editBtn, .deleteBtn {
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    padding: 5px;
+    top: 10px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 1;
+}
 
-    .label {
-        font-weight: bold;
-    }
+.editBtn {
+    background-color: #4CAF50;
+    right: 70px;
+}
 
-    .deleteBtn, .editBtn {
-        position: absolute;
-        z-index: 10;
-        background-color: #f44336;
-        color: white;
-        border: none;
-        padding: 5px;
-        cursor: pointer;
-    }
+.deleteBtn {
+    background-color: #f44336;
+    right: 10px;
+}
 
-    .editBtn {
-        background-color: #4CAF50;
-        top: 10px;
-        right: 70px;
-        border-radius: 5px;
-        font-size: 14px;
-    }
+.deleteBtn:hover, .editBtn:hover {
+    opacity: 0.7;
+}
 
-    .deleteBtn {
-        background-color: #f44336;
-        top: 10px;
-        right: 10px;
-        border-radius: 5px;
-        font-size: 14px;
-    }
+/* 卡片樣式 */
+div.card {
+    position: relative;
+    width: 80%;
+    padding: 10px;
+    margin: 20px auto;
+    border: 1px solid grey;
+    border-radius: 10px;
+    box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+    z-index: 0;
+}
 
-    .deleteBtn:hover, .editBtn:hover {
-        opacity: 0.7;
-    }
+/* 上方搜尋區 */
+.topBar {
+    margin: 20px;
+}
 
-    span.name {
-        font-size: 18px;
-        font-weight: bold;
+.topBar input {
+    padding: 8px;
+}
 
-    }
+.topBar button {
+    padding: 8px;
+    margin-left: 10px;
+}
 
-    span.label {
-        color: black;
-    }
+/* 顯示用標籤 */
+.label {
+    font-weight: bold;
+    color: black;
+}
 
-    .img-preview {
-        max-width: 100px;
-        display: none;
-    }
+span.name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 預覽圖片 */
+.img-preview {
+    max-width: 100px;
+    display: none;
+}

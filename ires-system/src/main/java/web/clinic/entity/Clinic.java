@@ -1,6 +1,5 @@
 package web.clinic.entity;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -102,13 +101,13 @@ public class Clinic extends Core{
     private Timestamp updateTime;
 
     @Column(name = "latitude")
-    private BigDecimal latitude;
+    private Double latitude;
 
     @Column(name = "longitude")
-    private BigDecimal longitude;
+    private Double longitude;
     
     @Column(name = "rating")
-    private BigDecimal rating;
+    private Double rating;
 
     @Lob
     @Column(name = "profile_picture")

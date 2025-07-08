@@ -131,10 +131,8 @@ $(function () {
 });
 
 function loadClinics(selector, majorId = null) {
-  const rawLat =
-    sessionStorage.getItem("userLat") || localStorage.getItem("userLat");
-  const rawLng =
-    sessionStorage.getItem("userLng") || localStorage.getItem("userLng");
+  const rawLat = sessionStorage.getItem("userLat");
+  const rawLng = sessionStorage.getItem("userLng");
 
   const userLat = rawLat && !isNaN(rawLat) ? parseFloat(rawLat) : null;
   const userLng = rawLng && !isNaN(rawLng) ? parseFloat(rawLng) : null;
@@ -165,7 +163,7 @@ function loadClinics(selector, majorId = null) {
                 ? `尚未評論`
                 : `<i class="fa-solid fa-star" style="color: gold"></i>
                     ${clinic.rating.toFixed(1)} Rating`;
-            let distance = "你沒給位置";
+            let distance = "未知";
             if (
               userLat !== null &&
               userLng !== null &&

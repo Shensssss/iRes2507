@@ -15,14 +15,14 @@ public class ClinicInfoDaoImpl implements ClinicInfoDao {
 	@PersistenceContext
 	private Session session;
 
-	//註冊時即建立，用不到此方法
+	// 註冊時即建立，用不到此方法
 	@Override
 	public int insert(Clinic clinic) {
 		session.persist(clinic);
 		return 1;
 	}
 	
-	//診所無權刪除診所，用不到此方法
+	// 診所無權刪除診所，用不到此方法
 	@Override
 	public int deleteById(Integer clinicId) {
 		Clinic clinic = session.get(Clinic.class, clinicId);
