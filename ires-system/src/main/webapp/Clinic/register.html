@@ -134,10 +134,10 @@
   <input type="text" id="address_road" name="address_road" placeholder="道路" required>
 </div>
 <div class="form-group">
-  <input type="text" id="longitude" name="longitude" placeholder="經度" required readonly>
+  <input type="number" id="longitude" name="longitude" placeholder="經度"  step="any" readonly>
 </div>
 <div class="form-group">
-  <input type="text" id="latitude" name="latitude" placeholder="緯度" required readonly>
+  <input type="number" id="latitude" name="latitude" placeholder="緯度"  step="any" readonly>
   <button class="btn btn-primary" type="button" id="get_position">取得經緯度</button>
 </div>
 
@@ -213,12 +213,12 @@
   document.getElementById("get_position").addEventListener("click", function () {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
-      const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
+      const latitude = position.coords.latitude;
 
       // 填進 input 欄位
-      document.getElementById("latitude").value = latitude;
-      document.getElementById("longitude").value = longitude;
+      document.getElementById("longitude").value = longitude.toFixed(6);
+      document.getElementById("latitude").value = latitude.toFixed(6);
     }, function (error) {
       alert("無法取得定位：" + error.message);
     });
@@ -301,13 +301,16 @@
       return;
     }
 
-    if (!longitude.value || longitude.value.length < -180 || addressRoad.value.length > 180) {
-      alert('經度需介於 -180~180');
+    const longitudeVal = parseFloat(longitude.value);
+    const latitudeVal = parseFloat(latitude.value);
+
+    if (isNaN(longitudeVal) || longitudeVal < -180 || longitudeVal > 180) {
+      alert('經度需介於 -180 ~ 180');
       return;
     }
 
-    if (!latitude.value || latitude.value.length < -90 || addressRoad.value.length > 90) {
-      alert('緯度度需介於 -90~90');
+    if (isNaN(latitudeVal) || latitudeVal < -90 || latitudeVal > 90) {
+      alert('緯度需介於 -90 ~ 90');
       return;
     }
 
@@ -339,6 +342,8 @@
           addressTown: addressTown.value,
           addressRoad: addressRoad.value,
           account: account.value,
+          longitude: parseFloat(longitude.value),  
+          latitude: parseFloat(latitude.value),
           password: password.value,
           profilePicture: imageBase64
         })

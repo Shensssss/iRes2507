@@ -18,12 +18,10 @@ public class reservequeryServiceImpl implements reservequeryService {
 
 	@Autowired
 	private reservequeryDAO reservequeryDAO;
-	
-	@Override
-    public List<Object[]> getAppointmentsByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date date, int timePeriod) {
-        return reservequeryDAO.findByclinicid_doctorid_DateAndPeriod(clinic_id,doctor_id,date, timePeriod);
-    }
-	
 
+	@Override
+	public List<Object[]> getAppointmentsByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date dateS, Date dateE, int timePeriod) {
+		return reservequeryDAO.findByclinicid_doctorid_DateAndPeriod(clinic_id, doctor_id, dateS, dateE, timePeriod);
+	}
 
 }
