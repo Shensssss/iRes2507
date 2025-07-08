@@ -100,7 +100,7 @@
             $(`#${prefix}Edu${i}`).val("");
             $(`#${prefix}Exp${i}`).val("");
             $(`#${prefix}Memo${i}`).val("");
-        });ㄙ
+        });
     }
 
     
@@ -176,6 +176,7 @@
     $("#cancelAddBtn").on("click", function () {
         clearFormValues("add");
         $("#addOverlay").removeClass("show");
+        $("#addForm").hide();
     });    
 
     // 按下儲存將填入的資料送至後端，重發請求取得所有醫師資料
@@ -267,7 +268,7 @@
     $("#cancelEditBtn").on("click", function () {
         clearFormValues("edit");
         $("#editOverlay").removeClass("show");
-
+        $("#editForm").hide();
     });
 
     // 儲存編輯
