@@ -1,7 +1,9 @@
 package web.appointment.service;
 
 import web.appointment.entity.Appointment;
+import web.clinic.entity.Clinic;
 
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -30,4 +32,6 @@ public interface AppointmentService {
     void reserveAppointments(Integer clinicId, List<Appointment> appointments);
     
     List<Appointment> findByPatientId(Integer patientId);
+
+    int resolveTimePeriod(Clinic clinic, LocalTime now);
 }
