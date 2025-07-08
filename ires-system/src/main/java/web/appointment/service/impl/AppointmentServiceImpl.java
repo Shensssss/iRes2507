@@ -2,6 +2,7 @@ package web.appointment.service.impl;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import web.appointment.entity.Notification;
 import web.appointment.service.AppointmentService;
 import web.appointment.service.NotificationService;
 import web.clinic.dao.ClinicDAO;
+import web.clinic.dao.impl.ClinicDaoImpl;
 import web.clinic.entity.Clinic;
 import web.doctor.dao.DoctorDao;
 import web.doctor.entity.Doctor;
@@ -83,19 +85,27 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDAO.insert(appointment);
     }
 
+    @Override
     public Appointment updateAppointment(Appointment a) {
+        if (a.getAppointmentId() == null) return null;
+
         Appointment origin = appointmentDAO.selectById(a.getAppointmentId());
-        if (origin == null) {
-            return null;
+        if (origin == null) return null;
+
+        boolean dateChanged = false, periodChanged = false, doctorChanged = false;
+
+        if (a.getAppointmentDate() != null && !a.getAppointmentDate().equals(origin.getAppointmentDate())) {
+            dateChanged = true;
+            origin.setAppointmentDate(a.getAppointmentDate());
         }
-
-        boolean dateChanged = !origin.getAppointmentDate().equals(a.getAppointmentDate());
-        boolean periodChanged = !origin.getTimePeriod().equals(a.getTimePeriod());
-        boolean doctorChanged = !origin.getDoctorId().equals(a.getDoctorId());
-
-        origin.setAppointmentDate(a.getAppointmentDate());
-        origin.setTimePeriod(a.getTimePeriod());
-        origin.setDoctorId(a.getDoctorId());
+        if (a.getTimePeriod() != null && !a.getTimePeriod().equals(origin.getTimePeriod())) {
+            periodChanged = true;
+            origin.setTimePeriod(a.getTimePeriod());
+        }
+        if (a.getDoctorId() != null && !a.getDoctorId().equals(origin.getDoctorId())) {
+            doctorChanged = true;
+            origin.setDoctorId(a.getDoctorId());
+        }
 
         if (dateChanged || periodChanged || doctorChanged) {
             int newReserveNo = commonUtil.getNextReserveNo(
@@ -107,9 +117,13 @@ public class AppointmentServiceImpl implements AppointmentService {
             origin.setReserveNo(newReserveNo);
         }
 
+        if (a.getStatus() != null) origin.setStatus(a.getStatus());
+        if (a.getNotes() != null) origin.setNotes(a.getNotes());
+
         appointmentDAO.update(origin);
         return origin;
     }
+
 
     public boolean deleteAppointment(String id) {
         Appointment a = appointmentDAO.selectById(id);
@@ -205,6 +219,26 @@ public class AppointmentServiceImpl implements AppointmentService {
                 return "晚上";
             default:
                 return "未知";
+        }
+    }
+
+    public int resolveTimePeriod(Clinic clinic, LocalTime now) {
+        try {
+            CommonUtil.TimeRange morning = CommonUtil.parseTimeRange(clinic.getMorning());
+            CommonUtil.TimeRange afternoon = CommonUtil.parseTimeRange(clinic.getAfternoon());
+
+            if (morning != null && now.isBefore(morning.end.plusSeconds(1))) {
+                return 1;
+            }
+
+            if (afternoon != null && now.isBefore(afternoon.end.plusSeconds(1))) {
+                return 2;
+            }
+
+            return 3;
+        } catch (Exception e) {
+            System.err.println("時段判斷失敗，回傳預設值（3）：" + e.getMessage());
+            return 3;
         }
     }
 

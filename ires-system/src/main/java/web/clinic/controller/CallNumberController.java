@@ -1,5 +1,6 @@
 package web.clinic.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,16 @@ public class CallNumberController {
     @Autowired
     private ClinicService clinicService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @GetMapping("/init")
     public ResponseEntity<?> initCallNumber(
             @RequestParam Integer doctorId,
             @RequestParam Integer timePeriod,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) Integer number,
+            @RequestParam(required = false) Integer consultationStatus,
             HttpSession session) {
 
         try {
@@ -46,18 +51,22 @@ public class CallNumberController {
 
             if (number != null) {
                 result.setNumber(number);
-                result.setUpdateId("admin");
-                result.setUpdateTime(LocalDateTime.now());
-                clinicService.saveCallNumber(result);
             }
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("callNumberId", result.getCallNumberId());
-            response.put("number", result.getNumber());
-            response.put("appointmentDate", result.getAppointmentDate().toString());
-            response.put("timePeriod", result.getTimePeriod());
+            if (consultationStatus != null) {
+                result.setConsultationStatus(consultationStatus);
+            }
 
-            return ResponseEntity.ok(response);
+            result.setUpdateId("admin");
+            result.setUpdateTime(LocalDateTime.now());
+            clinicService.saveCallNumber(result);
+
+            String json = objectMapper
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(result);
+            System.out.println("JSON輸出：\n" + json);
+
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             e.printStackTrace();

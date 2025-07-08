@@ -11,5 +11,5 @@ import java.util.List;
 public interface reservequeryDAO extends CoreDao<Appointment, String> {
 
 
-	List<Object[]> findByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date date, int timePeriod);
+	List<Object[]> findByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date dateS, Date dateE, int timePeriod);
 }

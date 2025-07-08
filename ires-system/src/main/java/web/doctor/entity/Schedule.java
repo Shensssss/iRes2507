@@ -29,7 +29,7 @@ import web.clinic.entity.Clinic;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "schedule-doctor")
+@Table(name = "scheduleDoctor")
 public class Schedule implements Serializable{
 
 	private static final long serialVersionUID = 1L;
