@@ -11,6 +11,8 @@ public interface AppointmentDAO extends CoreDao<Appointment, String> {
 
     List<Appointment> findByDateAndPeriod(Date date, int timePeriod);
 
+    List<Appointment> findByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod);
+
     boolean existsByPatientIdAndClinicId(Integer patientId, Integer clinicId);
 
     boolean existsDuplicateAppointment(int patientId, Date date);
