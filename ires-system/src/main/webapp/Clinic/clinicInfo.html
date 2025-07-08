@@ -23,7 +23,7 @@
      <link rel="stylesheet" href="static/css/bell.css">
     <!-- Feature detection -->
     <script src="static/js/modernizr-2.6.2.min.js"></script>
-    <link rel="stylesheet" href="static/css/doctorInfo.css">
+    <link rel="stylesheet" href="static/css/clinicInfo.css">
 </head>
 
 <body>
@@ -135,69 +135,217 @@
             <section id="main-content" class="animated fadeInUp">
             <!--<在此填入主要內容-->
                 <h2>診所資料</h2>
-                <div class="clinicInfo" id="clinicInfo">
-                    <button id="editBtn">編輯</button>
-                    <!-- 名稱不可修改 -->
-                    <p>診所名稱：○○耳鼻喉科診所</p>
-                    <!-- 代碼不可修改 -->
-                    <p>機構代碼：1234567890</p>
-                    <p>電話：02-12345678</p>
-                    <p>地址：
-                        <span>縣/市</span>
-                        <span>鄉/鎮/市/區</span>
-                        <span></span>
+                <div class="clinicInfo" id="basicInfo" data-clinic-id="">
+                    <button class="editBtn" id="editBasicInfoBtn">編輯</button>
+                    <p><label for="name">診所名稱：</label><span id="name"></span></p>
+                    <!-- 機構代碼不可修改 -->
+                    <p><label for="agencyId">機構代碼：</label><span id="agencyId"></span></p>
+                    <p>
+                        <label for="clinicMajors">專科別：</label>
+                        <span id="clinicMajors"></span>
                     </p>
-                    <p>官方網址：</p>
-                    <p>掛號費用：</p>
-                    <p>備註：</p>
-                    <p>營業時間：
-                        <span>格式???</span>
+                    <p>
+                    <p><label for="profilePicture">診所圖片：</label>
+                        <br>
+                        <img id="profilePicture" src="" alt="預覽圖"  style="max-width: 100px;"></p>
+                    <p><label for="phone">電話：</label><span id="phone"></span></p>
+                    <p>
+                        <label>地址：</label>
+                        <span id="addressCity"></span>
+                        <span id="addressTown"></span>
+                        <span id="addressRoad"></span>
                     </p>
+                    <p>
+                        <span id="latitude" style="display: none;"></span>
+                        <span id="longitude" style="display: none;"></span>
+                    </p>
+                    <p><label for="web">官方網址：</label><span id="web"></span></p>
+                    <p><label for="registrationFee">掛號費用：</label><span id="registrationFee"></span></p>
+                    <p><label for="memo">備註：</label><span id="memo"></span></p>
                 </div>
 
-                <div class="form-popup" id="editForm">
-                    <p>
-                        <label for="name">診所名稱：</label>
-                        <input type="text" id="name" readonly>
-                    </p>
-                    <p>
-                        <label for="agencyId">機構代碼：</label>
-                        <input type="text" id="agencyId" readonly>
-                    </p>
-                    <p>
-                        <label for="phone">電話：</label>
-                        <input type="text" id="phone">
-                    </p>
-                    <p>
-                        <span>地址：</span>
-                        <select id="city" name="city">
-                            <option value="">請選擇縣市</option>
-                            <option value="台北市">台北市</option>
-                            <option value="新北市">新北市</option>
-                        </select>
+                <div class="clinicInfo" id="businessHours">
+                    <p id="businessHoursTitle">營業時間</p>
+                    <button class="editBtn" id="editBusinessHoursBtn">編輯</button>
+                    <table class="business-hours-display">
+                        <thead>
+                            <tr>
+                                <th>時段＼星期</th>
+                                <th>一</th>
+                                <th>二</th>
+                                <th>三</th>
+                                <th>四</th>
+                                <th>五</th>
+                                <th>六</th>
+                                <th>日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <p>上午</p>
+                                    <p id="morning"></p>
+                                </td>
+                                <td id="morning-1"></td>
+                                <td id="morning-2"></td>
+                                <td id="morning-3"></td>
+                                <td id="morning-4"></td>
+                                <td id="morning-5"></td>
+                                <td id="morning-6"></td>
+                                <td id="morning-7"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>下午</p>
+                                    <p id="afternoon"></p>
+                                </td>
+                                <td id="afternoon-1"></td>
+                                <td id="afternoon-2"></td>
+                                <td id="afternoon-3"></td>
+                                <td id="afternoon-4"></td>
+                                <td id="afternoon-5"></td>
+                                <td id="afternoon-6"></td>
+                                <td id="afternoon-7"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>晚間</p>
+                                    <p id="night"></p>
+                                </td>
+                                <td id="night-1"></td>
+                                <td id="night-2"></td>
+                                <td id="night-3"></td>
+                                <td id="night-4"></td>
+                                <td id="night-5"></td>
+                                <td id="night-6"></td>
+                                <td id="night-7"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                        <select id="district" name="district">
-                            <option selected disabled>請先選擇縣市</option>
-                        </select>
+                <div class="form-overlay" id="editBasicOverlay">
+                    <div class="form-popup" id="editBasicInfoForm">
+                        <p>
+                            <label for="name">診所名稱：</label>
+                            <input type="text" id="editName" placeholder="此為必填欄位" required>
+                        </p>
+                        <p>
+                            <label for="agencyId">機構代碼：</label>
+                            <input type="text" id="editAgencyId" readonly>
+                        </p>
+                        <p>
+                            <label for ="editClinicMajors">專科別：</label>
+                            <div id="editClinicMajors" class="major-grid">
+                                <!-- 這裡放 checkbox -->
+                            </div>
+                        </p>
+                        <p>
+                            <label for="editProfilePicture">照片：</label>
+                            <input type="file" id="editProfilePicture">
+                            <br>
+                            <img id="editProfilePicturePreview" src="" alt="預覽圖" style="max-width: 150px; display:block; margin-top: 10px;">
+                        </p>
+                        <p>
+                            <label for="phone">電話：</label>
+                            <input type="text" id="editPhone" pattern="09\d{8}" placeholder="此為必填欄位" required>
+                        </p>
+                        <p>
+                            <label>地址：</label>
+                            <input type="text" id="editAddressCity" placeholder="請輸入縣市，此為必填欄位" required>
+                            <input type="text" id="editAddressTown" placeholder="請輸入相/鎮/市/區，此為必填欄位" required>
+                            <input type="text" id="editAddressRoad" name="address" placeholder="請輸入路名及門牌號碼，此為必填欄位" required>
+                        </p>
+                        <p>
+                            <label>若變更地址請點擊此按鈕更新地圖位置：</label>
+                            <input type="hidden" id="editLatitude">
+                            <input type="hidden" id="editLongitude">
+                            <button id="geolocationBtn">更新地圖</button>
+                        </p>
+                        <div id="mapPreview"></div>
+                        <p>
+                            <label for="web">官方網址：</label>
+                            <input type="text" id="editWeb">
+                        </p>
+                        <p id="registrationFee">
+                            <label for="registrationFee">掛號費用：</label>
+                            <input type="text" id="editRegistrationFee">
+                        </p>
+                        <p>
+                            <label for="memo">備註：</label>
+                            <input type="text" id="editMemo">
+                        </p>
+                        
+                        <button id="saveEditBtn">儲存</button>
+                        <button id="cancelEditBtn">取消</button>
+                    </div>
+                </div>
 
-                        <input type="text" id="address" name="address" placeholder="請輸入詳細地址">
-                    </p>
-                    <p>
-                        <label for="web">官方網址：</label>
-                        <input type="text" id="web">
-                    </p>
-                    <p id="registrationFee">
-                        <label for="registrationFee">掛號費用：</label>
-                        <input type="text" id="registrationFee">
-                    </p>
-                    <p>
-                        <label for="memo">備註：</label>
-                        <input type="text" id="memo">
-                    </p>
-                    
-                    <button id="saveEditBtn">儲存</button>
-                    <button id="cancelEditBtn">取消</button>
-                    
+                <div class="form-overlay" id="editHoursOverlay"></div>
+                    <div class="form-popup" id="editBusinessHoursForm">
+                        <table class="editBusinessHours">
+                            <thead>
+                                <tr>
+                                    <th>時段/星期</th>
+                                    <th>一</th>
+                                    <th>二</th>
+                                    <th>三</th>
+                                    <th>四</th>
+                                    <th>五</th>
+                                    <th>六</th>
+                                    <th>日</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <p>上午</p>
+                                        <input type="text" id="editMorning" placeholder="格式範例08:00-12:00"/>
+                                    </td>
+                                    <td><input type="checkbox" id="weekMorning1" value="1" /></td>
+                                    <td><input type="checkbox" id="weekMorning2" value="2" /></td>
+                                    <td><input type="checkbox" id="weekMorning3" value="3" /></td>
+                                    <td><input type="checkbox" id="weekMorning4" value="4" /></td>
+                                    <td><input type="checkbox" id="weekMorning5" value="5" /></td>
+                                    <td><input type="checkbox" id="weekMorning6" value="6" /></td>
+                                    <td><input type="checkbox" id="weekMorning7" value="7" /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>下午</p>
+                                        <input type="text" id="editAfternoon" placeholder="格式範例13:00-17:00"/>
+                                    </td>
+                                    <td><input type="checkbox" id="weekAfternoon1" value="1" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon2" value="2" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon3" value="3" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon4" value="4" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon5" value="5" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon6" value="6" /></td>
+                                    <td><input type="checkbox" id="weekAfternoon7" value="7" /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>晚間</p>
+                                        <input type="text" id="editNight" placeholder="格式範例18:00-21:00"/>
+                                    </td>
+                                    <td><input type="checkbox" id="weekNight1" value="1" /></td>
+                                    <td><input type="checkbox" id="weekNight2" value="2" /></td>
+                                    <td><input type="checkbox" id="weekNight3" value="3" /></td>
+                                    <td><input type="checkbox" id="weekNight4" value="4" /></td>
+                                    <td><input type="checkbox" id="weekNight5" value="5" /></td>
+                                    <td><input type="checkbox" id="weekNight6" value="6" /></td>
+                                    <td><input type="checkbox" id="weekNight7" value="7" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div id="Btn">
+                            <button id="saveEditHoursBtn">儲存</button>
+                            <button id="cancelEditHoursBtn">取消</button>
+                        </div>
+                        
+
+                    </div>
                 </div>
          
             </section>
@@ -205,8 +353,6 @@
     </section>
 
 
-    
-    <script src="static/js/jquery-3.7.1.min.js"></script>
     <script src=""></script>
     <!--/Config demo-->
     <!--Global JS-->
@@ -240,6 +386,12 @@
     <script src="static/js/switchery.min.js"></script>
     <!--Load these page level functions-->
     <script src="static/js/bell.js"></script>
+    <script src="static/js/clinicInfo.js"></script>
+
+
+
+
+
     <!--<script>
     $(document).ready(function() {
         app.dateRangePicker();

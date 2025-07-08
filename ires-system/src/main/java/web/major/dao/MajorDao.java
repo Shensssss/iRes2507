@@ -6,4 +6,6 @@ import web.major.entity.Major;
 
 public interface MajorDao {
 	List<Major> selectAll();
+	
+	Major selectMajorById(Integer majorId);
 }
