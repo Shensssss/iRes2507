@@ -24,4 +24,6 @@ public interface ClinicDAO extends CoreDao<Clinic, Integer> {
     Optional<CallNumber> findCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date);
 
     CallNumber save(CallNumber callNumber);
+    
+    List<CallNumber> findCallNumbersByClinicIdAndDate(Integer clinicId, LocalDate date);
 }

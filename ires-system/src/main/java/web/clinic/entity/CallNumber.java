@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import web.doctor.entity.Doctor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,6 +27,10 @@ public class CallNumber {
 
     @Column(name = "doctor_id")
     private Integer doctorId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    private Doctor doctor;
 
     @Column(name = "consultation_status")
     private Integer consultationStatus;
