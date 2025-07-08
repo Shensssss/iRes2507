@@ -20,6 +20,26 @@ function getStatusClass(status) {
     }
 }
 
+function updateButtonStates(status) {
+    const disabled = (status === 0); // 尚未開診時 disable
+    document.getElementById("prevBtn").disabled = disabled;
+    document.getElementById("nextBtn").disabled = disabled;
+    document.getElementById("insertBtn").disabled = disabled;
+    document.getElementById("completeBtn").disabled = disabled;
+}
+
+function updateUpcomingList(currentNumber) {
+    const room = JSON.parse(localStorage.getItem("callRoom"));
+    const remaining = room.patients
+        .filter(p => p.status === "未報到" && parseInt(p.number) > parseInt(currentNumber))
+        .slice(0, 5);
+
+    const upcomingList = document.getElementById("upcomingList");
+    upcomingList.innerHTML = remaining.length
+        ? remaining.map(p => `<li class="list-group-item">${p.number} - ${p.name}</li>`).join("")
+        : `<li class="list-group-item text-muted">無將來號碼</li>`;
+}
+
 function sendNumberToDevice(number, retryCount = 0) {
     if (socket.readyState === WebSocket.OPEN) {
         socket.send(number);
@@ -165,11 +185,15 @@ function insertNumber() {
 
 function prevNumber() {
     const room = JSON.parse(localStorage.getItem("callRoom"));
-    const uncalled = room.patients.filter(p => p.status === "未報到");
+    const eligible = room.patients
+        .filter(p => p.status !== "已取消" && p.status !== "已完成")
+        .sort((a, b) => parseInt(a.number) - parseInt(b.number));
+
     const currentText = document.getElementById("currentNumber").innerText.replace("號碼：", "").trim();
-    const currentIndex = uncalled.findIndex(p => p.number === currentText);
+    const currentIndex = eligible.findIndex(p => p.number === currentText);
+
     if (currentIndex > 0) {
-        const prev = uncalled[currentIndex - 1].number;
+        const prev = eligible[currentIndex - 1].number;
         highlightRow(prev);
         const status = getSelectedConsultationStatus();
         updateCallNumberOnServer(prev, status);
@@ -178,11 +202,15 @@ function prevNumber() {
 
 function nextNumber() {
     const room = JSON.parse(localStorage.getItem("callRoom"));
-    const uncalled = room.patients.filter(p => p.status === "未報到");
+    const eligible = room.patients
+        .filter(p => p.status !== "已取消" && p.status !== "已完成")
+        .sort((a, b) => parseInt(a.number) - parseInt(b.number));
+
     const currentText = document.getElementById("currentNumber").innerText.replace("號碼：", "").trim();
-    const currentIndex = uncalled.findIndex(p => p.number === currentText);
-    if (currentIndex < uncalled.length - 1) {
-        const next = uncalled[currentIndex + 1].number;
+    const currentIndex = eligible.findIndex(p => p.number === currentText);
+
+    if (currentIndex < eligible.length - 1) {
+        const next = eligible[currentIndex + 1].number;
         highlightRow(next);
         const status = getSelectedConsultationStatus();
         updateCallNumberOnServer(next, status);
@@ -264,16 +292,8 @@ function highlightRow(number) {
         currentNumberEl.dataset.number = current.number;
         document.getElementById("currentName").innerText = `姓名：${current.name}`;
         sendNumberToDevice(current.number);
+        updateUpcomingList(current.number);
     }
-
-    const remaining = room.patients
-        .filter(p => p.status === "未報到" && parseInt(p.number) > parseInt(numStr))
-        .slice(0, 5);
-
-    const upcomingList = document.getElementById("upcomingList");
-    upcomingList.innerHTML = remaining.length
-        ? remaining.map(p => `<li class="list-group-item">${p.number} - ${p.name}</li>`).join("")
-        : `<li class="list-group-item text-muted">無將來號碼</li>`;
 }
 
 // 執行初始化邏輯
@@ -293,14 +313,27 @@ window.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 console.log("診間叫號初始化成功", data);
 
-                if (data.number) highlightRow(data.number);
+                if (data.consultationStatus === 1) {
+                    if (data.number) {
+                        highlightRow(data.number); // 看診中時 highlight 初始號碼
+                    } else {
+                        const roomData = JSON.parse(localStorage.getItem("callRoom"));
+                        const first = roomData?.patients?.find(p => p.status === "未報到");
+                        if (first) highlightRow(first.number);
+                    }
+                }
+                if (typeof data.consultationStatus === "number") {
+                    updateButtonStates(data.consultationStatus);
+                } else {
+                    console.warn("未提供 consultationStatus，按鈕狀態未更新");
+                }
 
                 switch (data.consultationStatus) {
                     case 0: document.getElementById("status1").checked = true; break;
                     case 1: document.getElementById("status2").checked = true; break;
                     case 2: document.getElementById("status3").checked = true; break;
-                    default: console.warn("未知 consultationStatus：", data.consultationStatus);
                 }
+
             })
             .catch(err => console.error("診間叫號初始化失敗", err));
     }
@@ -310,15 +343,23 @@ window.addEventListener("DOMContentLoaded", () => {
     radios.forEach(radio => {
         radio.addEventListener("change", () => {
             const status = parseInt(radio.value);
-            const number = getCurrentNumber();
+            updateButtonStates(status);
 
+            if (status === 1) {
+                const roomData = JSON.parse(localStorage.getItem("callRoom"));
+                const first = roomData?.patients?.find(p =>
+                    p.status === "未報到" || p.status === "已報到"
+                );
+                if (first) highlightRow(first.number);
+            }
+
+            const number = getCurrentNumber();
             if (!isNaN(number) && !isNaN(status)) {
                 updateCallNumberOnServer(number, status);
-            } else {
-                console.warn("略過不合法請求", { number, status });
             }
         });
     });
+
 
     setTimeout(() => {
         const leftCard = document.querySelector("#roomCardContainer .card");
@@ -327,4 +368,9 @@ window.addEventListener("DOMContentLoaded", () => {
             leftCard.style.height = rightCol.offsetHeight + "px";
         }
     }, 200);
+
+    const initRadio = document.querySelector('input[name="statusOption"]:checked');
+    if (initRadio) {
+        updateButtonStates(parseInt(initRadio.value));
+    }
 });

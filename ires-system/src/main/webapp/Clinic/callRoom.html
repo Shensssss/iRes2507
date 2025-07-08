@@ -89,10 +89,10 @@
 
   <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
     <div class="d-flex gap-2 flex-wrap">
-      <button class="btn-call" onclick="prevNumber()">上一號</button>
-      <button class="btn-call" onclick="nextNumber()">下一號</button>
-      <button class="btn-call" data-bs-toggle="modal" data-bs-target="#insertModal">插號</button>
-      <button type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
+      <button id="prevBtn" class="btn-call" onclick="prevNumber()">上一號</button>
+      <button id="nextBtn" class="btn-call" onclick="nextNumber()">下一號</button>
+      <button id="insertBtn" class="btn-call" data-bs-toggle="modal" data-bs-target="#insertModal">插號</button>
+      <button id="completeBtn" type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
     </div>
 
     <button class="btn btn-secondary" onclick="history.back()">
