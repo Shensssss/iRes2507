@@ -22,4 +22,6 @@ public interface ClinicService {
 	CallNumber findOrCreateCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date);
 
 	CallNumber saveCallNumber(CallNumber callNumber);
+
+	List<CallNumber> findCallNumbersByClinicId(Integer clinicId, LocalDate date);
 }

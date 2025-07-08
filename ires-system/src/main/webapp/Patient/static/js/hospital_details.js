@@ -261,65 +261,68 @@ function renderDoctorList(doctors) {
     return;
   }
 
-  doctors.forEach(function (doctor) {
-    const doctorImg = doctor.profilePicture.startsWith("data:")
-      ? doctor.profilePicture
-      : `data:image/jpeg;base64,${doctor.profilePicture}`;
+  const date = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+  const api = `/ires-system/callNumber/listByClinic?clinicId=${clinicId}&date=${date}`;
 
-    doctorList += `
-      <div class="col-md-6 d-flex">
-                      <div class="card-body p-0">
-                        <div class="bg-white d-flex p-3 p-lg-4 p-md-3 p-sm-4">
-                          <div
-                            class="d-block doctor-avatar flex-shrink-0 me-3 p-2 position-relative rounded-bottom rounded-circle shadow"
-                          >
-                            <div class="online position-absolute">
-                              <span class="heartbit"></span>
-                              <span class="point"></span>
-                            </div>
-                            <img
-                              src="${doctorImg}"
-                              alt=""
-                              class="rounded-bottom rounded-circle"
-                            />
-                          </div>
-                          <div class="flex-grow-1">
-                            <h6 class="fs-17 fw-semibold mb-2 mb-sm-1">
-                              ${doctor.doctorName}
-                            </h6>
-                            <div
-                              class="fw-semibold mb-0 mb-sm-2 small text-primary"
-                            >
-                              ${doctor.education}
-                            </div>
-                            <div class="d-none d-sm-block small"> ${doctor.memo}</div>
-                            <div class="d-none d-sm-block small">
-                              ${doctor.experience}
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          class="bg-white p-3 p-lg-4 p-md-3 p-sm-4 pt-0 pt-lg-0 pt-sm-0"
-                        >
-                          <div class="row g-3">
-                            <div class="col-auto col-md-12">
-                              <h6 class="fs-13 mb-1 text-muted">工作於</h6>
-                              <div class="fw-bold text-black fs-15">
-                                ${clinicName}
-                              </div>
-                            </div>
+  $.ajax({
+    url: api,
+    type: "GET",
+    async: false,
+    success: function (callNumbers) {
+      const numberMap = {}; // doctorId => number
+      callNumbers.forEach((c) => {
+        if (!numberMap[c.doctorId] || c.number > numberMap[c.doctorId]) {
+          numberMap[c.doctorId] = c.number;
+        }
+      });
 
-                            <div class="col-auto">
-                              <h6 class="fs-13 mb-1 text-muted">經歷</h6>
-                              <div class="fw-bold text-black fs-15">${doctor.experience}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-    `;
+      doctors.forEach(function (doctor) {
+        const doctorImg = doctor.profilePicture.startsWith("data:")
+          ? doctor.profilePicture
+          : `data:image/jpeg;base64,${doctor.profilePicture}`;
+        const numberBadge = numberMap[doctor.doctorId]
+          ? `<span class="position-absolute top-0 end-0 badge bg-danger rounded-circle m-2">${
+              numberMap[doctor.doctorId]
+            }</span>`
+          : "";
+
+        doctorList += `
+          <div class="col-md-6 d-flex position-relative">
+            ${numberBadge}
+            <div class="card-body p-0">
+              <div class="bg-white d-flex p-3 p-lg-4 p-md-3 p-sm-4">
+                <div class="d-block doctor-avatar flex-shrink-0 me-3 p-2 position-relative rounded-bottom rounded-circle shadow">
+                  <img src="${doctorImg}" class="rounded-circle" />
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="fs-17 fw-semibold mb-2 mb-sm-1">${doctor.doctorName}</h6>
+                  <div class="fw-semibold mb-0 mb-sm-2 small text-primary">${doctor.education}</div>
+                  <div class="d-none d-sm-block small">${doctor.memo}</div>
+                  <div class="d-none d-sm-block small">${doctor.experience}</div>
+                </div>
+              </div>
+              <div class="bg-white p-3 pt-0">
+                <div class="row g-3">
+                  <div class="col-auto col-md-12">
+                    <h6 class="fs-13 mb-1 text-muted">工作於</h6>
+                    <div class="fw-bold text-black fs-15">${clinicName}</div>
+                  </div>
+                  <div class="col-auto">
+                    <h6 class="fs-13 mb-1 text-muted">經歷</h6>
+                    <div class="fw-bold text-black fs-15">${doctor.experience}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+    },
+    error: () => {
+      console.error("無法取得叫號資料");
+    },
   });
 }
+
 function renderComment(comments) {
   if (comments.length === 0) {
     commentHtml = "<p>沒有人留言。</p>";
