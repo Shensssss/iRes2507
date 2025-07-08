@@ -28,7 +28,7 @@ public class NotificationDAOImpl implements NotificationDAO {
 
 	@Override
 	public List<Notification> findByPatientId(int patientId) {
-		String hql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid ORDER BY n.sentDatetime DESC";
+		String hql = "SELECT n FROM Notification n WHERE n.patient.patientId = :pid and n.notificationType not in ('報到成功通知') ORDER BY n.sentDatetime DESC";
 		return session.createQuery(hql, Notification.class).setParameter("pid", patientId).getResultList();
 	}
 

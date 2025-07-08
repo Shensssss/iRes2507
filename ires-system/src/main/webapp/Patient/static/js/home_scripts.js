@@ -163,7 +163,7 @@ function loadClinics(selector, majorId = null) {
                 ? `尚未評論`
                 : `<i class="fa-solid fa-star" style="color: gold"></i>
                     ${clinic.rating.toFixed(1)} Rating`;
-            let distance = "你沒給位置";
+            let distance = "未知";
             if (
               userLat !== null &&
               userLng !== null &&
