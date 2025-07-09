@@ -86,7 +86,8 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 2rem; /* 加這行讓它有距離 */
+            margin-top: 2rem;
+            /* 加這行讓它有距離 */
         }
 
         .btn {
@@ -165,18 +166,20 @@
                 style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div class="notification-wrapper">
-                <div class="notification-icon" id="bell">
-                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
-                    <span class="badge"></span>
-                </div>
-                <div class="notification-dropdown" id="dropdown">
+                <a href="clinicNotification.html">
+                    <div class="notification-icon" id="bell">
+                        <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                        <span class="badge"></span>
+                    </div>
+                </a>
+                <!-- <div class="notification-dropdown" id="dropdown">
                     <p>📬 您有新通知</p>
                     <ul>
                         <li>✅ 報到通知</li>
                         <li>💬 評價通知</li>
                         <li>⚠️ 系統通知</li>
-                    </ul>
-                </div>
+                    </ul>                    
+                </div> -->
             </div>
             <!--logo end-->
             <ul class="nav navbar-nav navbar-left">
@@ -188,7 +191,7 @@
             </ul>
         </header>
         <!--sidebar left start-->
-      <aside class="sidebar sidebar-left">
+        <aside class="sidebar sidebar-left">
             <nav>
                 <ul class="nav nav-pills nav-stacked">
                     <li class="nav-dropdown">
@@ -272,7 +275,7 @@
                                 <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
                                 <th>#</th>
                                 <th>看診日期</th>
-<!--                                <th>診間</th>-->
+                                <!--                                <th>診間</th>-->
                                 <th>號碼</th>
                                 <th>姓名</th>
                                 <th>醫師</th>
@@ -343,7 +346,7 @@
         app.spinStop();
     });
     </script>-->
-    
+
     <script>
         let notifyData = [];
         let currentPage = 1;
@@ -485,29 +488,29 @@
                 },
                 body: JSON.stringify(payload) // 傳送 JSON 陣列
             })
-            .then(response => response.json())
-            .then(result => {
-                console.log("通知結果：", result);
+                .then(response => response.json())
+                .then(result => {
+                    console.log("通知結果：", result);
 
-                const checkboxes = document.querySelectorAll(".row-check:checked");
-                const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
+                    const checkboxes = document.querySelectorAll(".row-check:checked");
+                    const data = JSON.parse(localStorage.getItem("notifyPatients") || "[]");
 
-                checkboxes.forEach((checkbox, i) => {
-                    const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
-                    if (data[rowIndex]) {
-                        data[rowIndex].status = result[i];
-                    }
+                    checkboxes.forEach((checkbox, i) => {
+                        const rowIndex = Array.from(document.querySelectorAll(".row-check")).indexOf(checkbox);
+                        if (data[rowIndex]) {
+                            data[rowIndex].status = result[i];
+                        }
+                    });
+
+                    notifyData = data;
+
+                    renderNotifyTable();
+                    alert(`已發送 ${selectedRows.length} 筆通知！`);
+                })
+                .catch(error => {
+                    console.error("發送通知時發生錯誤", error);
+                    alert("發送失敗，請查看 console log");
                 });
-
-                notifyData = data;
-
-                renderNotifyTable();
-                alert(`已發送 ${selectedRows.length} 筆通知！`);
-            })
-            .catch(error => {
-                console.error("發送通知時發生錯誤", error);
-                alert("發送失敗，請查看 console log");
-            });
         }
 
         function scrollToTop() {
@@ -515,56 +518,56 @@
         }
 
         //window.onload = loadNotifyData;
-        
+
         document.addEventListener("DOMContentLoaded", () => {
             loadNotifyData();
         });
     </script>
-     <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const name = sessionStorage.getItem("clinicName");
             if (name) {
-              document.getElementById("clinicName").textContent = name;
-             } else {
-           // 未登入或資料遺失，導回登入頁
-               alert("尚未登入");
-              location.href = "/ires-system/Clinic/login.html";
-           }
+                document.getElementById("clinicName").textContent = name;
+            } else {
+                // 未登入或資料遺失，導回登入頁
+                alert("尚未登入");
+                location.href = "/ires-system/Clinic/login.html";
+            }
         });
     </script>
     <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 處理登出點擊
-    const logoutLink = document.querySelector('a[title="Logout"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", function (e) {
-        e.preventDefault();
+        document.addEventListener("DOMContentLoaded", function () {
+            // 處理登出點擊
+            const logoutLink = document.querySelector('a[title="Logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-        // 彈窗確認
-        if (confirm("確定要登出嗎？")) {
-          // 發送登出請求
-          fetch('/ires-system/clinic/logout', {
-            method: 'DELETE',
-            credentials: 'include' // 確保 session cookie 被送出
-          })
-            .then(response => {
-              if (response.ok) {
-                // 跳轉回登入頁
-                sessionStorage.clear();
-                window.location.href = '/ires-system/Clinic/login.html';
-              } else {
-                alert("登出失敗，請稍後再試");
-              }
-            })
-            .catch(err => {
-              console.error("登出錯誤：", err);
-              alert("無法連線到伺服器");
-            });
-        }
-      });
-    }
-  });
-  </script>
+                    // 彈窗確認
+                    if (confirm("確定要登出嗎？")) {
+                        // 發送登出請求
+                        fetch('/ires-system/clinic/logout', {
+                            method: 'DELETE',
+                            credentials: 'include' // 確保 session cookie 被送出
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // 跳轉回登入頁
+                                    sessionStorage.clear();
+                                    window.location.href = '/ires-system/Clinic/login.html';
+                                } else {
+                                    alert("登出失敗，請稍後再試");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("登出錯誤：", err);
+                                alert("無法連線到伺服器");
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

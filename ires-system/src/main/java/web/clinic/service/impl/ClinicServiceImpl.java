@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -134,9 +135,6 @@ public class ClinicServiceImpl implements ClinicService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
-
-
-
 	
 	@Override
 	public Clinic selectById(int clinic_id) {
@@ -154,39 +152,47 @@ public class ClinicServiceImpl implements ClinicService {
 		return clinicDAO.selectById(clinicId);
 	}
 
-	@Override
-	public CallNumber findOrCreateCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date) {
-		try {
-			if (clinicId == null || doctorId == null || timePeriod == null || date == null) {
-				throw new IllegalArgumentException("參數不能為 null");
-			}
+    @Override
+    public CallNumber findOrCreateCallNumber(Integer clinicId, Integer doctorId, Integer timePeriod, LocalDate date) {
+        CallNumber existing = clinicDAO.findByClinicDoctorDate(clinicId, doctorId, date);
 
-			return clinicDAO.findCallNumber(clinicId, doctorId, timePeriod, date)
-					.orElseGet(() -> {
-						CallNumber newEntry = CallNumber.builder()
-								.clinicId(clinicId)
-								.doctorId(doctorId)
-								.timePeriod(timePeriod)
-								.appointmentDate(date)
-								.number(0)
-								.consultationStatus(0)
-								.createId("admin")
-								.updateId("admin")
-								.createTime(LocalDateTime.now())
-								.updateTime(LocalDateTime.now())
-								.build();
-						return clinicDAO.save(newEntry);
-					});
+        // 情況 1：查到，且時段相同 → 不做任何更新
+        if (existing != null && Objects.equals(existing.getTimePeriod(), timePeriod)) {
+            return existing;
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace(); // 或使用 logger.error(...)
-			throw new RuntimeException("建立或查詢叫號資料時發生錯誤：" + e.getMessage(), e);
-		}
-	}
+        // 情況 2：查到，但時段不同 → 更新
+        if (existing != null) {
+            existing.setNumber(0);
+            existing.setConsultationStatus(0);
+            existing.setTimePeriod(timePeriod);
+            existing.setUpdateTime(LocalDateTime.now());
+            existing.setUpdateId("system");
+            return clinicDAO.save(existing);
+        }
 
-	@Override
+        // 情況 3：查不到 → 新增
+        CallNumber newCall = new CallNumber();
+        newCall.setClinicId(clinicId);
+        newCall.setDoctorId(doctorId);
+        newCall.setAppointmentDate(date);
+        newCall.setTimePeriod(timePeriod);
+        newCall.setNumber(0);
+        newCall.setConsultationStatus(0);
+        newCall.setCreateTime(LocalDateTime.now());
+        newCall.setCreateId("system");
+
+        return clinicDAO.save(newCall);
+    }
+
+
+    @Override
 	public CallNumber saveCallNumber(CallNumber callNumber) {
 		return clinicDAO.save(callNumber);
 	}
 
+	@Override
+	public List<CallNumber> findCallNumbersByClinicId(Integer clinicId, LocalDate date) {
+	    return clinicDAO.findCallNumbersByClinicIdAndDate(clinicId, date);
+	}
 }

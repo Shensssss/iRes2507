@@ -267,8 +267,6 @@
             line-height: 34px;
             height: 34px;
         }
-
-        
     </style>
 </head>
 
@@ -279,23 +277,25 @@
             <div class="brand">
                 <a href="roomInfo.html" class="logo"
                     style="font-size: 24px; margin-left: 10px; margin-top: 5px; display: inline-block;">
-                   <span id="clinicName"></span></a>
+                    <span id="clinicName"></span></a>
                 </a>
             </div>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
             <div class="notification-wrapper">
-                <div class="notification-icon" id="bell">
-                    <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
-                    <span class="badge"></span>
-                </div>
-                <div class="notification-dropdown" id="dropdown">
+                <a href="clinicNotification.html">
+                    <div class="notification-icon" id="bell">
+                        <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                        <span class="badge"></span>
+                    </div>
+                </a>
+                <!-- <div class="notification-dropdown" id="dropdown">
                     <p>📬 您有新通知</p>
                     <ul>
                         <li>✅ 報到通知</li>
                         <li>💬 評價通知</li>
                         <li>⚠️ 系統通知</li>
-                    </ul>
-                </div>
+                    </ul>                    
+                </div> -->
             </div>
             <!--logo end-->
             <ul class="nav navbar-nav navbar-left" style="display: flex; align-items: center;">
@@ -445,13 +445,13 @@
                 </div>
 
                 <table id="appointmentTable">
-<!--                    <colgroup>-->
-<!--                        <col style="width: 180px;"> &lt;!&ndash; 預約日期 &ndash;&gt;-->
-<!--                        <col style="width: 120px;"> &lt;!&ndash; 時段 &ndash;&gt;-->
-<!--                        <col style="width: 180px;"> &lt;!&ndash; 醫師 &ndash;&gt;-->
-<!--                        <col style="width: 100px;"> &lt;!&ndash; 看診號碼 &ndash;&gt;-->
-<!--                        <col style="width: 260px;"> &lt;!&ndash; 操作 &ndash;&gt;-->
-<!--                    </colgroup>-->
+                    <!--                    <colgroup>-->
+                    <!--                        <col style="width: 180px;"> &lt;!&ndash; 預約日期 &ndash;&gt;-->
+                    <!--                        <col style="width: 120px;"> &lt;!&ndash; 時段 &ndash;&gt;-->
+                    <!--                        <col style="width: 180px;"> &lt;!&ndash; 醫師 &ndash;&gt;-->
+                    <!--                        <col style="width: 100px;"> &lt;!&ndash; 看診號碼 &ndash;&gt;-->
+                    <!--                        <col style="width: 260px;"> &lt;!&ndash; 操作 &ndash;&gt;-->
+                    <!--                    </colgroup>-->
                     <thead>
                         <tr>
                             <th>日期</th>
@@ -474,10 +474,10 @@
         <input type="text" class="popup-search" placeholder="搜尋醫師..." style="width:100%;margin-bottom:6px;">
         <table style="width:100%; border-collapse: collapse;">
             <thead>
-            <tr>
-                <th style="border-bottom: 1px solid #ccc;">醫師編號</th>
-                <th style="border-bottom: 1px solid #ccc;">醫師姓名</th>
-            </tr>
+                <tr>
+                    <th style="border-bottom: 1px solid #ccc;">醫師編號</th>
+                    <th style="border-bottom: 1px solid #ccc;">醫師姓名</th>
+                </tr>
             </thead>
             <tbody class="popup-body"></tbody>
         </table>
@@ -521,47 +521,47 @@
         document.addEventListener("DOMContentLoaded", function () {
             const name = sessionStorage.getItem("clinicName");
             if (name) {
-              document.getElementById("clinicName").textContent = name;
-             } else {
-           // 未登入或資料遺失，導回登入頁
-               alert("尚未登入");
-              location.href = "/ires-system/Clinic/login.html";
-           }
+                document.getElementById("clinicName").textContent = name;
+            } else {
+                // 未登入或資料遺失，導回登入頁
+                alert("尚未登入");
+                location.href = "/ires-system/Clinic/login.html";
+            }
         });
     </script>
     <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 處理登出點擊
-    const logoutLink = document.querySelector('a[title="Logout"]');
-    if (logoutLink) {
-      logoutLink.addEventListener("click", function (e) {
-        e.preventDefault();
+        document.addEventListener("DOMContentLoaded", function () {
+            // 處理登出點擊
+            const logoutLink = document.querySelector('a[title="Logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function (e) {
+                    e.preventDefault();
 
-        // 彈窗確認
-        if (confirm("確定要登出嗎？")) {
-          // 發送登出請求
-          fetch('/ires-system/clinic/logout', {
-            method: 'DELETE',
-            credentials: 'include' // 確保 session cookie 被送出
-          })
-            .then(response => {
-              if (response.ok) {
-                // 跳轉回登入頁
-                sessionStorage.clear();
-                window.location.href = '/ires-system/Clinic/login.html';
-              } else {
-                alert("登出失敗，請稍後再試");
-              }
-            })
-            .catch(err => {
-              console.error("登出錯誤：", err);
-              alert("無法連線到伺服器");
-            });
-        }
-      });
-    }
-  });
-</script>
+                    // 彈窗確認
+                    if (confirm("確定要登出嗎？")) {
+                        // 發送登出請求
+                        fetch('/ires-system/clinic/logout', {
+                            method: 'DELETE',
+                            credentials: 'include' // 確保 session cookie 被送出
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    // 跳轉回登入頁
+                                    sessionStorage.clear();
+                                    window.location.href = '/ires-system/Clinic/login.html';
+                                } else {
+                                    alert("登出失敗，請稍後再試");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("登出錯誤：", err);
+                                alert("無法連線到伺服器");
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

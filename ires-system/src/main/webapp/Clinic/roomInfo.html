@@ -572,8 +572,9 @@
         console.log("callNext - 最終使用 timePeriod:", timePeriod);
 
         const doctorId = room.patients?.[0]?.doctorId ?? null;
-        const today = new Date().toISOString().slice(0, 10);
-
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        console.log("callNext - today:", today);
         const extendedRoom = {
             ...room,
             doctorId,

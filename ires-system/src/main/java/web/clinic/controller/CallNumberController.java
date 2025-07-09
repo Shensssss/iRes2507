@@ -17,8 +17,7 @@ import web.clinic.service.ClinicService;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping("/callNumber")
@@ -72,5 +71,14 @@ public class CallNumberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("後端處理錯誤：" + e.getMessage());
         }
+    }
+
+    @GetMapping("/listByClinic")
+    @ResponseBody
+    public List<CallNumber> getCallNumbersByClinicId(
+            @RequestParam Integer clinicId,
+            @RequestParam String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        return clinicService.findCallNumbersByClinicId(clinicId, parsedDate);
     }
 }
