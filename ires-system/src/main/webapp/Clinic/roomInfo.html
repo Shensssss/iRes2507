@@ -175,6 +175,19 @@
             background-color: #1e88e5;
             transform: scale(1.05);
         }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #ccc;
+            border-top-color: #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -305,8 +318,10 @@
                 <input type="text" placeholder="搜尋病人（姓名或號碼）" id="searchInput" onkeyup="filterPatients()">
             </div>
 
-
-            <div id="clinic-info"></div>
+            <div id="clinic-info">
+                <div id="clinic-loader" class="spinner" style="display: none;"></div>
+                <div id="clinic-content"></div>
+            </div>
 
             <div id="qrcodeModal" class="modal">
                 <div class="modal-content">
@@ -418,8 +433,11 @@
     async function selectTime(time) {
         currentTime = time || null;
         document.getElementById("searchInput").value = "";
-        const clinicInfo = document.getElementById("clinic-info");
-        clinicInfo.innerHTML = "<p>載入中...</p>";
+        const loader = document.getElementById("clinic-loader");
+        const content = document.getElementById("clinic-content");
+
+        loader.style.display = "block";
+        content.innerHTML = "";
 
         const url = time
             ? `/ires-system/appointment/apiToday?period=${time}`
@@ -483,36 +501,45 @@
     }
 
     function renderData(data) {
-        const clinicInfo = document.getElementById("clinic-info");
-        clinicInfo.innerHTML = "";
+        const loader = document.getElementById("clinic-loader");
+        const content = document.getElementById("clinic-content");
+
+        loader.style.display = "none"; // 資料載入完 → 隱藏 loading
+
         const wrapper = document.createElement("div");
         wrapper.className = "room-container";
 
-        data.forEach((room, idx) => {
+        data.forEach(room => {
             const card = document.createElement("div");
             card.className = "room-card";
             card.innerHTML = `
-                                    <div class="room-card-header">${room.doctor}</div>
-                                    <div class="room-card-body">
-                                    <div style="overflow-y: auto; max-height: 300px;">
-                                        <table>
-                                        <thead><tr><th>看診號碼</th><th>姓名</th><th>狀態</th></tr></thead>
-                                        <tbody>
-                                            ${room.patients.map(p => `
-                                            <tr><td>${p.number}</td><td>${p.name}</td><td><span class="${getStatusClass(p.status)}">${p.status}</span></td></tr>
-                                            `).join('')}
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="action-buttons">
-                                        <button class="btn" onclick="showQRCode('${room.doctor}')">產生報到 QRCode</button>
-<!--                                        <button class="btn" onclick="callNext('${room.doctor}')">診間叫號</button>-->
-                                        <button class="btn" onclick="callNext('${room.doctor}', ${room.timePeriod})">診間叫號</button>
-                                    </div>
-                                    </div>`;
+            <div class="room-card-header">${room.doctor}</div>
+            <div class="room-card-body">
+                <div style="overflow-y: auto; max-height: 300px;">
+                    <table>
+                        <thead><tr><th>看診號碼</th><th>姓名</th><th>狀態</th></tr></thead>
+                        <tbody>
+                            ${room.patients.map(p => `
+                                <tr>
+                                    <td>${p.number}</td>
+                                    <td>${p.name}</td>
+                                    <td><span class="${getStatusClass(p.status)}">${p.status}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn" onclick="showQRCode('${room.doctor}')">產生報到 QRCode</button>
+                    <button class="btn" onclick="callNext('${room.doctor}', ${room.timePeriod})">診間叫號</button>
+                </div>
+            </div>
+        `;
             wrapper.appendChild(card);
         });
-        clinicInfo.appendChild(wrapper);
+
+        content.innerHTML = "";            // 清掉上次 render 的卡片
+        content.appendChild(wrapper);     // 插入新卡片
     }
 
     function filterPatients() {
