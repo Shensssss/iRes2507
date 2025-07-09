@@ -91,6 +91,13 @@
         .status-cancelled {
             color: gray;
             font-weight: bold;
+            text-decoration: line-through;
+        }
+
+        .status-finished {
+            color: darkblue;
+            font-weight: bold;
+            background-color: #f0f8ff;
         }
 
         .action-buttons {
@@ -583,7 +590,7 @@
         };
 
         localStorage.setItem("callRoom", JSON.stringify(extendedRoom));
-        window.location.href = "callRoom.html";
+        window.open("callRoom.html", "_blank", "width=800,height=600");
     }
 
     function goToNotifyPage() {
@@ -613,6 +620,9 @@
         if (name) {
             document.getElementById("clinicName").textContent = name;
             selectTime();
+            setInterval(() => {
+                selectTime();
+            }, 10000);
         } else {
             // 未登入或資料遺失，導回登入頁
             alert("尚未登入");

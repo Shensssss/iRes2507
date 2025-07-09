@@ -52,16 +52,19 @@ function sendNumberToDevice(number, retryCount = 0) {
     }
 }
 
-function renderRoomData() {
+function renderRoomData(highlightNumber = null) {
     const data = localStorage.getItem("callRoom");
+    const container = document.getElementById("roomCardContainer");
+
     if (!data) {
-        document.getElementById("roomCardContainer").innerHTML = "<p class='text-danger'>⚠️ 找不到診間資料</p>";
+        container.innerHTML = "<p class='text-danger'>找不到診間資料</p>";
         return;
     }
 
+    container.innerHTML = "";
+
     const room = JSON.parse(data);
 
-    // 左側卡片
     const card = document.createElement("div");
     card.className = "card shadow-sm full-height-card";
     card.innerHTML = `
@@ -87,11 +90,15 @@ function renderRoomData() {
       </div>
     </div>
   `;
-    document.getElementById("roomCardContainer").appendChild(card);
+
+    container.appendChild(card);
 
     const notArrived = room.patients.filter(p => p.status === '未報到');
 
-    const current = notArrived[0];
+    let current = highlightNumber
+        ? room.patients.find(p => p.number === highlightNumber.toString())
+        : notArrived[0];
+
     if (current) {
         const currentNumberEl = document.getElementById("currentNumber");
         currentNumberEl.innerText = `號碼：${current.number}`;
@@ -102,7 +109,10 @@ function renderRoomData() {
         if (row) row.classList.add("selected-row");
     }
 
-    const upcoming = notArrived.slice(1, 6);
+    const upcoming = notArrived
+        .filter(p => !highlightNumber || p.number !== highlightNumber.toString())
+        .slice(1, 6);
+
     const upcomingList = document.getElementById("upcomingList");
     upcomingList.innerHTML = upcoming.length
         ? upcoming.map(p => `<li class="list-group-item">${p.number} - ${p.name}</li>`).join("")
@@ -202,19 +212,26 @@ function prevNumber() {
 
 function nextNumber() {
     const room = JSON.parse(localStorage.getItem("callRoom"));
+    const currentNumber = getCurrentNumber();
+    if (!room || !currentNumber) return null;
+
     const eligible = room.patients
         .filter(p => p.status !== "已取消" && p.status !== "已完成")
         .sort((a, b) => parseInt(a.number) - parseInt(b.number));
 
-    const currentText = document.getElementById("currentNumber").innerText.replace("號碼：", "").trim();
-    const currentIndex = eligible.findIndex(p => p.number === currentText);
+    const currentIndex = eligible.findIndex(p => p.number === currentNumber.toString());
 
     if (currentIndex < eligible.length - 1) {
         const next = eligible[currentIndex + 1].number;
         highlightRow(next);
+
         const status = getSelectedConsultationStatus();
         updateCallNumberOnServer(next, status);
+
+        return next;
     }
+
+    return null; // 沒有下一號
 }
 
 function completeConsultation() {
@@ -254,22 +271,36 @@ function completeConsultation() {
         .then(data => {
             console.log("完成看診成功：", data);
 
-            // 更新本地狀態
             const idx = room.patients.findIndex(p => p.number === number.toString());
             if (idx !== -1) {
-                room.patients[idx].status = "完成看診";
+                room.patients[idx].status = "已完成";
             }
 
             localStorage.setItem("callRoom", JSON.stringify(room));
 
-            // 跳下一號
-            nextNumber();
+            const eligible = room.patients.filter(p => p.status === "未報到");
+            const currentIndex = eligible.findIndex(p => p.number === number.toString());
+            const nextPatient = eligible[currentIndex + 1];
+            const nextNumber = nextPatient ? nextPatient.number : null;
+
+            renderRoomData();
+
+            if (nextNumber) {
+                highlightRow(nextNumber);
+                const status = getSelectedConsultationStatus();
+                updateCallNumberOnServer(nextNumber, status);
+            } else {
+                document.getElementById("currentNumber").innerText = "號碼：";
+                document.getElementById("currentName").innerText = "姓名：";
+                updateUpcomingList(9999); // 清空 upcomingList
+            }
         })
         .catch(err => {
             console.error("完成看診失敗：", err);
             alert("完成看診失敗");
         });
 }
+
 function highlightRow(number) {
     const numStr = number.toString();
 
