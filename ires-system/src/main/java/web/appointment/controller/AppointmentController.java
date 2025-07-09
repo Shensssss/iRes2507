@@ -70,6 +70,7 @@ public class AppointmentController {
         java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
         int timePeriod = 1;
         List<Appointment> appointments;
+        Clinic clinic = (Clinic) session.getAttribute("clinic");
 
         if (period != null && !period.isBlank()) {
             // 有指定時段
@@ -79,10 +80,14 @@ public class AppointmentController {
                 timePeriod = 3;
             }
 
-            appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+            if (clinic != null && clinic.getClinicId() > 0) {
+                int clinicId = clinic.getClinicId();
+                appointments = service.getAppointmentsByClinicDateAndPeriod(clinicId, queryDate, timePeriod);
+            } else {
+                appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+            }
         } else {
             // 沒指定時段，從 session 判斷診所與時段
-            Clinic clinic = (Clinic) session.getAttribute("clinic");
             if (clinic == null || clinic.getClinicId() == null) {
                 response.put("status", "error");
                 response.put("message", "Session 未包含 clinicId，請重新登入");
@@ -104,8 +109,11 @@ public class AppointmentController {
 
     @GetMapping("/history")
     @ResponseBody
-    public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
-        List<Appointment> list = service.getHistoryByPatientId(patientId);
+    public ResponseEntity<?> getAppointmentHistory(HttpSession session, @RequestParam int patientId) {
+        Clinic clinic = (Clinic) session.getAttribute("clinic");
+        Integer clinicId = (clinic != null) ? clinic.getClinicId() : null;
+
+        List<Appointment> list = service.getHistoryByPatientId(patientId, clinicId);
         return ResponseEntity.ok(list);
     }
 

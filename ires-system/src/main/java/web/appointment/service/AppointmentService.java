@@ -23,7 +23,7 @@ public interface AppointmentService {
 
     List<Appointment> getAppointmentsByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod);
 
-    List<Appointment> getHistoryByPatientId(int patientId);
+    List<Appointment> getHistoryByPatientId(int patientId, Integer clinicId);
 
     void save(Appointment appointment);
 
