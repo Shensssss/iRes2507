@@ -85,7 +85,8 @@ function renderAppointmentHistory(appointments) {
 			<td>${
 			app.status === 1 ? '已報到' :
 				app.status === 2 ? '已取消' :
-					'未報到'
+					app.status === 3 ? '已完成' :
+						'未報到'
 		}</td>
 			<td class="created">${formatDateTime(app.createTime)}</td>
 			<td class="modified">${formatDateTime(app.updateTime)}</td>
