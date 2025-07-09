@@ -80,8 +80,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentDAO.findByClinicDateAndPeriod(clinicId, date, timePeriod);
     }
 
-    public List<Appointment> getHistoryByPatientId(int patientId) {
-        return appointmentDAO.findByPatientId(patientId);
+    public List<Appointment> getHistoryByPatientId(int patientId, Integer clinicId) {
+        return appointmentDAO.findByPatientIdAndClinicId(patientId, clinicId);
     }
 
     @Override

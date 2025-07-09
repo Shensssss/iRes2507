@@ -136,6 +136,23 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 		return session.createQuery(hql, Appointment.class).setParameter("pid", patientId).getResultList();
 	}
 
+	// 取得診所病患歷史預約紀錄
+	@Override
+	public List<Appointment> findByPatientIdAndClinicId(int patientId, Integer clinicId) {
+		String hql = "FROM Appointment a " +
+				"JOIN FETCH a.doctor " +
+				"JOIN FETCH a.clinic " +
+				"JOIN FETCH a.patient " +
+				"WHERE a.patientId = :pid " +
+				"AND a.clinic.clinicId = :cid " +
+				"ORDER BY a.appointmentDate DESC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("pid", patientId)
+				.setParameter("cid", clinicId)
+				.getResultList();
+	}
+
 	// 判斷是否超出預約人數
 	@Override
 	public Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod) {

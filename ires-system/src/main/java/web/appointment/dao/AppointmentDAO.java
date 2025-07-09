@@ -19,6 +19,8 @@ public interface AppointmentDAO extends CoreDao<Appointment, String> {
 
     List<Appointment> findByPatientId(int patientId);
 
+    List<Appointment> findByPatientIdAndClinicId(int patientId, Integer clinicId);
+
     Long countAppointmentsByGroup(int clinicId, int doctorId, Date date, int timePeriod);
 
     Appointment findByClinicIdPatientIdDateTimePeriod(Integer clinicId, Integer patientId, Date appointmentDate, Integer timePeriod);

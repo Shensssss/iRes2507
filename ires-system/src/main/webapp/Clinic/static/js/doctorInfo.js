@@ -1,4 +1,4 @@
-    
+        
     //AJAX請求：showAll
     function fetchShowAll(){
         fetch('/ires-system/doctor/showAll', {
@@ -17,25 +17,22 @@
                         const eduHtml = doctor.education && doctor.education.length > 0 ? `<p><span class="label">學歷：</span><span class="edu">${doctor.education.join("、")}</span></p>`: "";
                         const expHtml = doctor.experience && doctor.experience.length > 0 ? `<p><span class="label">經歷：</span><span class="exp">${doctor.experience.join("、")}</span></p>`: "";
                         const memoHtml = doctor.memo && doctor.memo.length > 0 ? `<p><span class="label">專長：</span><span class="memo">${doctor.memo.join("、")}</span></p>`: "";
-                        // const eduHtml = (doctor.education || []).map(e => `<p><span class="label">學歷：</span><span class="edu">${e}</span></p>`).join("");
-                        // const expHtml = (doctor.experience || []).map(e => `<p><span class="label">經歷：</span><span class="exp">${e}</span></p>`).join("");
-                        // const memoHtml = (doctor.memo || []).map(e => `<p><span class="label">專長：</span><span class="memo">${e}</span></p>`).join("");
                         const picSrc = doctor.profilePicture ? `data:image/png;base64,${doctor.profilePicture}` : "";
 
-                        const cardHtml = `
-                            <div class="card" data-doctor-id="${doctor.doctorId}">
-                                <button class="editBtn">編輯</button>
-                                <button class="deleteBtn">刪除</button>
-                                <p><span class="name">${doctor.doctorName}</span> 醫師</p>
-                                ${picSrc ? `<img src="${picSrc}" alt="照片未上傳" style="max-width: 100px;">` : ""}
-                                ${eduHtml}
-                                ${expHtml}
-                                ${memoHtml}
-                            </div>
-                        `;
+                            const cardHtml = `
+                                <div class="card" data-doctor-id="${doctor.doctorId}">
+                                    <button class="editBtn">編輯</button>
+                                    <button class="deleteBtn">刪除</button>
+                                    <p><span class="name">${doctor.doctorName}</span> 醫師</p>
+                                    ${picSrc ? `<img src="${picSrc}" alt="照片未上傳" style="max-width: 100px;">` : ""}
+                                    ${eduHtml}
+                                    ${expHtml}
+                                    ${memoHtml}
+                                </div>
+                            `;
 
-                        $("#container").append(cardHtml);
-                    })
+                            $("#container").append(cardHtml);
+                        })
                 }else {
                     alert(result.message);
                 }
@@ -93,7 +90,7 @@
     }
    
     
-    //清除新增表單
+    //清除表單內容
     function clearFormValues(prefix){
         $(`#${prefix}Name`).val("");
         $(`#${prefix}ProfilePicture`).val("");
@@ -168,6 +165,7 @@
         // 不重複後開始新增，顯示新增表單(帶入輸入的姓名)
         clearFormValues("add");
         $("#addName").val(name);
+        $("#addForm").show();
         $("#addOverlay").addClass("show");
 
         // 滾到表單內部頂部，並強制視窗到最上方
@@ -205,7 +203,7 @@
             return;
         }
 
-        const file = document.querySelector('#addProfilePicture').files[0];
+        const file = document.querySelector("#addProfilePicture").files[0];
         if(file){
             const fileReader = new FileReader();
             fileReader.addEventListener("load", function(e){
@@ -257,6 +255,7 @@
         $("#editMemo2").val(memo[1] || "");
         $("#editMemo3").val(memo[2] || "");
 
+        $("#editForm").show();
         $("#editOverlay").addClass("show");
         // 滾動表單內部到頂部
         $("#editOverlay .form-popup").scrollTop(0);
