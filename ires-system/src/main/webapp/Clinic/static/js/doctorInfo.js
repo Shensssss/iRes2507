@@ -8,7 +8,6 @@
 
             .then(resp => resp.json())
             .then(result => {
-                console.log(result);
                 if (result.statusCode === 200) {
                     const doctors = result.data|| [];
                     //先清空原有資料
@@ -59,11 +58,13 @@
         .then(result => {
             if (result.statusCode === 200) {
                 alert(result.message);
-                $("#addOverlay").hide();
+                $("#addOverlay").removeClass("show");
+                $("#addForm").hide();
                 fetchShowAll();
             } else {
                 alert(result.message + "，請稍後再試！");
-                $("#addOverlay").hide();
+                $("#addOverlay").removeClass("show");
+                $("#addForm").hide();
             }
         });
     }
@@ -80,11 +81,13 @@
         .then(result => {
             if (result.statusCode === 200) {
                 alert(result.message);
-                $("#editOverlay").hide();
+                $("#editOverlay").removeClass("show");
+                $("#editForm").hide();
                 fetchShowAll();
             } else {
                 alert(result.message + "，請稍後再試！");
-                $("#editOverlay").hide();
+                $("#editOverlay").removeClass("show");
+                $("#editForm").hide();
             }
         });
     }
