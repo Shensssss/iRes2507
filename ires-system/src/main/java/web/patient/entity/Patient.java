@@ -72,7 +72,7 @@ public class Patient extends Core {
 	private byte[] profilePicture;
 
 	@Column(name = "status")
-	private Integer status;
+	private Integer status = 1;
 
 	@Column(name = "create_time", updatable = false, insertable = false)
 	private Timestamp createTime;

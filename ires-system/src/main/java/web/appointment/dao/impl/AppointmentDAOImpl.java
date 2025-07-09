@@ -2,7 +2,6 @@ package web.appointment.dao.impl;
 
 import java.sql.Timestamp;
 import java.util.Date;
-//import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;
@@ -77,10 +76,35 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
 	@Override
 	public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
-		String hql = "SELECT a FROM Appointment a\n" + " JOIN FETCH a.doctor d\n" + " JOIN FETCH a.clinic c\n"
-				+ " JOIN FETCH a.patient p\n" + " WHERE a.appointmentDate = :date\n" + "  AND a.timePeriod = :period\n"
-				+ " ORDER BY a.reserveNo ASC";
-		return session.createQuery(hql, Appointment.class).setParameter("date", date).setParameter("period", timePeriod)
+		String hql = "SELECT a FROM Appointment a " +
+				"JOIN FETCH a.doctor d " +
+				"JOIN FETCH a.clinic c " +
+				"JOIN FETCH a.patient p " +
+				"WHERE a.appointmentDate = :date " +
+				"AND a.timePeriod = :period " +
+				"ORDER BY a.reserveNo ASC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("date", date)
+				.setParameter("period", timePeriod)
+				.getResultList();
+	}
+
+	@Override
+	public List<Appointment> findByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod) {
+		String hql = "SELECT a FROM Appointment a " +
+				"JOIN FETCH a.doctor d " +
+				"JOIN FETCH a.clinic c " +
+				"JOIN FETCH a.patient p " +
+				"WHERE a.appointmentDate = :date " +
+				"AND a.timePeriod = :period " +
+				"AND c.clinicId = :clinicId " +
+				"ORDER BY a.reserveNo ASC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("date", date)
+				.setParameter("period", timePeriod)
+				.setParameter("clinicId", clinicId)
 				.getResultList();
 	}
 

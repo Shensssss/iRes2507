@@ -68,29 +68,32 @@ public class AppointmentController {
         }
 
         java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
+        int timePeriod = 1;
+        List<Appointment> appointments;
 
-        int timePeriod = 1; // 預設上午診
-
-        // 解析 period 參數或自動判斷
         if (period != null && !period.isBlank()) {
+            // 有指定時段
             if ("afternoon".equalsIgnoreCase(period)) {
                 timePeriod = 2;
             } else if ("evening".equalsIgnoreCase(period)) {
                 timePeriod = 3;
             }
+
+            appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
         } else {
-            Integer clinicId;
+            // 沒指定時段，從 session 判斷診所與時段
             Clinic clinic = (Clinic) session.getAttribute("clinic");
-            clinicId = clinic.getClinicId();
-            if (clinicId == null) {
+            if (clinic == null || clinic.getClinicId() == null) {
                 response.put("status", "error");
                 response.put("message", "Session 未包含 clinicId，請重新登入");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
-            timePeriod = service.resolveTimePeriod(clinic, LocalTime.now());
-        }
 
-        List<Appointment> appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+            int clinicId = clinic.getClinicId();
+            timePeriod = service.resolveTimePeriod(clinic, LocalTime.now());
+
+            appointments = service.getAppointmentsByClinicDateAndPeriod(clinicId, queryDate, timePeriod);
+        }
 
         response.put("status", "success");
         response.put("message", "查詢成功");

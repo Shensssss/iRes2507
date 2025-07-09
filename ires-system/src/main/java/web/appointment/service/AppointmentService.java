@@ -21,6 +21,8 @@ public interface AppointmentService {
 
     List<Appointment> getAppointmentsByDateAndPeriod(Date date, int timePeriod);
 
+    List<Appointment> getAppointmentsByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod);
+
     List<Appointment> getHistoryByPatientId(int patientId);
 
     void save(Appointment appointment);

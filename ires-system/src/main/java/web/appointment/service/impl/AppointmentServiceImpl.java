@@ -18,7 +18,6 @@ import web.appointment.entity.Notification;
 import web.appointment.service.AppointmentService;
 import web.appointment.service.NotificationService;
 import web.clinic.dao.ClinicDAO;
-import web.clinic.dao.impl.ClinicDaoImpl;
 import web.clinic.entity.Clinic;
 import web.doctor.dao.DoctorDao;
 import web.doctor.entity.Doctor;
@@ -74,6 +73,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<Appointment> getAppointmentsByDateAndPeriod(Date date, int timePeriod) {
         return appointmentDAO.findByDateAndPeriod(date, timePeriod);
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod) {
+        return appointmentDAO.findByClinicDateAndPeriod(clinicId, date, timePeriod);
     }
 
     public List<Appointment> getHistoryByPatientId(int patientId) {
