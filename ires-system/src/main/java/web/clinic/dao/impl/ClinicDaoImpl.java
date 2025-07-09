@@ -118,4 +118,14 @@ public class ClinicDaoImpl implements ClinicDAO {
                 .setParameter("date", date)
                 .getResultList();
     }
+
+    @Override
+    public CallNumber findByClinicDoctorDate(Integer clinicId, Integer doctorId, LocalDate date) {
+        String hql = "FROM CallNumber cn WHERE cn.clinicId = :clinicId AND cn.doctorId = :doctorId AND cn.appointmentDate = :date";
+        return session.createQuery(hql, CallNumber.class)
+                .setParameter("clinicId", clinicId)
+                .setParameter("doctorId", doctorId)
+                .setParameter("date", date)
+                .uniqueResult();
+    }
 }
