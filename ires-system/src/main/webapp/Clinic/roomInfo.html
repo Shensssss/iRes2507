@@ -188,6 +188,57 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        .toggle-switch input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        .toggle-switch input:checked + .slider::before {
+            transform: translateX(18px);
+        }
     </style>
 </head>
 
@@ -308,9 +359,14 @@
                     <button class="btn btn-primary" onclick="selectTime('morning')">上午</button>
                     <button class="btn btn-primary" onclick="selectTime('afternoon')">下午</button>
                     <button class="btn btn-primary" onclick="selectTime('evening')">晚上</button>
-                </div>
-                <div>
                     <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
+                </div>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoRefreshToggle" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">自動更新診間資訊</span>
                 </div>
             </div>
 
@@ -373,6 +429,7 @@
 <script>
     let currentTime = "";
     let allData = {};
+    let autoRefresh = false; // 預設不啟動自動刷新診間資訊
 
     function fetchData(time) {
         return fetch(`/ires-system/appointment/apiToday?period=${time}`)
@@ -643,49 +700,62 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+        // ====== 顯示診所名稱 & 初始化資料 ======
         const name = sessionStorage.getItem("clinicName");
-        if (name) {
-            document.getElementById("clinicName").textContent = name;
-            selectTime();
-            setInterval(() => {
-                selectTime();
-            }, 10000);
-        } else {
-            // 未登入或資料遺失，導回登入頁
+        if (!name) {
             alert("尚未登入");
             location.href = "/ires-system/Clinic/login.html";
+            return;
         }
-    });
 
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 處理登出點擊
+        document.getElementById("clinicName").textContent = name;
+        selectTime();
+
+        // ====== 初始化 Switchery 開關 ======
+        // const elem = document.querySelector('#autoRefreshToggle');
+        // if (!elem.classList.contains('switchery-initialized')) {
+        //     new Switchery(elem, { color: '#4CAF50' });
+        //     elem.classList.add('switchery-initialized');
+        // }
+
+        const elem = document.querySelector('#autoRefreshToggle');
+        elem.onchange = function () {
+            autoRefresh = elem.checked;
+        };
+
+        elem.onchange = function () {
+            autoRefresh = elem.checked;
+        };
+
+        // ====== 自動刷新診間資訊（每 10 秒） ======
+        setInterval(() => {
+            if (autoRefresh) {
+                selectTime(currentTime);
+            }
+        }, 10000);
+
+        // ====== 登出按鈕事件 ======
         const logoutLink = document.querySelector('a[title="Logout"]');
         if (logoutLink) {
             logoutLink.addEventListener("click", function (e) {
                 e.preventDefault();
-
-                // 彈窗確認
                 if (confirm("確定要登出嗎？")) {
-                    // 發送登出請求
                     fetch('/ires-system/clinic/logout', {
                         method: 'DELETE',
-                        credentials: 'include' // 確保 session cookie 被送出
+                        credentials: 'include'
                     })
-                    .then(response => {
-                        if (response.ok) {
-                            // 跳轉回登入頁
-                            sessionStorage.clear();
-                            window.location.href = '/ires-system/Clinic/login.html';
-                        } else {
-                            alert("登出失敗，請稍後再試");
-                        }
-                    })
-                    .catch(err => {
-                        console.error("登出錯誤：", err);
-                        alert("無法連線到伺服器");
-                    });
+                        .then(response => {
+                            if (response.ok) {
+                                sessionStorage.clear();
+                                window.location.href = '/ires-system/Clinic/login.html';
+                            } else {
+                                alert("登出失敗，請稍後再試");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("登出錯誤：", err);
+                            alert("無法連線到伺服器");
+                        });
                 }
             });
         }
