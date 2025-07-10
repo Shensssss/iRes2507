@@ -91,6 +91,13 @@
         .status-cancelled {
             color: gray;
             font-weight: bold;
+            text-decoration: line-through;
+        }
+
+        .status-finished {
+            color: darkblue;
+            font-weight: bold;
+            background-color: #f0f8ff;
         }
 
         .action-buttons {
@@ -167,6 +174,70 @@
         .call-btn:hover {
             background-color: #1e88e5;
             transform: scale(1.05);
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #ccc;
+            border-top-color: #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        .toggle-switch input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        .toggle-switch input:checked + .slider::before {
+            transform: translateX(18px);
         }
     </style>
 </head>
@@ -288,9 +359,14 @@
                     <button class="btn btn-primary" onclick="selectTime('morning')">上午</button>
                     <button class="btn btn-primary" onclick="selectTime('afternoon')">下午</button>
                     <button class="btn btn-primary" onclick="selectTime('evening')">晚上</button>
-                </div>
-                <div>
                     <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
+                </div>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoRefreshToggle" />
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">自動更新診間資訊</span>
                 </div>
             </div>
 
@@ -298,8 +374,10 @@
                 <input type="text" placeholder="搜尋病人（姓名或號碼）" id="searchInput" onkeyup="filterPatients()">
             </div>
 
-
-            <div id="clinic-info"></div>
+            <div id="clinic-info">
+                <div id="clinic-loader" class="spinner" style="display: none;"></div>
+                <div id="clinic-content"></div>
+            </div>
 
             <div id="qrcodeModal" class="modal">
                 <div class="modal-content">
@@ -351,6 +429,7 @@
 <script>
     let currentTime = "";
     let allData = {};
+    let autoRefresh = false; // 預設不啟動自動刷新診間資訊
 
     function fetchData(time) {
         return fetch(`/ires-system/appointment/apiToday?period=${time}`)
@@ -411,8 +490,11 @@
     async function selectTime(time) {
         currentTime = time || null;
         document.getElementById("searchInput").value = "";
-        const clinicInfo = document.getElementById("clinic-info");
-        clinicInfo.innerHTML = "<p>載入中...</p>";
+        const loader = document.getElementById("clinic-loader");
+        const content = document.getElementById("clinic-content");
+
+        loader.style.display = "block";
+        content.innerHTML = "";
 
         const url = time
             ? `/ires-system/appointment/apiToday?period=${time}`
@@ -476,36 +558,45 @@
     }
 
     function renderData(data) {
-        const clinicInfo = document.getElementById("clinic-info");
-        clinicInfo.innerHTML = "";
+        const loader = document.getElementById("clinic-loader");
+        const content = document.getElementById("clinic-content");
+
+        loader.style.display = "none"; // 資料載入完 → 隱藏 loading
+
         const wrapper = document.createElement("div");
         wrapper.className = "room-container";
 
-        data.forEach((room, idx) => {
+        data.forEach(room => {
             const card = document.createElement("div");
             card.className = "room-card";
             card.innerHTML = `
-                                    <div class="room-card-header">${room.doctor}</div>
-                                    <div class="room-card-body">
-                                    <div style="overflow-y: auto; max-height: 300px;">
-                                        <table>
-                                        <thead><tr><th>看診號碼</th><th>姓名</th><th>狀態</th></tr></thead>
-                                        <tbody>
-                                            ${room.patients.map(p => `
-                                            <tr><td>${p.number}</td><td>${p.name}</td><td><span class="${getStatusClass(p.status)}">${p.status}</span></td></tr>
-                                            `).join('')}
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="action-buttons">
-                                        <button class="btn" onclick="showQRCode('${room.doctor}')">產生報到 QRCode</button>
-<!--                                        <button class="btn" onclick="callNext('${room.doctor}')">診間叫號</button>-->
-                                        <button class="btn" onclick="callNext('${room.doctor}', ${room.timePeriod})">診間叫號</button>
-                                    </div>
-                                    </div>`;
+            <div class="room-card-header">${room.doctor}</div>
+            <div class="room-card-body">
+                <div style="overflow-y: auto; max-height: 300px;">
+                    <table>
+                        <thead><tr><th>看診號碼</th><th>姓名</th><th>狀態</th></tr></thead>
+                        <tbody>
+                            ${room.patients.map(p => `
+                                <tr>
+                                    <td>${p.number}</td>
+                                    <td>${p.name}</td>
+                                    <td><span class="${getStatusClass(p.status)}">${p.status}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn" onclick="showQRCode('${room.doctor}')">產生報到 QRCode</button>
+                    <button class="btn" onclick="callNext('${room.doctor}', ${room.timePeriod})">診間叫號</button>
+                </div>
+            </div>
+        `;
             wrapper.appendChild(card);
         });
-        clinicInfo.appendChild(wrapper);
+
+        content.innerHTML = "";            // 清掉上次 render 的卡片
+        content.appendChild(wrapper);     // 插入新卡片
     }
 
     function filterPatients() {
@@ -583,7 +674,7 @@
         };
 
         localStorage.setItem("callRoom", JSON.stringify(extendedRoom));
-        window.location.href = "callRoom.html";
+        window.open("callRoom.html", "_blank", "width=800,height=600");
     }
 
     function goToNotifyPage() {
@@ -609,46 +700,62 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+        // ====== 顯示診所名稱 & 初始化資料 ======
         const name = sessionStorage.getItem("clinicName");
-        if (name) {
-            document.getElementById("clinicName").textContent = name;
-            selectTime();
-        } else {
-            // 未登入或資料遺失，導回登入頁
+        if (!name) {
             alert("尚未登入");
             location.href = "/ires-system/Clinic/login.html";
+            return;
         }
-    });
 
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 處理登出點擊
+        document.getElementById("clinicName").textContent = name;
+        selectTime();
+
+        // ====== 初始化 Switchery 開關 ======
+        // const elem = document.querySelector('#autoRefreshToggle');
+        // if (!elem.classList.contains('switchery-initialized')) {
+        //     new Switchery(elem, { color: '#4CAF50' });
+        //     elem.classList.add('switchery-initialized');
+        // }
+
+        const elem = document.querySelector('#autoRefreshToggle');
+        elem.onchange = function () {
+            autoRefresh = elem.checked;
+        };
+
+        elem.onchange = function () {
+            autoRefresh = elem.checked;
+        };
+
+        // ====== 自動刷新診間資訊（每 10 秒） ======
+        setInterval(() => {
+            if (autoRefresh) {
+                selectTime(currentTime);
+            }
+        }, 10000);
+
+        // ====== 登出按鈕事件 ======
         const logoutLink = document.querySelector('a[title="Logout"]');
         if (logoutLink) {
             logoutLink.addEventListener("click", function (e) {
                 e.preventDefault();
-
-                // 彈窗確認
                 if (confirm("確定要登出嗎？")) {
-                    // 發送登出請求
                     fetch('/ires-system/clinic/logout', {
                         method: 'DELETE',
-                        credentials: 'include' // 確保 session cookie 被送出
+                        credentials: 'include'
                     })
-                    .then(response => {
-                        if (response.ok) {
-                            // 跳轉回登入頁
-                            sessionStorage.clear();
-                            window.location.href = '/ires-system/Clinic/login.html';
-                        } else {
-                            alert("登出失敗，請稍後再試");
-                        }
-                    })
-                    .catch(err => {
-                        console.error("登出錯誤：", err);
-                        alert("無法連線到伺服器");
-                    });
+                        .then(response => {
+                            if (response.ok) {
+                                sessionStorage.clear();
+                                window.location.href = '/ires-system/Clinic/login.html';
+                            } else {
+                                alert("登出失敗，請稍後再試");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("登出錯誤：", err);
+                            alert("無法連線到伺服器");
+                        });
                 }
             });
         }
