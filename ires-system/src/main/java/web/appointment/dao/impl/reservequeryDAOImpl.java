@@ -53,13 +53,15 @@ public class reservequeryDAOImpl implements reservequeryDAO {
 	public List<Object[]> findByclinicid_doctorid_DateAndPeriod(int clinic_id, int doctor_id, Date dateS, Date dateE,
 			int timePeriod) {
 
-		String hql = "SELECT a.reserveNo, p.name, d.doctorName,case a.status when 1 then '已報到' else '未報到' end "
+		String hql = "SELECT  DATE_FORMAT(a.appointmentDate, '%Y/%m/%d')"
+				+ ", case a.timePeriod when 1 then '上午' when 2 then '下午' when 3 then '晚上' else '無該時段' end "
+				+ ", a.reserveNo, p.name, d.doctorName" + ", case a.status when 1 then '已報到' else '未報到' end "
 				+ "FROM Appointment a " + "LEFT JOIN a.patient p " + "LEFT JOIN a.doctor d "
 				+ "WHERE a.clinic.clinicId = :clinic_id " + "AND a.appointmentDate between :dateS and :dateE ";
 
 		hql += (doctor_id != 0) ? "AND a.doctor.doctorId = :doctor_id " : "";
 		hql += (timePeriod != 0) ? "AND a.timePeriod = :period " : "";
-		hql += "ORDER BY a.reserveNo";
+//		hql += "ORDER BY a.reserveNo";
 
 		System.out.println("查看hql結果:" + hql);
 

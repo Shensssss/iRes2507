@@ -10,4 +10,6 @@ public interface clinicNotificationDAO {
 
 	List<Object[]> selectNotificationMsgByClinicId(int clinic_id);
 
+	int updateReadStatus(String appointment_id);
+
 }

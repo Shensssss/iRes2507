@@ -6,7 +6,8 @@
 .password-panel {
     background-color: #ddd;
     padding: 30px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     margin: 50px auto;
     border-radius: 10px;
     box-shadow: 0 0 10px #ccc;
@@ -16,29 +17,54 @@
     text-align: left;
     margin-bottom: 20px;
     font-weight: normal;
-    /* 可加也可不加，預設即為 normal */
 }
 
 .form-group {
     margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
 }
 
 .form-group label {
+    display: block;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .form-group input {
-    height: 30px;
-    padding: 5px;
+    width: 100%;
+    height: 36px;
+    padding: 5px 10px;
     font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* 眼睛 icon 包裝 */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    height: 36px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.password-wrapper .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
 }
 
 .form-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+    margin-top: 20px;
 }
 
 .form-buttons button {

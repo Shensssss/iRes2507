@@ -23,6 +23,8 @@
     <!-- bell -->
     <link rel="stylesheet" href="static/css/bell.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <!-- history-account-updatepsd.css -->
     <link rel="stylesheet" href="static/css/accountupdatepsd.css">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -43,7 +45,7 @@
             </div>
             <img src="static/picture/ires.png"
                 style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
             <div class="notification-wrapper">
                 <a href="clinicNotification.html">
                     <div class="notification-icon" id="bell">
@@ -149,31 +151,43 @@
             <section id="main-content" class="animated fadeInUp">
                 <!--<在此填入主要內容helen-->
                 <!-- Main content area -->
-                <div class="main-content">
-
-                    <div class="password-panel">
-                        <h2>修改密碼</h2>
-                        <form id="change-password-form">
-                            <div class="form-group">
-                                <label for="current-password"><span class="required">*</span>舊密碼</label>
+                <!-- 修改密碼表單區塊 -->
+                <div class="password-panel">
+                    <h2>修改密碼</h2>
+                    <form id="change-password-form">
+                        <div class="form-group">
+                            <label for="current-password"><span class="required">*</span>舊密碼</label>
+                            <div class="password-wrapper">
                                 <input type="password" id="current-password" name="current-password" required />
+                                <i class="fa-solid fa-eye toggle-password"
+                                    onclick="togglePassword('current-password', this)"></i>
                             </div>
-                            <div class="form-group">
-                                <label for="new-password"><span class="required">*</span>新密碼</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password"><span class="required">*</span>新密碼</label>
+                            <div class="password-wrapper">
                                 <input type="password" id="new-password" name="new-password" required />
+                                <i class="fa-solid fa-eye toggle-password"
+                                    onclick="togglePassword('new-password', this)"></i>
                             </div>
-                            <div class="form-group">
-                                <label for="confirm-password"><span class="required">*</span>確認新密碼</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password"><span class="required">*</span>確認新密碼</label>
+                            <div class="password-wrapper">
                                 <input type="password" id="confirm-password" name="confirm-password" required />
+                                <i class="fa-solid fa-eye toggle-password"
+                                    onclick="togglePassword('confirm-password', this)"></i>
                             </div>
-                            <div class="form-buttons">
-                                <button id="btn-submit" type="button">變更</button>
-                                <button id="btn-cancel" type="cancel" onclick="cancelChange()">取消</button>
-                            </div>
-                            <div id="msg" class="error"></div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button id="btn-submit" type="submit">變更</button>
+                            <button id="btn-cancel" type="button" onclick="cancelChange()">取消</button>
+                        </div>
+                        <div id="msg" class="error"></div>
+                    </form>
                 </div>
+
+
 
             </section>
         </section>

@@ -1,10 +1,13 @@
 package web.appointment.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import web.appointment.entity.Notification;
 import web.appointment.service.clinicNotificationService;
 import web.clinic.entity.Clinic;
 import web.clinic.service.ClinicService;
+import web.doctor.entity.Doctor;
 
 @Controller
 @RequestMapping("clinic/clinicNotification")
@@ -57,6 +61,15 @@ public class clinicNotificationController {
 		}
 
 		return listNotifications;
+	}
+
+	@PostMapping("/updateReadStatus")
+	@ResponseBody
+	public int updateReadStatus(@RequestBody Map<String, Object> payload) {
+		String appointment_id = (String) payload.get("appointment_id");
+		System.out.println("Appointment ID: " + appointment_id);
+
+		return service.updateReadStatus(appointment_id);
 	}
 
 }

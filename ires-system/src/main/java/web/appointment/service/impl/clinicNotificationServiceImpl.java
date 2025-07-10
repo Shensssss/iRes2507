@@ -27,4 +27,10 @@ public class clinicNotificationServiceImpl implements clinicNotificationService 
 	public List<Object[]> selectNotificationMsgByClinicId(int clinic_id) {
 		return clinicNotificationDAO.selectNotificationMsgByClinicId(clinic_id);
 	}
+
+	@Override
+	public int updateReadStatus(String appointment_id) {
+		return clinicNotificationDAO.updateReadStatus(appointment_id);
+	}
+
 }

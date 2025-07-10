@@ -1,4 +1,8 @@
 (() => {
+    // const clinicAccount = sessionStorage.getItem("account");
+    // const clinicName = sessionStorage.getItem("clinicName");
+    const clinicId = sessionStorage.getItem("clinicId");
+
     const doctorSelect = document.querySelector('#doctor');
     const dateSInput = document.querySelector('#dateS');
     const dateEInput = document.querySelector('#dateE');
@@ -24,7 +28,7 @@
             msgBox.textContent = `已完成匯出，共 ${ExportData.length} 筆資料`;
 
             const csvRows = [];
-            const headers = ["預約號碼", "姓名", "看診醫師", "狀態"];
+            const headers = ["預約日期", "預約時段", "預約號碼", "姓名", "看診醫師", "狀態"];
             csvRows.push(headers.join(","));
 
             ExportData.forEach(row => {
@@ -57,6 +61,14 @@
             msgBox.textContent = "「日期」為必填欄位，請點選「日期」。";
             return;
         }
+        // 預約日期  防呆:起<=訖
+        else {
+            if (dateS > dateE) {
+                msgBox.textContent = "「起始日期」不可大於「截止日期」，請重新點選「起始日期」。";
+                return;
+            }
+        }
+
 
         if (doctor_id.length === 0) {
             doctor_id = "0";
@@ -84,7 +96,7 @@
         }
 
         const payload = {
-            clinic_id: 1,
+            clinic_id: parseInt(clinicId),
             doctor_id: parseInt(doctor_id),    // 允許無值，因此帶入為0
             dateS: dateS,
             dateE: dateE,
@@ -126,6 +138,8 @@
                         <td>${row[1]}</td>
                         <td>${row[2]}</td>
                         <td>${row[3]}</td>
+                        <td>${row[4]}</td>
+                        <td>${row[5]}</td>
                     `;
                     resultTableBody.appendChild(tr);
                 });
@@ -137,7 +151,7 @@
     });
 
     function init() {
-        const clinic_account = 'berlinclinic@example.com';
+        const clinic_account = sessionStorage.getItem("account");
 
         fetch("../clinic/reservequery/SearchDoctor?clinic_account=" + clinic_account)
             .then(resp => resp.json())

@@ -69,3 +69,22 @@
     margin-top: 6px;
     color: #333;
 }
+
+.notification-date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.notification-close-btn:hover {
+    color: #f00;
+}

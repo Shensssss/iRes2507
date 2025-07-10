@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import web.appointment.dao.clinicNotificationDAO;
@@ -36,4 +35,13 @@ public class clinicNotificationDAOImpl implements clinicNotificationDAO {
 		return session.createQuery(hql, Object[].class).setParameter("clinic_id", clinic_id).getResultList();
 	}
 
+	@Override
+	public int updateReadStatus(String appointment_id) {
+		final StringBuilder hql = new StringBuilder().append("UPDATE Notification n SET n.readStatus = true ");
+
+		hql.append("WHERE n.appointment.appointmentId = :appointment_id");
+
+		return session.createQuery(hql.toString()).setParameter("appointment_id", appointment_id).executeUpdate();
+
+	}
 }
