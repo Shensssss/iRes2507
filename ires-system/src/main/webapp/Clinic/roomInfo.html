@@ -616,8 +616,9 @@
         const agencyId = room.patients?.[0]?.agencyId || room.agencyId || "0000000000"; // 預設10碼錯誤碼
 
         // 時段代碼：早上=1、下午=2、晚上=3
-        const timePeriodMap = {morning: "1", afternoon: "2", evening: "3"};
-        const periodCode = timePeriodMap[currentTime] || "1";
+        // const timePeriodMap = {morning: "1", afternoon: "2", evening: "3"};
+        // const periodCode = timePeriodMap[currentTime] || "1";
+        const timePeriod = room.timePeriod ?? "1"; // 後端沒給時段時預設為1
 
         const now = new Date();
         const yyyy = now.getFullYear();
@@ -625,7 +626,8 @@
         const dd = String(now.getDate()).padStart(2, '0');
         const dateCode = `${yyyy}${mm}${dd}`;
 
-        const qrValue = `${dateCode}${agencyId}${periodCode}`;
+        // const qrValue = `${dateCode}${agencyId}${periodCode}`;
+        const qrValue = `${dateCode}${agencyId}${timePeriod}`;
 
         localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
         window.open("qrcode.html", "_blank");
