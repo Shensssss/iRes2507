@@ -132,6 +132,8 @@ fetch('/ires-system/clinic/login', {
 .then(body => {
   if(body.successful){
 	sessionStorage.setItem("clinicName", body.clinicName);
+    sessionStorage.setItem("account", body.account);
+    sessionStorage.setItem("clinicId", body.clinicId);
       alert("登入成功");
 	  location.href = 'http://localhost:8080/ires-system/Clinic/roomInfo.html';
   }else{
