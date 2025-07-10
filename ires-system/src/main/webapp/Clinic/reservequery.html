@@ -203,12 +203,12 @@
                         </table>
 
                         <!-- <div class="pagination"> -->
-                        <div class="form-row button-row">
+                        <!-- <div class="form-row button-row">
                             <button>&laquo;</button>
                             <button>&lsaquo;</button>
                             <button>&rsaquo;</button>
                             <button>&raquo;</button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -266,8 +266,6 @@
 
             if (name) {
                 document.getElementById("clinicName").textContent = name;
-                document.getElementById("account").textContent = clinicAccount;
-                document.getElementById("clinicId").textContent = id;
             } else {
                 // 未登入或資料遺失，導回登入頁
                 alert("尚未登入");
