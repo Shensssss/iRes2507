@@ -1,60 +1,3 @@
-// 預約日期變更時，查詢各時段剩餘名額並動態更新時段選項
-$(document).on("change", '.appointment-form input[type="date"]', function () {
-  const selectedDate = $(this).val();
-  if (!selectedDate) return;
-
-  const quotaInt = parseInt(quota);
-
-  $.ajax({
-    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=morning`,
-    type: "GET",
-    success: function (data) {
-      morningQuota = quotaInt - data.length;
-      updateTimeOptions();
-    },
-    error: function () {
-      console.error("上午名額查詢失敗");
-    },
-  });
-
-  $.ajax({
-    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=afternoon`,
-    type: "GET",
-    success: function (data) {
-      afternoonQuota = quotaInt - data.length;
-      updateTimeOptions();
-    },
-    error: function () {
-      console.error("下午名額查詢失敗");
-    },
-  });
-
-  $.ajax({
-    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=evening`,
-    type: "GET",
-    success: function (data) {
-      eveningQuota = quotaInt - data.length;
-      updateTimeOptions();
-    },
-    error: function () {
-      console.error("晚上名額查詢失敗");
-    },
-  });
-});
-
-function updateTimeOptions() {
-  const timeSelects = $('.appointment-form select[name="time"]');
-  timeSelects.empty();
-  timeSelects.append(
-    `<option value="1">上午(可預約名額 ${morningQuota})</option>`
-  );
-  timeSelects.append(
-    `<option value="2">下午(可預約名額 ${afternoonQuota})</option>`
-  );
-  timeSelects.append(
-    `<option value="3">晚上(可預約名額 ${eveningQuota})</option>`
-  );
-}
 let clinicId = 0;
 let doctorId = 0;
 let clinicName = "";
@@ -74,20 +17,16 @@ let quota = 0;
 let morningQuota = 0;
 let afternoonQuota = 0;
 let eveningQuota = 0;
+let latitude = 0.0;
+let longitude = 0.0;
+let weekMorning = [];
+let weekAfternoon = [];
+let weekNight = [];
 
 $(document).ready(function () {
   const params = new URLSearchParams(window.location.search);
   clinicId = params.get("clinicId");
-  $.ajax({
-    url: "/ires-system/account/patient",
-    type: "GET",
-    success: function (patient) {
-      patientIdJson = patient;
-    },
-    error: function () {
-      // alert("尚未登入或 session 失效");
-    },
-  });
+
   $.ajax({
     url: `/ires-system/clinic/id/${clinicId}`,
     type: "GET",
@@ -100,6 +39,17 @@ $(document).ready(function () {
       clinicEmail = clinic.account;
       clinicMemo = clinic.memo;
       quota = clinic.quota;
+      latitude = clinic.latitude;
+      longitude = clinic.longitude;
+      weekMorning = clinic.weekMorning
+        ? clinic.weekMorning.split(",").map(Number)
+        : [];
+      weekAfternoon = clinic.weekAfternoon
+        ? clinic.weekAfternoon.split(",").map(Number)
+        : [];
+      weekNight = clinic.weekNight
+        ? clinic.weekNight.split(",").map(Number)
+        : [];
       $.ajax({
         url: `/ires-system/clinicMajor/major?clinicId=${clinicId}`,
         type: "GET",
@@ -122,61 +72,162 @@ $(document).ready(function () {
             success: function (response) {
               renderDoctorselect(response.data);
               renderDoctorList(response.data);
-              renderhospitalDetails(clinic);
-
-              const dateParam = params.get("date");
-              const timeParam = params.get("time");
-
-              if (dateParam) {
-                $('input[type="date"]').val(dateParam);
-              }
-
-              if (timeParam !== null) {
-                $('select[name="time"]').val(timeParam);
-              }
-
-              setTimeout(init, 300);
+              // 查詢三時段名額，全部取得後再渲染
+              Promise.all([
+                $.get(
+                  `/ires-system/appointment/apiToday?period=morning&clinicIdParam=${clinicId}`
+                ),
+                $.get(
+                  `/ires-system/appointment/apiToday?period=afternoon&clinicIdParam=${clinicId}`
+                ),
+                $.get(
+                  `/ires-system/appointment/apiToday?period=evening&clinicIdParam=${clinicId}`
+                ),
+              ]).then(([morningData, afternoonData, eveningData]) => {
+                morningQuota = quota - morningData.data.length;
+                afternoonQuota = quota - afternoonData.data.length;
+                eveningQuota = quota - eveningData.data.length;
+                renderhospitalDetails(clinic);
+                updateTimeOptions();
+                const dateParam = params.get("date");
+                const timeParam = params.get("time");
+                if (dateParam) {
+                  $('input[type="date"]').val(dateParam);
+                } else {
+                  const today = new Date().toISOString().split("T")[0];
+                  $('input[type="date"]').val(today);
+                }
+                if (timeParam !== null) {
+                  $('select[name="time"]').val(timeParam);
+                }
+                setTimeout(init, 300);
+              });
             },
             error: function () {
               alert("無法取得診所列表，請稍後再試！");
             },
           });
-          $.ajax({
-            url: `/ires-system/appointment/apiToday`,
-            type: "GET",
-            success: (data) => {
-              morningQuota = quota - data.length;
-              console.log(morningQuota);
-            },
-            // error: (e) => alert(e),
-          });
-          $.ajax({
-            url: `/ires-system/appointment/apiToday?period=afternoon`,
-            type: "GET",
-            success: (data) => {
-              afternoonQuota = quota - data.length;
-              console.log(afternoonQuota);
-            },
-            // error: (e) => alert(e),
-          });
-          $.ajax({
-            url: `/ires-system/appointment/apiToday?period=evening`,
-            type: "GET",
-            success: (data) => {
-              eveningQuota = quota - data.length;
-              console.log(eveningQuota);
-            },
-            // error: (e) => alert(e),
-          });
         },
         // error: (e) => alert(e),
       });
+      $.ajax({
+        url: "/ires-system/account/patient",
+        type: "GET",
+        success: function (patient) {
+          patientIdJson = patient;
+        },
+        error: function () {
+          // alert("尚未登入或 session 失效");
+        },
+      });
     },
     error: (e) => {
-      // alert(e);
+      alert(e);
     },
   });
 });
+
+// 預約日期變更時，查詢各時段剩餘名額並動態更新時段選項
+$(document).on("change", '.appointment-form input[type="date"]', function () {
+  const selectedDate = $(this).val();
+  if (!selectedDate) return;
+
+  const quotaInt = parseInt(quota);
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=morning&clinicIdParam=${clinicId}`,
+    type: "GET",
+    success: function (data) {
+      morningQuota = quotaInt - data.data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("上午名額查詢失敗");
+    },
+  });
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=afternoon&clinicIdParam=${clinicId}`,
+    type: "GET",
+    success: function (data) {
+      afternoonQuota = quotaInt - data.data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("下午名額查詢失敗");
+    },
+  });
+
+  $.ajax({
+    url: `/ires-system/appointment/apiToday?date=${selectedDate}&period=evening&clinicIdParam=${clinicId}`,
+    type: "GET",
+    success: function (data) {
+      eveningQuota = quotaInt - data.data.length;
+      updateTimeOptions();
+    },
+    error: function () {
+      console.error("晚上名額查詢失敗");
+    },
+  });
+});
+
+function updateTimeOptions() {
+  const safeMorning = isNaN(morningQuota) ? 0 : morningQuota;
+  const safeAfternoon = isNaN(afternoonQuota) ? 0 : afternoonQuota;
+  const safeEvening = isNaN(eveningQuota) ? 0 : eveningQuota;
+
+  const timeSelects = $('.appointment-form select[name="time"]');
+  timeSelects.empty();
+
+  const selectedDate = $('input[type="date"]').val();
+  const dayOfWeek = selectedDate
+    ? new Date(selectedDate).getDay() || 7
+    : new Date().getDay() || 7;
+
+  const isMorningOpen = weekMorning.includes(dayOfWeek);
+  const isAfternoonOpen = weekAfternoon.includes(dayOfWeek);
+  const isEveningOpen = weekNight.includes(dayOfWeek);
+
+  timeSelects.append(
+    `<option value="1" ${
+      !isMorningOpen ? "disabled" : safeMorning <= 0 ? "disabled" : ""
+    }>
+      上午(${
+        !isMorningOpen
+          ? "休診中"
+          : safeMorning <= 0
+          ? "預約已滿"
+          : `可預約名額 ${safeMorning}`
+      })
+    </option>`
+  );
+  timeSelects.append(
+    `<option value="2" ${
+      !isAfternoonOpen ? "disabled" : safeAfternoon <= 0 ? "disabled" : ""
+    }>
+      下午(${
+        !isAfternoonOpen
+          ? "休診中"
+          : safeAfternoon <= 0
+          ? "預約已滿"
+          : `可預約名額 ${safeAfternoon}`
+      })
+    </option>`
+  );
+  timeSelects.append(
+    `<option value="3" ${
+      !isEveningOpen ? "disabled" : safeEvening <= 0 ? "disabled" : ""
+    }>
+      晚上(${
+        !isEveningOpen
+          ? "休診中"
+          : safeEvening <= 0
+          ? "預約已滿"
+          : `可預約名額 ${safeEvening}`
+      })
+    </option>`
+  );
+}
 
 $(document).on("click", "#submit-comment", function () {
   const comment = $("#comment-text").val().trim();
@@ -214,7 +265,7 @@ $(document).on("click", "#submit-comment", function () {
 function init() {
   var mapOptions = {
     zoom: 17,
-    center: new google.maps.LatLng(25.0821576, 121.5750363),
+    center: new google.maps.LatLng(latitude, longitude),
   };
 
   var mapElement = document.getElementById("map");
@@ -334,7 +385,7 @@ function renderComment(comments) {
       ? comment.patient.profilePicture.startsWith("data:")
         ? comment.patient.profilePicture
         : `data:image/jpeg;base64,${comment.patient.profilePicture}`
-      : "static/picture/300.jpeg";
+      : "static/picture/300.png";
 
     const name =
       comment.patient && comment.patient.name
@@ -422,6 +473,9 @@ function renderhospitalDetails(clinic) {
     return;
   }
 
+  // 判斷是否顯示登入提示
+  const showLoginPrompt = sessionStorage.getItem("patient");
+
   let ratingStarsHtml = "";
   for (let i = 1; i <= 5; i++) {
     const iconClass = i <= Math.round(ratingCount) ? "fas" : "far";
@@ -429,6 +483,20 @@ function renderhospitalDetails(clinic) {
       <i class="align-items-center d-inline-flex fa-star ${iconClass} justify-content-center rounded-1 bg-warning text-dark"></i>
     `;
   }
+
+  // 登入提示 HTML
+  const loginPromptHtml = !showLoginPrompt
+    ? `
+    <div class="text-center">
+      <span>
+        已經有帳號了嗎？
+        <a href="./login.html?redirect=${encodeURIComponent(
+          window.location.href
+        )}" class="login-dynamic-link">登入</a>
+      </span>
+    </div>
+  `
+    : "";
 
   const html = `
      <div
@@ -588,17 +656,13 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                             <label class="required">預約時段</label>
                              <select name="time" class="form-select">
-                                <option value="0">上午(可預約名額 ${morningQuota})</option>
-                                <option value="1">下午(可預約名額 ${afternoonQuota})</option>
-                                <option value="2">晚上(可預約名額 ${eveningQuota})</option>
-                              </select>
+                             </select>
                             </div>
                           </div>
                           <div class="col-sm-6">
                             <div class="form-group">
                               <label class="required">科別</label>
                               <select name="majorId" class="form-select">
-                                <option value="none">不指定</option>
                                ${majorList}
                               </select>
                             </div>
@@ -607,7 +671,6 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">醫生</label>
                               <select name="doctorId" class="form-select">
-                                <option value="none">不指定</option>
                                 ${doctorSelect}
                               </select>
                             </div>
@@ -683,12 +746,7 @@ function renderhospitalDetails(clinic) {
                           </div>
                         </div>
                         <hr />
-                        <div class="text-center">
-                          <span
-                            >已經有帳號了嗎？
-                            <a href="./login.html">登入</a></span
-                          >
-                        </div>
+                        ${loginPromptHtml}
                       </form>
                     </div>
                     <div
@@ -713,9 +771,6 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">預約時段</label>
                               <select name="time" class="form-select">
-                                <option value="0">上午(可預約名額 ${morningQuota})</option>
-                                <option value="1">下午(可預約名額 ${afternoonQuota})</option>
-                                <option value="2">晚上(可預約名額 ${eveningQuota})</option>
                               </select>
                             </div>
                           </div>
@@ -723,7 +778,6 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">科別</label>
                               <select name="majorId" class="form-select">
-                                 <option value="none">不指定</option>
                                ${majorList}
                               </select>
                             </div>
@@ -732,7 +786,6 @@ function renderhospitalDetails(clinic) {
                             <div class="form-group">
                               <label class="required">醫生</label>
                               <select name="doctorId" class="form-select">
-                                <option value="none">不指定</option>
                                 ${doctorSelect}
                               </select>
                             </div>
@@ -808,17 +861,7 @@ function renderhospitalDetails(clinic) {
                           </div>
                         </div>
                         <hr />
-                        <div class="text-center">
-                          <span
-                            >已經有帳號了嗎?
-                            <a
-                              href="./login.html"
-                              data-toggle="modal"
-                              data-target="#loginModal"
-                              >登入</a
-                            ></span
-                          >
-                        </div>
+                        ${loginPromptHtml}
                       </form>
                     </div>
                   </div>
@@ -899,19 +942,16 @@ $(document).on("submit", ".appointment-form form", function (e) {
     return;
   }
 
-  // 判斷是否初診 tab
   const isFirstVisit = $("#tab-one-pane").hasClass("active") ? 1 : 0;
-  // 預約類型
+
   const visitType =
     parseInt($form.find('select[name="visitType"]').val()) || null;
   const caseType =
     parseInt($form.find('select[name="caseType"]').val()) || null;
 
-  // 正確擷取 majorId
   let majorIdVal = $form.find('select[name="majorId"]').val();
   majorId = majorIdVal && majorIdVal !== "none" ? parseInt(majorIdVal) : null;
 
-  // doctorId: 若為 "none" 則不送出
   doctorId = parseInt($form.find('select[name="doctorId"]').val()) || null;
 
   const formData = {
@@ -926,8 +966,7 @@ $(document).on("submit", ".appointment-form form", function (e) {
     selfCondition: caseType,
     patientId: patientIdJson.patientId,
   };
-  alert(JSON.stringify(formData, null, 2));
-  // 傳送預約資料
+
   $.ajax({
     url: "/ires-system/appointment/reserve",
     type: "POST",

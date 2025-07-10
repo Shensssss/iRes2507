@@ -1,7 +1,6 @@
 package web.appointment.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +46,7 @@ public class AppointmentController {
     @GetMapping("/apiToday")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getTodayAppointments(
+            @RequestParam(value = "clinicIdParam", required = false) Integer clinicIdParam,
             @RequestParam(value = "period", required = false) String period,
             @RequestParam(value = "date", required = false) String dateStr,
             HttpSession session
@@ -54,40 +54,37 @@ public class AppointmentController {
         Map<String, Object> response = new HashMap<>();
         Date baseDate;
 
-        // 解析日期參數
-        if (dateStr != null) {
-            try {
-                baseDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
-            } catch (Exception e) {
-                response.put("status", "error");
-                response.put("message", "日期格式錯誤，應為 yyyy-MM-dd");
-                return ResponseEntity.badRequest().body(response);
-            }
-        } else {
-            baseDate = new Date();
+        try {
+            baseDate = (dateStr != null)
+                    ? new SimpleDateFormat("yyyy-MM-dd").parse(dateStr)
+                    : new Date();
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "日期格式錯誤");
+            return ResponseEntity.badRequest().body(response);
         }
 
         java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
 
-        int timePeriod = 1; // 預設上午診
+        int timePeriod = 1;
+        if ("afternoon".equalsIgnoreCase(period)) {
+            timePeriod = 2;
+        } else if ("evening".equalsIgnoreCase(period)) {
+            timePeriod = 3;
+        }
 
-        // 解析 period 參數或自動判斷
-        if (period != null && !period.isBlank()) {
-            if ("afternoon".equalsIgnoreCase(period)) {
-                timePeriod = 2;
-            } else if ("evening".equalsIgnoreCase(period)) {
-                timePeriod = 3;
-            }
+        Clinic clinic = null;
+
+        if (clinicIdParam != null) {
+            clinic = clinicService.findById(clinicIdParam);
         } else {
-            Integer clinicId;
-            Clinic clinic = (Clinic) session.getAttribute("clinic");
-            clinicId = clinic.getClinicId();
-            if (clinicId == null) {
-                response.put("status", "error");
-                response.put("message", "Session 未包含 clinicId，請重新登入");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-            timePeriod = service.resolveTimePeriod(clinic, LocalTime.now());
+            clinic = (Clinic) session.getAttribute("clinic");
+        }
+
+        if (clinic == null || clinic.getClinicId() == null) {
+            response.put("status", "error");
+            response.put("message", "無法取得診所資訊，請重新登入");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
         List<Appointment> appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);

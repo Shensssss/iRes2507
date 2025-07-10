@@ -22,8 +22,8 @@ public class AccountController {
 
 	// 取得病患的帳戶資訊
 	@GetMapping("patient")
-	public Patient getInfo(@SessionAttribute("patient") Patient patient) {
-		return patient;
+	public Patient getInfo(@SessionAttribute(name = "patient", required = false) Patient patient) {
+	    return patient;
 	}
 
 	// 回傳更新後的病患資料

@@ -149,7 +149,7 @@ function loadClinics(selector, majorId = null) {
     url,
     method: "GET",
     success: function (clinics) {
-      if (Array.isArray(clinics)) {
+      if (Array.isArray(clinics) && clinics.length > 0) {
         const $wrapper = $(`${selector} .swiper-wrapper`);
         $wrapper.empty();
         for (let i = 0; i < clinics.length; i += 3) {
@@ -288,6 +288,9 @@ function loadClinics(selector, majorId = null) {
             1200: { slidesPerView: 3, slidesPerGroup: 3 },
           },
         });
+      } else {
+        $(selector).closest("#rooms-suites").hide();
+        return;
       }
     },
   });

@@ -34,6 +34,7 @@
           relation: parseInt($("#register_relation").val()),
           bloodType: parseInt($("#register_blood_type").val()),
           notes: $("#register_notes").val(),
+          status: 1,
           profilePicture: base64Image,
         };
 
@@ -76,7 +77,15 @@
           console.log(response);
           if (response.successful) {
             sessionStorage.setItem("patient", JSON.stringify(response));
-            window.location.href = "index.html";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get("redirect");
+
+            if (redirect) {
+              window.location.href = decodeURIComponent(redirect);
+            } else {
+              window.location.href = "index.html";
+            }
           } else {
             alert("登入失敗：" + response.message);
           }
