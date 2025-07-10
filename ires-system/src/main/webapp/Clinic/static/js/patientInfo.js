@@ -72,6 +72,15 @@ function showSearchedResult(patient){
     if (!patient || !patient.name) {
         $("#nameResult").text("姓名：查無資料");
         $("#notesResult").text("查無資料");
+        $("#genderResult").text("性別：查無資料");
+        $("#birthdayResult").text("生日：查無資料");
+        $("#bloodTypeResult").text("血型：查無資料");
+        $("#phoneResult").text("手機號碼：查無資料");
+        $("#addressResult").text("地址：查無資料");
+        $("#emailResult").text("電子郵件：查無資料");
+        $("#emergencyNameResult").text("緊急聯絡人：查無資料");
+        $("#relationResult").text("關係：查無資料");
+        $("#emergencyContentResult").text("電話：查無資料");
         return;
     }
 

@@ -1,6 +1,6 @@
 (() => {
-    // const clinic_account = sessionStorage.getItem("clinic_account");
-    let clinic_account = "berlinclinic@example.com";
+    //const clinic_account = sessionStorage.getItem("clinic_account");
+    let clinic_account = sessionStorage.getItem("account");
     if (!clinic_account) {
         alert("尚未登入或診所帳號遺失");
         location.href = "/ires-system/Clinic/login.html";
@@ -38,15 +38,33 @@
                 const item = document.createElement("div");
                 item.classList.add("notification-item");
 
+                // 計算 Ｎ天前
+                const dateObj = new Date(date.replace(/-/g, '/')); // 日期字串處理
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dateObj.setHours(0, 0, 0, 0);
+
+                const diffTime = today - dateObj;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const dateLabel = isNaN(diffDays) ? date : `${date}（${diffDays}天前）`;
+
                 item.innerHTML = `
                     <div class="notification-header">
                         <span class="notification-type">${getTypeText(type)}</span>
-                        <span class="notification-date">${date}</span>
+                        <div class="notification-date-wrapper">
+                            <span class="notification-date">${dateLabel}</span>
+                            <button class="notification-close-btn" title="移除">×</button>
+                        </div>
                     </div>
                     <div class="notification-content">
                         ${message}
                     </div>
                 `;
+                // 點擊叉叉就移除這筆通知
+                item.querySelector(".notification-close-btn").addEventListener("click", () => {
+                    itemRead(appointmentId);
+                    item.remove();
+                });
 
                 listContainer.appendChild(item);
             });
@@ -66,4 +84,32 @@
             default: return "📬 一般通知";
         }
     }
+
+    function itemRead(appointmentId) {
+        fetch('/ires-system/clinic/clinicNotification/updateReadStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                appointment_id: appointmentId // ✅ 注意這邊 key 要小寫的 _id
+            }),
+        })
+            .then(resp => resp.text())
+            .then(message => {
+                if (message.includes('1')) {
+                    // location.href = "/ires-system/Clinic/Search.html";
+                } else {
+                    console.error("更新 read 狀態失敗");
+                }
+            })
+            .catch(err => {
+                msg.className = 'error';
+                msg.textContent = '發生錯誤，請稍後再試';
+                console.error('fetch error:', err);
+            });
+
+    }
 })();
+
+

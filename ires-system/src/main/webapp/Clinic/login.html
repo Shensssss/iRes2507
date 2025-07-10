@@ -92,9 +92,9 @@
 
     <button type="submit" class="submit-btn">登入</button>
 
-    <!-- <div style="text-align: center; margin-top: 20px; font-size: 12px;">
+    <div style="text-align: center; margin-top: 20px; font-size: 12px;">
          <a href="http://localhost:8080/ires-system/Clinic/forgetPassword.html">忘記密碼？</a> | <a href="/ires-system/Clinic/register.html">前往註冊</a>
-    </div> -->
+    </div> 
 </form>
 
 <script>
@@ -132,6 +132,8 @@ fetch('/ires-system/clinic/login', {
 .then(body => {
   if(body.successful){
 	sessionStorage.setItem("clinicName", body.clinicName);
+    sessionStorage.setItem("account", body.account);
+    sessionStorage.setItem("clinicId", body.clinicId);
       alert("登入成功");
 	  location.href = 'http://localhost:8080/ires-system/Clinic/roomInfo.html';
   }else{

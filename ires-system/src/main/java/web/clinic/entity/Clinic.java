@@ -119,5 +119,5 @@ public class Clinic extends Core{
 
     //各時段的預約額度
     @Column(name = "quota")
-    private Integer quota;
+    private Integer quota = 20;
 }

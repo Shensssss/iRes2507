@@ -1,6 +1,6 @@
 (() => {
+    const clinicId = sessionStorage.getItem("clinicId");
     const btn1 = document.querySelector('#btn-submit');
-    const btn2 = document.querySelector('#btn-submit');
     const oPassword = document.querySelector('#current-password');
     const nPassword = document.querySelector('#new-password');
     const confirmPassword = document.querySelector('#confirm-password');
@@ -37,7 +37,7 @@
             },
             // 送出的json 
             body: JSON.stringify({
-                clinic_id: 1,  // 這邊要抓 clinic的 id
+                clinic_id: parseInt(clinicId),  // 這邊要抓 clinic的 id
                 oPassword: oPassword.value,
                 nPassword: nPassword.value,
                 confirmPassword: confirmPassword.value
@@ -65,4 +65,16 @@
                 console.error('fetch error:', err);
             });
     }
+
 })();
+
+function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+
+    // 切換圖示
+    icon.classList.toggle('fa-eye');
+    icon.classList.toggle('fa-eye-slash');
+}
+

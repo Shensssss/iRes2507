@@ -17,9 +17,7 @@ import web.clinic.service.ClinicService;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/callNumber")
@@ -74,6 +72,7 @@ public class CallNumberController {
                     .body("後端處理錯誤：" + e.getMessage());
         }
     }
+
     @GetMapping("/listByClinic")
     @ResponseBody
     public List<CallNumber> getCallNumbersByClinicId(

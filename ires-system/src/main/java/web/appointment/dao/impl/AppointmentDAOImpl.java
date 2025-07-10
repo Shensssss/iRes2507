@@ -2,7 +2,6 @@ package web.appointment.dao.impl;
 
 import java.sql.Timestamp;
 import java.util.Date;
-//import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;
@@ -77,10 +76,35 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
 	@Override
 	public List<Appointment> findByDateAndPeriod(Date date, int timePeriod) {
-		String hql = "SELECT a FROM Appointment a\n" + " JOIN FETCH a.doctor d\n" + " JOIN FETCH a.clinic c\n"
-				+ " JOIN FETCH a.patient p\n" + " WHERE a.appointmentDate = :date\n" + "  AND a.timePeriod = :period\n"
-				+ " ORDER BY a.reserveNo ASC";
-		return session.createQuery(hql, Appointment.class).setParameter("date", date).setParameter("period", timePeriod)
+		String hql = "SELECT a FROM Appointment a " +
+				"JOIN FETCH a.doctor d " +
+				"JOIN FETCH a.clinic c " +
+				"JOIN FETCH a.patient p " +
+				"WHERE a.appointmentDate = :date " +
+				"AND a.timePeriod = :period " +
+				"ORDER BY a.reserveNo ASC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("date", date)
+				.setParameter("period", timePeriod)
+				.getResultList();
+	}
+
+	@Override
+	public List<Appointment> findByClinicDateAndPeriod(Integer clinicId, Date date, int timePeriod) {
+		String hql = "SELECT a FROM Appointment a " +
+				"JOIN FETCH a.doctor d " +
+				"JOIN FETCH a.clinic c " +
+				"JOIN FETCH a.patient p " +
+				"WHERE a.appointmentDate = :date " +
+				"AND a.timePeriod = :period " +
+				"AND c.clinicId = :clinicId " +
+				"ORDER BY a.reserveNo ASC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("date", date)
+				.setParameter("period", timePeriod)
+				.setParameter("clinicId", clinicId)
 				.getResultList();
 	}
 
@@ -110,6 +134,23 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 		String hql = "FROM Appointment a " + "JOIN FETCH a.doctor " + "JOIN FETCH a.clinic " + "JOIN FETCH a.patient "
 				+ "WHERE a.patientId = :pid " + "ORDER BY a.appointmentDate DESC";
 		return session.createQuery(hql, Appointment.class).setParameter("pid", patientId).getResultList();
+	}
+
+	// 取得診所病患歷史預約紀錄
+	@Override
+	public List<Appointment> findByPatientIdAndClinicId(int patientId, Integer clinicId) {
+		String hql = "FROM Appointment a " +
+				"JOIN FETCH a.doctor " +
+				"JOIN FETCH a.clinic " +
+				"JOIN FETCH a.patient " +
+				"WHERE a.patientId = :pid " +
+				"AND a.clinic.clinicId = :cid " +
+				"ORDER BY a.appointmentDate DESC";
+
+		return session.createQuery(hql, Appointment.class)
+				.setParameter("pid", patientId)
+				.setParameter("cid", clinicId)
+				.getResultList();
 	}
 
 	// 判斷是否超出預約人數

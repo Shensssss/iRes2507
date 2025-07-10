@@ -187,6 +187,8 @@
                         <table id="resultTable" class="results-table">
                             <thead>
                                 <tr>
+                                    <th>預約日期</th>
+                                    <th>預約時段</th>
                                     <th>預約號碼</th>
                                     <th>姓名</th>
                                     <th>看診醫師</th>
@@ -259,8 +261,13 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const name = sessionStorage.getItem("clinicName");
+            const clinicAccount = sessionStorage.getItem("account");
+            const id = sessionStorage.getItem("clinicId");
+
             if (name) {
                 document.getElementById("clinicName").textContent = name;
+                document.getElementById("account").textContent = clinicAccount;
+                document.getElementById("clinicId").textContent = id;
             } else {
                 // 未登入或資料遺失，導回登入頁
                 alert("尚未登入");

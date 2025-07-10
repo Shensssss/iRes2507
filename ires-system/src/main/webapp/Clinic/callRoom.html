@@ -9,8 +9,9 @@
   <style>
     .status-arrived { color: green; font-weight: bold; }
     .status-not-arrived { color: red; font-weight: bold; }
-    .status-cancelled { color: gray; font-weight: bold; }
-    .status-finished { color: gray; font-weight: bold; }
+    .status-cancelled { color: gray; font-weight: bold; text-decoration: line-through; }
+    .status-finished { color: darkblue; font-weight: bold; background-color: #f0f0f0; }
+
     .patient-table-scroll {
       overflow-y: auto;
       flex-grow: 1;
@@ -95,8 +96,8 @@
       <button id="completeBtn" type="button" class="btn btn-outline-success" onclick="completeConsultation()">完成看診</button>
     </div>
 
-    <button class="btn btn-secondary" onclick="history.back()">
-      <i class="bi bi-arrow-left-circle"></i> 返回上一頁
+    <button class="btn btn-secondary" onclick="window.close()">
+      <i class="bi bi-x-circle"></i> 關閉視窗
     </button>
   </div>
 

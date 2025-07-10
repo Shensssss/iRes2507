@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import core.pojo.Core;
 import web.appointment.entity.Appointment;
 import web.appointment.service.AppointmentService;
+import web.clinic.entity.Clinic;
 import web.patient.entity.Patient;
 import web.patient.service.PatientService;
 
@@ -95,21 +96,26 @@ public class ClinicPatientProfileController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(core);
 	    }
 	}
-	
-    @GetMapping("appointmentHistory/{id}")
-    @ResponseBody
-    public ResponseEntity<Core> getAppointmentHistory(@PathVariable("id") int patientId) {
-    	Core core = new Core();
-    	Patient patient = patientService.findById(patientId);
-	    if (patient == null) {
-	    	core.setStatusCode(404);
-	        core.setMessage("查無此病人資料");
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
-	    }
-	    
-    	core.setStatusCode(200);
-    	core.setMessage("預約歷史載入成功");
-	    core.setData(appointmentService.getHistoryByPatientId(patientId));
-        return ResponseEntity.ok(core);
-    }
+
+	@GetMapping("appointmentHistory/{id}")
+	@ResponseBody
+	public ResponseEntity<Core> getAppointmentHistory(@PathVariable("id") int patientId, HttpSession session) {
+		Core core = new Core();
+
+		Patient patient = patientService.findById(patientId);
+		if (patient == null) {
+			core.setStatusCode(404);
+			core.setMessage("查無此病人資料");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(core);
+		}
+
+		Clinic clinic = (Clinic) session.getAttribute("clinic");
+		Integer clinicId = (clinic != null) ? clinic.getClinicId() : null;
+
+		core.setStatusCode(200);
+		core.setMessage("預約歷史載入成功");
+		core.setData(appointmentService.getHistoryByPatientId(patientId, clinicId));
+
+		return ResponseEntity.ok(core);
+	}
 }
