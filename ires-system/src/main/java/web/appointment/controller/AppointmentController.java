@@ -1,6 +1,7 @@
 package web.appointment.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,6 @@ public class AppointmentController {
     @GetMapping("/apiToday")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getTodayAppointments(
-            @RequestParam(value = "clinicIdParam", required = false) Integer clinicIdParam,
             @RequestParam(value = "period", required = false) String period,
             @RequestParam(value = "date", required = false) String dateStr,
             HttpSession session
@@ -54,40 +54,51 @@ public class AppointmentController {
         Map<String, Object> response = new HashMap<>();
         Date baseDate;
 
-        try {
-            baseDate = (dateStr != null)
-                    ? new SimpleDateFormat("yyyy-MM-dd").parse(dateStr)
-                    : new Date();
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", "日期格式錯誤");
-            return ResponseEntity.badRequest().body(response);
+        // 解析日期參數
+        if (dateStr != null) {
+            try {
+                baseDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            } catch (Exception e) {
+                response.put("status", "error");
+                response.put("message", "日期格式錯誤，應為 yyyy-MM-dd");
+                return ResponseEntity.badRequest().body(response);
+            }
+        } else {
+            baseDate = new Date();
         }
 
         java.sql.Date queryDate = new java.sql.Date(normalizeDate(baseDate).getTime());
-
         int timePeriod = 1;
-        if ("afternoon".equalsIgnoreCase(period)) {
-            timePeriod = 2;
-        } else if ("evening".equalsIgnoreCase(period)) {
-            timePeriod = 3;
-        }
+        List<Appointment> appointments;
+        Clinic clinic = (Clinic) session.getAttribute("clinic");
 
-        Clinic clinic = null;
+        if (period != null && !period.isBlank()) {
+            // 有指定時段
+            if ("afternoon".equalsIgnoreCase(period)) {
+                timePeriod = 2;
+            } else if ("evening".equalsIgnoreCase(period)) {
+                timePeriod = 3;
+            }
 
-        if (clinicIdParam != null) {
-            clinic = clinicService.findById(clinicIdParam);
+            if (clinic != null && clinic.getClinicId() > 0) {
+                int clinicId = clinic.getClinicId();
+                appointments = service.getAppointmentsByClinicDateAndPeriod(clinicId, queryDate, timePeriod);
+            } else {
+                appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+            }
         } else {
-            clinic = (Clinic) session.getAttribute("clinic");
-        }
+            // 沒指定時段，從 session 判斷診所與時段
+            if (clinic == null || clinic.getClinicId() == null) {
+                response.put("status", "error");
+                response.put("message", "Session 未包含 clinicId，請重新登入");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
 
-        if (clinic == null || clinic.getClinicId() == null) {
-            response.put("status", "error");
-            response.put("message", "無法取得診所資訊，請重新登入");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+            int clinicId = clinic.getClinicId();
+            timePeriod = service.resolveTimePeriod(clinic, LocalTime.now());
 
-        List<Appointment> appointments = service.getAppointmentsByDateAndPeriod(queryDate, timePeriod);
+            appointments = service.getAppointmentsByClinicDateAndPeriod(clinicId, queryDate, timePeriod);
+        }
 
         response.put("status", "success");
         response.put("message", "查詢成功");
@@ -98,8 +109,11 @@ public class AppointmentController {
 
     @GetMapping("/history")
     @ResponseBody
-    public ResponseEntity<?> getAppointmentHistory(@RequestParam int patientId) {
-        List<Appointment> list = service.getHistoryByPatientId(patientId);
+    public ResponseEntity<?> getAppointmentHistory(HttpSession session, @RequestParam int patientId) {
+        Clinic clinic = (Clinic) session.getAttribute("clinic");
+        Integer clinicId = (clinic != null) ? clinic.getClinicId() : null;
+
+        List<Appointment> list = service.getHistoryByPatientId(patientId, clinicId);
         return ResponseEntity.ok(list);
     }
 
