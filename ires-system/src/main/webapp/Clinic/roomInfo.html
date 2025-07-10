@@ -185,8 +185,11 @@
             animation: spin 1s linear infinite;
             margin: 40px auto;
         }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .toggle-container {
@@ -232,211 +235,283 @@
             transition: 0.4s;
         }
 
-        .toggle-switch input:checked + .slider {
+        .toggle-switch input:checked+.slider {
             background-color: #4CAF50;
         }
 
-        .toggle-switch input:checked + .slider::before {
+        .toggle-switch input:checked+.slider::before {
             transform: translateX(18px);
         }
     </style>
 </head>
 
 <body>
-<section id="main-wrapper" class="theme-default">
-    <header id="header">
-        <!--logo start-->
-        <div class="brand">
-            <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
-                <span id="clinicName"></span></a>
-        </div>
-        <img src="static/picture/ires.png"
-             style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <div class="notification-wrapper">
-            <div class="notification-icon" id="bell">
-                <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
-                <span class="badge"></span>
+    <section id="main-wrapper" class="theme-default">
+        <header id="header">
+            <!--logo start-->
+            <div class="brand">
+                <a href="roomInfo.html" class="logo" style="position: fixed; top: -3px; left: 10px; font-size: 24px;">
+                    <span id="clinicName"></span></a>
             </div>
-            <div class="notification-dropdown" id="dropdown">
-                <p>📬 您有新通知</p>
-                <ul>
-                    <li>✅ 報到通知</li>
-                    <li>💬 評價通知</li>
-                    <li>⚠️ 系統通知</li>
-                </ul>
+            <img src="static/picture/ires.png"
+                style=" position: fixed; margin-top: 0.4cm; width:3cm; height:auto; left: 280px;">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <div class="notification-wrapper">
+                <a href="clinicNotification.html">
+                    <div class="notification-icon" id="bell">
+                        <i class="fas fa-bell" style="position: fixed; top: 20px; right: 20px; font-size: 24px;"></i>
+                        <span class="badge"></span>
+                    </div>
+                </a>
+                <!-- <div class="notification-dropdown" id="dropdown">
+                    <p>📬 您有新通知</p>
+                    <ul>
+                        <li>✅ 報到通知</li>
+                        <li>💬 評價通知</li>
+                        <li>⚠️ 系統通知</li>
+                    </ul>                    
+                </div> -->
             </div>
-        </div>
-        <!--logo end-->
-        <ul class="nav navbar-nav navbar-left">
-            <li class="toggle-navigation toggle-left">
-                <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
-                    <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
-                </button>
-            </li>
-        </ul>
-    </header>
-    <!--sidebar left start-->
-    <aside class="sidebar sidebar-left">
-        <nav>
-            <ul class="nav nav-pills nav-stacked">
-                <li class="nav-dropdown">
-                    <a href="#" title="Appointment">
-                        <i class="fa  fa-fw fa-cogs"></i> 預約管理
-                    </a>
-                    <ul class="nav-sub">
-                        <li>
-                            <a href="reservequery.html" title="reservequery">
-                                預約查詢
-                            </a>
-                        </li>
-                        <li>
-                            <a href="appointment.html" title="Appointment">
-                                新增預約
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-dropdown">
-                    <a href="patientInfo.html" title="PatientInfo">
-                        <i class="fa  fa-fw fa-edit"></i> 病患資料
-                    </a>
-                </li>
-                <li class="nav-dropdown hidden">
-                    <a href="callRoom.html" title="callRoom">
-                        <i class="fa  fa-fw fa-th-list"></i> 診間叫號
-                    </a>
-                </li>
-                <li class="nav-dropdown hidden">
-                    <a href="#" title="FeedbackManagement">
-                        <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
-                    </a>
-                </li>
-                <li class="nav-dropdown">
-                    <a href="#" title="AccountManagement">
-                        <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
-                    </a>
-                    <ul class="nav-sub">
-                        <li>
-                            <a href="clinicInfo.html" title="ClinicInfo">
-                                診所資料
-                            </a>
-                        </li>
-                        <li>
-                            <a href="doctorInfo.html" title="DocInfo">
-                                醫生資料
-                            </a>
-                        </li>
-                        <li hidden>
-                            <a href="#" title="Feedback">
-                                意見回饋
-                            </a>
-                        </li>
-                        <li>
-                            <a href="accountupdatepsd.html" title="Password">
-                                修改密碼
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-dropdown">
-                    <a href="#" title="Logout">
-                        <i class="fa  fa-fw fa-file-text"></i> 登出
-                    </a>
+            <!--logo end-->
+            <ul class="nav navbar-nav navbar-left">
+                <li class="toggle-navigation toggle-left">
+                    <button class="sidebar-toggle" id="toggle-left" style="width: 10px;">
+                        <i class="fa fa-bars" style="position: fixed; top: 25px; left: 250px;"></i>
+                    </button>
                 </li>
             </ul>
-        </nav>
-    </aside>
-    <!--main content start-->
-    <section class="main-content-wrapper">
-        <div class="pageheader">
-            <h1>今日預約</h1>
-        </div>
-
-        <section id="main-content" class="animated fadeInUp">
-            <div class="time-buttons">
-                <div>
-                    <button class="btn btn-primary" onclick="selectTime('morning')">上午</button>
-                    <button class="btn btn-primary" onclick="selectTime('afternoon')">下午</button>
-                    <button class="btn btn-primary" onclick="selectTime('evening')">晚上</button>
-                    <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
-                </div>
-                <div class="toggle-container">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="autoRefreshToggle" />
-                        <span class="slider"></span>
-                    </label>
-                    <span class="toggle-label">自動更新診間資訊</span>
-                </div>
+        </header>
+        <!--sidebar left start-->
+        <aside class="sidebar sidebar-left">
+            <nav>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="nav-dropdown">
+                        <a href="#" title="Appointment">
+                            <i class="fa  fa-fw fa-cogs"></i> 預約管理
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="reservequery.html" title="reservequery">
+                                    預約查詢
+                                </a>
+                            </li>
+                            <li>
+                                <a href="appointment.html" title="Appointment">
+                                    新增預約
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="patientInfo.html" title="PatientInfo">
+                            <i class="fa  fa-fw fa-edit"></i> 病患資料
+                        </a>
+                    </li>
+                    <li class="nav-dropdown hidden">
+                        <a href="callRoom.html" title="callRoom">
+                            <i class="fa  fa-fw fa-th-list"></i> 診間叫號
+                        </a>
+                    </li>
+                    <li class="nav-dropdown hidden">
+                        <a href="#" title="FeedbackManagement">
+                            <i class="fa fa-fw fa-bar-chart-o"></i> 評價管理
+                        </a>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="AccountManagement">
+                            <i class="fa  fa-fw fa-folder-open"></i> 帳戶管理
+                        </a>
+                        <ul class="nav-sub">
+                            <li>
+                                <a href="clinicInfo.html" title="ClinicInfo">
+                                    診所資料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="doctorInfo.html" title="DocInfo">
+                                    醫生資料
+                                </a>
+                            </li>
+                            <li hidden>
+                                <a href="#" title="Feedback">
+                                    意見回饋
+                                </a>
+                            </li>
+                            <li>
+                                <a href="accountupdatepsd.html" title="Password">
+                                    修改密碼
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-dropdown">
+                        <a href="#" title="Logout">
+                            <i class="fa  fa-fw fa-file-text"></i> 登出
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <!--main content start-->
+        <section class="main-content-wrapper">
+            <div class="pageheader">
+                <h1>今日預約</h1>
             </div>
 
-            <div class="search-box" style="display: none;">
-                <input type="text" placeholder="搜尋病人（姓名或號碼）" id="searchInput" onkeyup="filterPatients()">
-            </div>
-
-            <div id="clinic-info">
-                <div id="clinic-loader" class="spinner" style="display: none;"></div>
-                <div id="clinic-content"></div>
-            </div>
-
-            <div id="qrcodeModal" class="modal">
-                <div class="modal-content">
-                    <h3>報到 QR Code</h3>
-                    <div id="qrcodeContainer"></div>
+            <section id="main-content" class="animated fadeInUp">
+                <div class="time-buttons">
                     <div>
-                        <button class="btn" onclick="downloadQRCode()">下載</button>
-                        <button class="btn" onclick="printQRCode()">列印</button>
-                        <button class="btn" onclick="closeModal()">關閉</button>
+                        <button class="btn btn-primary" onclick="selectTime('morning')">上午</button>
+                        <button class="btn btn-primary" onclick="selectTime('afternoon')">下午</button>
+                        <button class="btn btn-primary" onclick="selectTime('evening')">晚上</button>
+                        <button class="btn btn-success" onclick="goToNotifyPage()">批次通知</button>
+                    </div>
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoRefreshToggle" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label">自動更新診間資訊</span>
                     </div>
                 </div>
-            </div>
+
+                <div class="search-box" style="display: none;">
+                    <input type="text" placeholder="搜尋病人（姓名或號碼）" id="searchInput" onkeyup="filterPatients()">
+                </div>
+
+                <div id="clinic-info">
+                    <div id="clinic-loader" class="spinner" style="display: none;"></div>
+                    <div id="clinic-content"></div>
+                </div>
+
+                <div id="qrcodeModal" class="modal">
+                    <div class="modal-content">
+                        <h3>報到 QR Code</h3>
+                        <div id="qrcodeContainer"></div>
+                        <div>
+                            <button class="btn" onclick="downloadQRCode()">下載</button>
+                            <button class="btn" onclick="printQRCode()">列印</button>
+                            <button class="btn" onclick="closeModal()">關閉</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </section>
     </section>
-</section>
-<!--/Config demo-->
-<!--Global JS-->
-<script src="static/js/jquery-1.11.1.min.js"></script>
-<script src="static/js/bootstrap.min.js"></script>
-<script src="static/js/jquery.navgoco.min.js"></script>
-<script src="static/js/pace.min.js"></script>
-<script src="static/js/jquery.fullscreen-min.js"></script>
-<script src="static/js/app.js"></script>
-<!--Page Level JS-->
-<script src="static/js/jquery.countTo.js"></script>
-<script src="static/js/skycons.js"></script>
-<script src="static/js/moment.min.js"></script>
-<script src="static/js/daterangepicker.js"></script>
-<!-- ChartJS  -->
-<script src="static/js/Chart.min.js"></script>
-<!-- Morris  -->
-<script src="static/js/morris.min.js"></script>
-<!--<script src="static/js/raphael.2.1.0.min.js"></script>-->
-<!-- Vector Map  -->
-<script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
-<!-- Gauge  -->
-<!--<script src="static/js/gauge.min.js"></script>
+    <!--/Config demo-->
+    <!--Global JS-->
+    <script src="static/js/jquery-1.11.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/jquery.navgoco.min.js"></script>
+    <script src="static/js/pace.min.js"></script>
+    <script src="static/js/jquery.fullscreen-min.js"></script>
+    <script src="static/js/app.js"></script>
+    <!--Page Level JS-->
+    <script src="static/js/jquery.countTo.js"></script>
+    <script src="static/js/skycons.js"></script>
+    <script src="static/js/moment.min.js"></script>
+    <script src="static/js/daterangepicker.js"></script>
+    <!-- ChartJS  -->
+    <script src="static/js/Chart.min.js"></script>
+    <!-- Morris  -->
+    <script src="static/js/morris.min.js"></script>
+    <!--<script src="static/js/raphael.2.1.0.min.js"></script>-->
+    <!-- Vector Map  -->
+    <script src="static/js/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="static/js/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- Gauge  -->
+    <!--<script src="static/js/gauge.min.js"></script>
 <script src="static/js/gauge-demo.js"></script>-->
-<!-- Calendar  -->
-<script src="static/js/clndr.js"></script>
-<script src="static/js/clndr-demo.js"></script>
-<script src="static/js/underscore-min.js"></script>
-<!-- Switch -->
-<script src="static/js/switchery.min.js"></script>
-<!--Load these page level functions-->
-<script src="static/js/bell.js"></script>
+    <!-- Calendar  -->
+    <script src="static/js/clndr.js"></script>
+    <script src="static/js/clndr-demo.js"></script>
+    <script src="static/js/underscore-min.js"></script>
+    <!-- Switch -->
+    <script src="static/js/switchery.min.js"></script>
+    <!--Load these page level functions-->
+    <script src="static/js/bell.js"></script>
 
-<script>
-    let currentTime = "";
-    let allData = {};
-    let autoRefresh = false; // 預設不啟動自動刷新診間資訊
+    <script>
+        let currentTime = "";
+        let allData = {};
+        let autoRefresh = false; // 預設不啟動自動刷新診間資訊
 
-    function fetchData(time) {
-        return fetch(`/ires-system/appointment/apiToday?period=${time}`)
-            .then(response => response.json())
-            .then(result => {
+        function fetchData(time) {
+            return fetch(`/ires-system/appointment/apiToday?period=${time}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status !== "success") {
+                        throw new Error(result.message || "查詢失敗");
+                    }
+
+                    const appointments = result.data || [];
+                    const grouped = {};
+
+                    appointments.forEach(app => {
+                        const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
+
+                        if (!grouped[doctorName]) {
+                            grouped[doctorName] = {
+                                timePeriod: result.timePeriod,
+                                patients: []
+                            };
+                        }
+
+                        grouped[doctorName].patients.push({
+                            number: String(app.reserveNo ?? "--"),
+                            name: app.patient?.name ?? "匿名",
+                            status: translateStatus(app.status),
+                            appointmentId: app.appointmentId,
+                            patientId: app.patient?.patientId,
+                            doctorId: app.doctor?.doctorId,
+                            agencyId: app.clinic?.agencyId ?? "0000000000",
+                            timePeriod: app.timePeriod
+                        });
+                    });
+
+                    return Object.entries(grouped).map(([doctor, info]) => ({
+                        doctor,
+                        timePeriod: info.timePeriod,
+                        patients: info.patients
+                    }));
+                });
+        }
+
+        function translateStatus(statusCode) {
+            switch (statusCode) {
+                case 1:
+                    return "已報到";
+                case 0:
+                    return "未報到";
+                case 2:
+                    return "已取消";
+                case 3:
+                    return "已完成";
+                default:
+                    return "未知狀態";
+            }
+        }
+
+        async function selectTime(time) {
+            currentTime = time || null;
+            document.getElementById("searchInput").value = "";
+            const loader = document.getElementById("clinic-loader");
+            const content = document.getElementById("clinic-content");
+
+            loader.style.display = "block";
+            content.innerHTML = "";
+
+            const url = time
+                ? `/ires-system/appointment/apiToday?period=${time}`
+                : `/ires-system/appointment/apiToday`;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
                 if (result.status !== "success") {
-                    throw new Error(result.message || "查詢失敗");
+                    alert(result.message || "查詢失敗");
+                    return;
                 }
 
                 const appointments = result.data || [];
@@ -464,112 +539,42 @@
                     });
                 });
 
-                return Object.entries(grouped).map(([doctor, info]) => ({
+                const data = Object.entries(grouped).map(([doctor, info]) => ({
                     doctor,
                     timePeriod: info.timePeriod,
                     patients: info.patients
                 }));
-            });
-    }
 
-    function translateStatus(statusCode) {
-        switch (statusCode) {
-            case 1:
-                return "已報到";
-            case 0:
-                return "未報到";
-            case 2:
-                return "已取消";
-            case 3:
-                return "已完成";
-            default:
-                return "未知狀態";
-        }
-    }
+                allData = data;
+                renderData(data);
 
-    async function selectTime(time) {
-        currentTime = time || null;
-        document.getElementById("searchInput").value = "";
-        const loader = document.getElementById("clinic-loader");
-        const content = document.getElementById("clinic-content");
-
-        loader.style.display = "block";
-        content.innerHTML = "";
-
-        const url = time
-            ? `/ires-system/appointment/apiToday?period=${time}`
-            : `/ires-system/appointment/apiToday`;
-
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
-
-            if (result.status !== "success") {
-                alert(result.message || "查詢失敗");
-                return;
+            } catch (error) {
+                console.error("查詢失敗：", error);
+                alert("無法取得資料，請稍後再試");
             }
-
-            const appointments = result.data || [];
-            const grouped = {};
-
-            appointments.forEach(app => {
-                const doctorName = (app.doctor?.doctorName ?? "未指定") + " 醫師";
-
-                if (!grouped[doctorName]) {
-                    grouped[doctorName] = {
-                        timePeriod: result.timePeriod,
-                        patients: []
-                    };
-                }
-
-                grouped[doctorName].patients.push({
-                    number: String(app.reserveNo ?? "--"),
-                    name: app.patient?.name ?? "匿名",
-                    status: translateStatus(app.status),
-                    appointmentId: app.appointmentId,
-                    patientId: app.patient?.patientId,
-                    doctorId: app.doctor?.doctorId,
-                    agencyId: app.clinic?.agencyId ?? "0000000000",
-                    timePeriod: app.timePeriod
-                });
-            });
-
-            const data = Object.entries(grouped).map(([doctor, info]) => ({
-                doctor,
-                timePeriod: info.timePeriod,
-                patients: info.patients
-            }));
-
-            allData = data;
-            renderData(data);
-
-        } catch (error) {
-            console.error("查詢失敗：", error);
-            alert("無法取得資料，請稍後再試");
         }
-    }
 
-    function getStatusClass(status) {
-        if (status === '已報到') return 'status-arrived';
-        if (status === '未報到') return 'status-not-arrived';
-        if (status === '已取消') return 'status-cancelled';
-        if (status === '已完成') return 'status-finished';
-        return '';
-    }
+        function getStatusClass(status) {
+            if (status === '已報到') return 'status-arrived';
+            if (status === '未報到') return 'status-not-arrived';
+            if (status === '已取消') return 'status-cancelled';
+            if (status === '已完成') return 'status-finished';
+            return '';
+        }
 
-    function renderData(data) {
-        const loader = document.getElementById("clinic-loader");
-        const content = document.getElementById("clinic-content");
+        function renderData(data) {
+            const loader = document.getElementById("clinic-loader");
+            const content = document.getElementById("clinic-content");
 
-        loader.style.display = "none"; // 資料載入完 → 隱藏 loading
+            loader.style.display = "none"; // 資料載入完 → 隱藏 loading
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "room-container";
+            const wrapper = document.createElement("div");
+            wrapper.className = "room-container";
 
-        data.forEach(room => {
-            const card = document.createElement("div");
-            card.className = "room-card";
-            card.innerHTML = `
+            data.forEach(room => {
+                const card = document.createElement("div");
+                card.className = "room-card";
+                card.innerHTML = `
             <div class="room-card-header">${room.doctor}</div>
             <div class="room-card-body">
                 <div style="overflow-y: auto; max-height: 300px;">
@@ -592,177 +597,177 @@
                 </div>
             </div>
         `;
-            wrapper.appendChild(card);
-        });
-
-        content.innerHTML = "";            // 清掉上次 render 的卡片
-        content.appendChild(wrapper);     // 插入新卡片
-    }
-
-    function filterPatients() {
-        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-        if (!keyword) return renderData(allData);
-        const filtered = allData.map(room => ({
-            ...room,
-            patients: room.patients.filter(p => p.name.toLowerCase().includes(keyword) || p.number.includes(keyword))
-        })).filter(room => room.patients.length > 0);
-        renderData(filtered);
-    }
-
-    function showQRCode(doctorName) {
-        const room = allData.find(r => r.doctor === doctorName);
-        if (!room) return alert("找不到該診間資料");
-
-        const agencyId = room.patients?.[0]?.agencyId || room.agencyId || "0000000000"; // 預設10碼錯誤碼
-
-        // 時段代碼：早上=1、下午=2、晚上=3
-        // const timePeriodMap = {morning: "1", afternoon: "2", evening: "3"};
-        // const periodCode = timePeriodMap[currentTime] || "1";
-        const timePeriod = room.timePeriod ?? "1"; // 後端沒給時段時預設為1
-
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
-        const dateCode = `${yyyy}${mm}${dd}`;
-
-        // const qrValue = `${dateCode}${agencyId}${periodCode}`;
-        const qrValue = `${dateCode}${agencyId}${timePeriod}`;
-
-        localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
-        window.open("qrcode.html", "_blank");
-    }
-
-    function closeModal() {
-        document.getElementById("qrcodeModal").style.display = "none";
-    }
-
-    function downloadQRCode() {
-        const canvas = document.querySelector("#qrcodeContainer canvas");
-        if (!canvas) return;
-        const link = document.createElement('a');
-        link.download = 'qrcode.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }
-
-    function printQRCode() {
-        const canvas = document.querySelector("#qrcodeContainer canvas");
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<img src="${canvas.toDataURL()}" style="display:block;margin:auto;">`);
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    function callNext(doctorName) {
-        const room = allData.find(r => r.doctor === doctorName);
-        if (!room) return alert("找不到該診間資料");
-
-        const timePeriodMap = { morning: "1", afternoon: "2", evening: "3" };
-        const timePeriod = room.timePeriod ?? timePeriodMap[currentTime] ?? "1";
-
-        console.log("callNext - 後端傳入 timePeriod:", room.timePeriod);
-        console.log("callNext - 最終使用 timePeriod:", timePeriod);
-
-        const doctorId = room.patients?.[0]?.doctorId ?? null;
-        const now = new Date();
-        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        console.log("callNext - today:", today);
-        const extendedRoom = {
-            ...room,
-            doctorId,
-            timePeriod,
-            date: today
-        };
-
-        localStorage.setItem("callRoom", JSON.stringify(extendedRoom));
-        window.open("callRoom.html", "_blank", "width=800,height=600");
-    }
-
-    function goToNotifyPage() {
-        const patients = [];
-        allData.forEach((room, index) => {
-            room.patients.forEach(p => {
-                if (p.status === '未報到') {
-                    patients.push({
-                        date: new Date().toISOString().slice(0, 10),
-                        // room: `診間 ${index + 1}`,
-                        number: p.number,
-                        name: p.name,
-                        doctor: room.doctor,
-                        appointmentId: p.appointmentId,
-                        patientId: p.patientId
-                    });
-                }
+                wrapper.appendChild(card);
             });
-        });
-        if (patients.length === 0) return alert("沒有未報到病人可通知！");
-        localStorage.setItem("notifyPatients", JSON.stringify(patients));
-        window.location.href = "notify.html";
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        // ====== 顯示診所名稱 & 初始化資料 ======
-        const name = sessionStorage.getItem("clinicName");
-        if (!name) {
-            alert("尚未登入");
-            location.href = "/ires-system/Clinic/login.html";
-            return;
+            content.innerHTML = "";            // 清掉上次 render 的卡片
+            content.appendChild(wrapper);     // 插入新卡片
         }
 
-        document.getElementById("clinicName").textContent = name;
-        selectTime();
+        function filterPatients() {
+            const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            if (!keyword) return renderData(allData);
+            const filtered = allData.map(room => ({
+                ...room,
+                patients: room.patients.filter(p => p.name.toLowerCase().includes(keyword) || p.number.includes(keyword))
+            })).filter(room => room.patients.length > 0);
+            renderData(filtered);
+        }
 
-        // ====== 初始化 Switchery 開關 ======
-        // const elem = document.querySelector('#autoRefreshToggle');
-        // if (!elem.classList.contains('switchery-initialized')) {
-        //     new Switchery(elem, { color: '#4CAF50' });
-        //     elem.classList.add('switchery-initialized');
-        // }
+        function showQRCode(doctorName) {
+            const room = allData.find(r => r.doctor === doctorName);
+            if (!room) return alert("找不到該診間資料");
 
-        const elem = document.querySelector('#autoRefreshToggle');
-        elem.onchange = function () {
-            autoRefresh = elem.checked;
-        };
+            const agencyId = room.patients?.[0]?.agencyId || room.agencyId || "0000000000"; // 預設10碼錯誤碼
 
-        elem.onchange = function () {
-            autoRefresh = elem.checked;
-        };
+            // 時段代碼：早上=1、下午=2、晚上=3
+            // const timePeriodMap = {morning: "1", afternoon: "2", evening: "3"};
+            // const periodCode = timePeriodMap[currentTime] || "1";
+            const timePeriod = room.timePeriod ?? "1"; // 後端沒給時段時預設為1
 
-        // ====== 自動刷新診間資訊（每 10 秒） ======
-        setInterval(() => {
-            if (autoRefresh) {
-                selectTime(currentTime);
-            }
-        }, 10000);
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const dateCode = `${yyyy}${mm}${dd}`;
 
-        // ====== 登出按鈕事件 ======
-        const logoutLink = document.querySelector('a[title="Logout"]');
-        if (logoutLink) {
-            logoutLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                if (confirm("確定要登出嗎？")) {
-                    fetch('/ires-system/clinic/logout', {
-                        method: 'DELETE',
-                        credentials: 'include'
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                sessionStorage.clear();
-                                window.location.href = '/ires-system/Clinic/login.html';
-                            } else {
-                                alert("登出失敗，請稍後再試");
-                            }
-                        })
-                        .catch(err => {
-                            console.error("登出錯誤：", err);
-                            alert("無法連線到伺服器");
+            // const qrValue = `${dateCode}${agencyId}${periodCode}`;
+            const qrValue = `${dateCode}${agencyId}${timePeriod}`;
+
+            localStorage.setItem("qrValue", qrValue); // 傳值到新頁面
+            window.open("qrcode.html", "_blank");
+        }
+
+        function closeModal() {
+            document.getElementById("qrcodeModal").style.display = "none";
+        }
+
+        function downloadQRCode() {
+            const canvas = document.querySelector("#qrcodeContainer canvas");
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function printQRCode() {
+            const canvas = document.querySelector("#qrcodeContainer canvas");
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<img src="${canvas.toDataURL()}" style="display:block;margin:auto;">`);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function callNext(doctorName) {
+            const room = allData.find(r => r.doctor === doctorName);
+            if (!room) return alert("找不到該診間資料");
+
+            const timePeriodMap = { morning: "1", afternoon: "2", evening: "3" };
+            const timePeriod = room.timePeriod ?? timePeriodMap[currentTime] ?? "1";
+
+            console.log("callNext - 後端傳入 timePeriod:", room.timePeriod);
+            console.log("callNext - 最終使用 timePeriod:", timePeriod);
+
+            const doctorId = room.patients?.[0]?.doctorId ?? null;
+            const now = new Date();
+            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            console.log("callNext - today:", today);
+            const extendedRoom = {
+                ...room,
+                doctorId,
+                timePeriod,
+                date: today
+            };
+
+            localStorage.setItem("callRoom", JSON.stringify(extendedRoom));
+            window.open("callRoom.html", "_blank", "width=800,height=600");
+        }
+
+        function goToNotifyPage() {
+            const patients = [];
+            allData.forEach((room, index) => {
+                room.patients.forEach(p => {
+                    if (p.status === '未報到') {
+                        patients.push({
+                            date: new Date().toISOString().slice(0, 10),
+                            // room: `診間 ${index + 1}`,
+                            number: p.number,
+                            name: p.name,
+                            doctor: room.doctor,
+                            appointmentId: p.appointmentId,
+                            patientId: p.patientId
                         });
-                }
+                    }
+                });
             });
+            if (patients.length === 0) return alert("沒有未報到病人可通知！");
+            localStorage.setItem("notifyPatients", JSON.stringify(patients));
+            window.location.href = "notify.html";
         }
-    });
-</script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // ====== 顯示診所名稱 & 初始化資料 ======
+            const name = sessionStorage.getItem("clinicName");
+            if (!name) {
+                alert("尚未登入");
+                location.href = "/ires-system/Clinic/login.html";
+                return;
+            }
+
+            document.getElementById("clinicName").textContent = name;
+            selectTime();
+
+            // ====== 初始化 Switchery 開關 ======
+            // const elem = document.querySelector('#autoRefreshToggle');
+            // if (!elem.classList.contains('switchery-initialized')) {
+            //     new Switchery(elem, { color: '#4CAF50' });
+            //     elem.classList.add('switchery-initialized');
+            // }
+
+            const elem = document.querySelector('#autoRefreshToggle');
+            elem.onchange = function () {
+                autoRefresh = elem.checked;
+            };
+
+            elem.onchange = function () {
+                autoRefresh = elem.checked;
+            };
+
+            // ====== 自動刷新診間資訊（每 10 秒） ======
+            setInterval(() => {
+                if (autoRefresh) {
+                    selectTime(currentTime);
+                }
+            }, 10000);
+
+            // ====== 登出按鈕事件 ======
+            const logoutLink = document.querySelector('a[title="Logout"]');
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    if (confirm("確定要登出嗎？")) {
+                        fetch('/ires-system/clinic/logout', {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    sessionStorage.clear();
+                                    window.location.href = '/ires-system/Clinic/login.html';
+                                } else {
+                                    alert("登出失敗，請稍後再試");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("登出錯誤：", err);
+                                alert("無法連線到伺服器");
+                            });
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
