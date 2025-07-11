@@ -301,7 +301,7 @@ $("#editBasicInfoBtn").on("click",function(){
     $("#editAddressTown").val($("#addressTown").text());
     $("#editAddressRoad").val($("#addressRoad").text());
     const lat = $("#latitude").text();
-    const lng = $("#longitutde").text();
+    const lng = $("#longitude").text();
     $("#editLatitude").val(lat);
     $("#editLontitude").val(lng);
     showMapPreview(lat, lng);

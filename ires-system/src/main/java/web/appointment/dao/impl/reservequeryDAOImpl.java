@@ -61,7 +61,7 @@ public class reservequeryDAOImpl implements reservequeryDAO {
 
 		hql += (doctor_id != 0) ? "AND a.doctor.doctorId = :doctor_id " : "";
 		hql += (timePeriod != 0) ? "AND a.timePeriod = :period " : "";
-//		hql += "ORDER BY a.reserveNo";
+		hql += "ORDER BY a.appointmentDate,a.timePeriod,d.doctorName,a.reserveNo";
 
 		System.out.println("查看hql結果:" + hql);
 
