@@ -141,131 +141,173 @@ function renderAddress(clinics) {
     });
   });
 }
+// 新增診所卡片產生函數
+async function buildClinicCard(clinic) {
+  const rating =
+    clinic.rating == 0 || clinic.rating == null || clinic.rating == undefined
+      ? `<span>尚未評論</span>`
+      : `<span class="reviews-stats">${clinic.rating.toFixed(1)}</span>
+         <span class="reviews-count">(${clinic.comments})</span>`;
+
+  let ratingStarsHtml = "";
+  for (let i = 1; i <= 5; i++) {
+    const iconClass = i <= Math.round(clinic.rating) ? "fas" : "far";
+    ratingStarsHtml += `<i class="${iconClass} fa-star"></i>`;
+  }
+
+  let distanceValue = "";
+  if (
+    userLat &&
+    userLng &&
+    clinic.latitude != null &&
+    clinic.longitude != null
+  ) {
+    distanceValue = getDistanceFromLatLonInKm(
+      parseFloat(userLat),
+      parseFloat(userLng),
+      parseFloat(clinic.latitude),
+      parseFloat(clinic.longitude)
+    );
+  }
+  const distanceHtml = distanceValue ? `距離${distanceValue}km` : "距離未知";
+
+  const apiUrl = `/ires-system/callNumber/listByClinic?clinicId=${clinic.clinicId}&date=${date}`;
+  let tableHtml = "";
+
+  await $.ajax({
+    url: apiUrl,
+    method: "GET",
+    async: false,
+    success: function (data) {
+      if (data.length > 0) {
+        tableHtml += `<table style="border-collapse: separate; border-spacing: 0; font-size: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: 100%;">`;
+        tableHtml += "<tr>";
+        data.forEach((item, index) => {
+          const isLast = index === data.length - 1;
+          const borderRightStyle = isLast
+            ? ""
+            : "border-right: 1px solid #ddd;";
+          tableHtml += `<th style="padding: 10px; background-color: #f8f9fa; border-right: ${borderRightStyle} font-weight: 600; color: #333;">${item.doctor.doctorName}</th>`;
+        });
+        tableHtml += "</tr><tr>";
+        data.forEach((item, index) => {
+          const isLast = index === data.length - 1;
+          const borderRightStyle = isLast
+            ? ""
+            : "border-right: 1px solid #ddd;";
+          tableHtml += `<td style="padding: 10px; background-color: #ffffff; border-top: 1px solid #eee; border-right: ${borderRightStyle}; text-align: center;">${item.number}</td>`;
+        });
+        tableHtml += "</tr></table>";
+      }
+    },
+  });
+
+  return `
+    <div class="border-0 card mb-3 overflow-hidden rounded card-hover shadow card-hover-sm card-hover">
+      <div class="d-sm-flex hospital-list__item">
+        <a href="hospital-details.html?clinicId=${
+          clinic.clinicId
+        }" class="bg-dark d-block flex-shrink-0 h-list__img overflow-hidden shadow">
+          <img src="${
+            clinic.profilePicture
+              ? `data:image/jpeg;base64,${clinic.profilePicture}`
+              : "static/img/1.jpeg"
+          }" alt="${
+    clinic.clinicName
+  }" style="aspect-ratio: 4 / 3; object-fit: cover; width: 100%;" />
+        </a>
+        <div class="d-flex" style="width: 100%;">
+          <div class="flex-grow-1 p-4">
+            <div class="align-items-center d-flex fs-13 mb-2 star-rating">
+              <div class="d-flex text-warning">
+                ${ratingStarsHtml}
+              </div>
+              <div class="ms-2 review-numbers">
+                ${rating}
+              </div>
+            </div>
+            <h5 class="fs-19 fw-bold h-title mb-1 overflow-hidden text-capitalize">
+              <a class="text-dark" href="hospital-details.html">${
+                clinic.clinicName
+              }</a>
+            </h5>
+            <address class="fw-medium text-primary">
+              <i class="fa-solid fa-location-dot me-2"></i>${
+                clinic.addressCity
+              }${clinic.addressTown}${clinic.addressRoad}
+            </address>
+            <div class="d-flex flex-wrap mt-3">
+              <a class="border directions-link fs-13 py-1 rounded-5">
+                <i class="fa-solid fa-compass me-2"></i>${distanceHtml}</a>
+              <br/>
+              <a href="tel:${
+                clinic.phone
+              }" class="border directions-link fs-13 py-1 rounded-5 ms-1">
+                <i class="fa-solid fa-phone me-2"></i>${clinic.phone}</a>
+            </div>
+          </div>
+          <div class="table-container" style="margin-left: auto; padding: 16px; max-width: 300px; overflow-x: auto;">
+            ${tableHtml}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 分頁功能的診所列表渲染
 async function renderClinicList(clinics) {
   const container = $("#clinic-list");
   container.empty();
 
-  renderAddress(clinics); // ← 新增這行
+  const itemsPerPage = 10;
+  let currentPage = 1;
 
-  if (clinics.length === 0) {
-    container.append("<p>沒有符合條件的診所。</p>");
-    return;
+  async function renderPage(page) {
+    container.empty();
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, clinics.length);
+    const pageClinics = clinics.slice(startIndex, endIndex);
+
+    renderAddress(clinics); // 只需要呼叫一次
+
+    if (pageClinics.length === 0) {
+      container.append("<p>沒有符合條件的診所。</p>");
+      return;
+    }
+
+    for (const clinic of pageClinics) {
+      const html = await buildClinicCard(clinic);
+      container.append(html);
+    }
+
+    renderPaginationControls(clinics.length, page);
   }
 
-  for (const clinic of clinics) {
-    const rating =
-      clinic.rating == 0 || clinic.rating == null || clinic.rating == undefined
-        ? `<span>尚未評論</span>`
-        : `   <span class="reviews-stats">${clinic.rating.toFixed(1)}</span>
-                <span class="reviews-count">(${clinic.comments})</span>`;
+  function renderPaginationControls(totalItems, currentPage) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (totalPages <= 1) return;
 
-    let ratingStarsHtml = "";
-    for (let i = 1; i <= 5; i++) {
-      const iconClass = i <= Math.round(clinic.rating) ? "fas" : "far";
-      ratingStarsHtml += `<i class="${iconClass} fa-star"></i>
-    `;
-    }
-    let distanceValue = "";
-    if (
-      userLat &&
-      userLng &&
-      clinic.latitude != null &&
-      clinic.longitude != null
-    ) {
-      distanceValue = getDistanceFromLatLonInKm(
-        parseFloat(userLat),
-        parseFloat(userLng),
-        parseFloat(clinic.latitude),
-        parseFloat(clinic.longitude)
+    const paginationHtml = $(
+      '<div class="pagination d-flex justify-content-center mt-4"></div>'
+    );
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = $(
+        `<button class="btn btn-outline-primary mx-1">${i}</button>`
       );
+      if (i === currentPage) pageBtn.addClass("active");
+
+      pageBtn.on("click", () => {
+        renderPage(i);
+        $("html, body").animate({ scrollTop: 0 }, 300);
+      });
+
+      paginationHtml.append(pageBtn);
     }
-    const distanceHtml = distanceValue ? `距離${distanceValue}km` : "距離未知";
-
-    const apiUrl = `/ires-system/callNumber/listByClinic?clinicId=${clinic.clinicId}&date=${date}`;
-    let tableHtml = "";
-
-    await $.ajax({
-      url: apiUrl,
-      method: "GET",
-      async: false,
-      success: function (data) {
-        if (data.length > 0) {
-          tableHtml += `<table style="border-collapse: separate; border-spacing: 0; font-size: 14px; margin-top: 10px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: 100%;">`;
-          tableHtml += "<tr>";
-          data.forEach((item, index) => {
-            const isLast = index === data.length - 1;
-            const borderRightStyle = isLast
-              ? ""
-              : "border-right: 1px solid #ddd;";
-            tableHtml += `<th style="padding: 10px; background-color: #f8f9fa; border-right: ${borderRightStyle} font-weight: 600; color: #333;">${item.doctor.doctorName}</th>`;
-          });
-          tableHtml += "</tr><tr>";
-          data.forEach((item, index) => {
-            const isLast = index === data.length - 1;
-            const borderRightStyle = isLast
-              ? ""
-              : "border-right: 1px solid #ddd;";
-            tableHtml += `<td style="padding: 10px; background-color: #ffffff; border-top: 1px solid #eee; border-right: ${borderRightStyle}; text-align: center;">${item.number}</td>`;
-          });
-          tableHtml += "</tr></table>";
-        }
-      },
-    });
-
-    const html = `
-      <div class="border-0 card mb-3 overflow-hidden rounded card-hover shadow card-hover-sm card-hover">
-        <div class="d-sm-flex hospital-list__item">
-          <a href="hospital-details.html?clinicId=${
-            clinic.clinicId
-          }" class="bg-dark d-block flex-shrink-0 h-list__img overflow-hidden shadow">
-            <img src="${
-              clinic.profilePicture
-                ? `data:image/jpeg;base64,${clinic.profilePicture}`
-                : "static/img/1.jpeg"
-            }" alt="${
-      clinic.clinicName
-    }" style="aspect-ratio: 4 / 3; object-fit: cover; width: 100%;" />
-          </a>
-          <div class="d-flex" style="width: 100%;">
-            <div class="flex-grow-1 p-4">
-              <div class="align-items-center d-flex fs-13 mb-2 star-rating">
-                <div class="d-flex text-warning">
-                 ${ratingStarsHtml}
-                </div>
-                <div class="ms-2 review-numbers">
-                 ${rating}
-                </div>
-              </div>
-              <h5 class="fs-19 fw-bold h-title mb-1 overflow-hidden text-capitalize">
-                <a class="text-dark" href="hospital-details.html">${
-                  clinic.clinicName
-                }</a>
-              </h5>
-              <address class="fw-medium text-primary">
-                <i class="fa-solid fa-location-dot me-2"></i>${
-                  clinic.addressCity
-                }${clinic.addressTown}${clinic.addressRoad}
-              </address>
-              <div class="d-flex flex-wrap mt-3">
-                <a class="border directions-link fs-13 py-1 rounded-5">
-                  <i class="fa-solid fa-compass me-2"></i>${distanceHtml}</a>
-                  <br/>
-                <a href="tel:${
-                  clinic.phone
-                }" class="border directions-link fs-13 py-1 rounded-5 ms-1">
-                  <i class="fa-solid fa-phone me-2"></i>${clinic.phone}</a>
-               
-              </div>
-            </div>
-            <div class="table-container" style="margin-left: auto; padding: 16px; max-width: 300px; overflow-x: auto;">
-              ${tableHtml}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    container.append(html);
+    container.append(paginationHtml);
   }
+
+  renderPage(currentPage);
 }
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {

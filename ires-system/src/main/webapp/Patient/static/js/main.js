@@ -6,6 +6,13 @@
     $("#register").on("submit", function (e) {
       e.preventDefault();
 
+      const password = $("#password").val();
+      const confirmPassword = $("#confirm-password").val();
+      if (password !== confirmPassword) {
+        alert("密碼與確認密碼不一致，請重新輸入。");
+        return;
+      }
+
       const fileInput = $("#register_profile_picture")[0];
       const file = fileInput.files[0];
 
