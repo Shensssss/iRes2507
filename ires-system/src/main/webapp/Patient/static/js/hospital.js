@@ -211,7 +211,7 @@ async function buildClinicCard(clinic) {
           <img src="${
             clinic.profilePicture
               ? `data:image/jpeg;base64,${clinic.profilePicture}`
-              : "static/img/1.jpeg"
+              : "static/img/iresclinic.png"
           }" alt="${
     clinic.clinicName
   }" style="aspect-ratio: 4 / 3; object-fit: cover; width: 100%;" />

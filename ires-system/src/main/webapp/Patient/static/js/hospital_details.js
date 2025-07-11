@@ -953,6 +953,11 @@ function renderhospitalDetails(clinic) {
 $(document).on("submit", ".appointment-form form", function (e) {
   e.preventDefault();
 
+  if (!patientIdJson || !patientIdJson.patientId) {
+    alert("請先登入後再進行預約！");
+    return;
+  }
+
   const $form = $(this);
 
   // 表單驗證

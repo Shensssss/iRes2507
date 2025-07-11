@@ -223,7 +223,7 @@ function loadClinics(selector, majorId = null) {
                   <img src="${
                     clinic.profilePicture
                       ? `data:image/jpeg;base64,${clinic.profilePicture}`
-                      : "static/img/1.jpeg"
+                      : "static/img/iresclinic.png"
                   }" alt="診所圖片" />
                 </div>
                 <div class="card-content">
