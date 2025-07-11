@@ -22,12 +22,13 @@
     border-radius: 10px;
     width: 80vw;
     max-width: 600px;
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     box-sizing: border-box;
     scroll-behavior: smooth;
+    transform: translate(25%, 25%);
 }
 
 /* 表單輸入框 */
@@ -77,9 +78,11 @@
 /* 卡片樣式 */
 div.card {
     position: relative;
-    width: 80%;
+    width: 60%;
     padding: 10px;
-    margin: 20px auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 80px;
     border: 1px solid grey;
     border-radius: 10px;
     box-shadow: 3px 6px 10px rgba(0, 0, 0, 0.5);
