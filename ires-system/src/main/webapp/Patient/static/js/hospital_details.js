@@ -23,6 +23,17 @@ let weekMorning = [];
 let weekAfternoon = [];
 let weekNight = [];
 
+const waitForMapElement = () => {
+  const mapDiv = document.getElementById("map");
+  if (mapDiv) {
+    // 使用全域 latitude, longitude 初始化地圖，避免 clinic 未定義錯誤
+    init(Number(latitude), Number(longitude));
+  } else {
+    console.log("⏳ 等待 #map...");
+    setTimeout(waitForMapElement, 200);
+  }
+};
+
 $(document).ready(function () {
   const params = new URLSearchParams(window.location.search);
   clinicId = params.get("clinicId");
@@ -41,6 +52,7 @@ $(document).ready(function () {
       quota = clinic.quota;
       latitude = clinic.latitude;
       longitude = clinic.longitude;
+      console.log(`${latitude}. ${longitude}`);
       weekMorning = clinic.weekMorning
         ? clinic.weekMorning.split(",").map(Number)
         : [];
@@ -89,6 +101,11 @@ $(document).ready(function () {
                 eveningQuota = quota - eveningData.data.length;
                 renderhospitalDetails(clinic);
                 updateTimeOptions();
+
+                setTimeout(() => {
+                  waitForMapElement();
+                }, 100);
+
                 const dateParam = params.get("date");
                 const timeParam = params.get("time");
                 if (dateParam) {
@@ -100,7 +117,6 @@ $(document).ready(function () {
                 if (timeParam !== null) {
                   $('select[name="time"]').val(timeParam);
                 }
-                setTimeout(init, 300);
               });
             },
             error: function () {
@@ -110,6 +126,7 @@ $(document).ready(function () {
         },
         // error: (e) => alert(e),
       });
+
       $.ajax({
         url: "/ires-system/account/patient",
         type: "GET",
@@ -257,23 +274,26 @@ $(document).on("click", "#submit-comment", function () {
     },
     error: function (err) {
       console.error(err);
-      alert("送出失敗，請稍後再試！");
+      alert("送   出失敗，請稍後再試！");
     },
   });
 });
 
-function init() {
+function init(lat = latitude, lng = longitude) {
   var mapOptions = {
     zoom: 17,
-    center: new google.maps.LatLng(latitude, longitude),
+    center: new google.maps.LatLng(lat, lng),
   };
 
   var mapElement = document.getElementById("map");
-
+  if (!mapElement) {
+    console.error("❌ 地圖容器 #map 未找到，取消初始化");
+    return;
+  }
   var map = new google.maps.Map(mapElement, mapOptions);
 
   var marker = new google.maps.Marker({
-    position: new google.maps.LatLng(25.0821576, 121.5750363),
+    position: new google.maps.LatLng(lat, lng),
     map: map,
     title: clinicName,
   });
@@ -285,7 +305,7 @@ function init() {
         const userLng = position.coords.longitude;
 
         const userLocation = new google.maps.LatLng(userLat, userLng);
-        const clinicLocation = new google.maps.LatLng(25.0821576, 121.5750363);
+        const clinicLocation = new google.maps.LatLng(lat, lng);
 
         const distanceInMeters =
           google.maps.geometry.spherical.computeDistanceBetween(

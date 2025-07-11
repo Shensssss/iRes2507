@@ -26,170 +26,195 @@ import web.patient.service.PatientService;
 @Service
 @Transactional
 public class PatientServiceImpl implements PatientService {
-	private static final Logger log = LoggerFactory.getLogger(PatientServiceImpl.class);
-	
-	@Autowired
-	private PatientDao dao;
 
-	@Autowired
-	private ClinicDAO clinicDAO;
+    private static final Logger log = LoggerFactory.getLogger(PatientServiceImpl.class);
 
-	@Autowired
-	private AppointmentDAO appointmentDAO;
+    @Autowired
+    private PatientDao dao;
 
-	@Override
-	public Patient register(Patient patient) {
-		if (patient.getEmail() == null) {
-			patient.setMessage("使用者Email不得為空");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		if (patient.getPassword() == null || patient.getPassword().length() < 6) {
-			patient.setMessage("密碼長度必須大於6");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		if (patient.getName() == null) {
-			patient.setMessage("使用者名稱不得為空");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		if (patient.getGender() == 0) {
-			patient.setMessage("使用者性別不得為空");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		if (patient.getBirthday() == null) {
-			patient.setMessage("使用者生日不得為空");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		dao.insert(patient);
-		patient.setMessage("成功註冊");
-		patient.setSuccessful(true);
-		return patient;
-	}
+    @Autowired
+    private ClinicDAO clinicDAO;
 
-	@Override
-	public Patient login(Patient patient) {
-		String email = patient.getEmail();
-		String password = patient.getPassword();
-		if (email == null && password == null) {
-			patient.setMessage("使用者信箱或密碼不得為空");
-			patient.setSuccessful(false);
-			return patient;
-		}
-		patient = dao.selectForLogin(email, password);
-		if (patient == null) {
-			Patient errorPatient = new Patient();
-			errorPatient.setMessage("信箱或密碼錯誤");
-			errorPatient.setSuccessful(false);
-			return errorPatient;
-		}
-		patient.setMessage("成功登入");
-		patient.setSuccessful(true);
-		return patient;
-	}
+    @Autowired
+    private AppointmentDAO appointmentDAO;
 
-	@Override
-	public Patient findById(int patientId) {
-		return dao.findById(patientId);
-	}
+    @Override
+    public Patient register(Patient patient) {
+        if (patient.getEmail() == null) {
+            patient.setMessage("使用者Email不得為空");
+            patient.setSuccessful(false);
+            return patient;
+        }
+        if (patient.getPassword() == null || patient.getPassword().length() < 6) {
+            patient.setMessage("密碼長度必須大於6");
+            patient.setSuccessful(false);
+            return patient;
+        }
+        if (patient.getName() == null) {
+            patient.setMessage("使用者名稱不得為空");
+            patient.setSuccessful(false);
+            return patient;
+        }
+        if (patient.getGender() == 0) {
+            patient.setMessage("使用者性別不得為空");
+            patient.setSuccessful(false);
+            return patient;
+        }
+        if (patient.getBirthday() == null) {
+            patient.setMessage("使用者生日不得為空");
+            patient.setSuccessful(false);
+            return patient;
+        }
 
-	@Override
-	public void updatePatient(Patient patient) {
-		dao.update(patient);
-	}
+        if (dao.selectByEmail(patient.getEmail()) != null) {
+            patient.setMessage("此信箱已被註冊");
+            patient.setSuccessful(false);
+            return patient;
+        }
 
-	@Override
-	public Patient edit(Patient patient) {
-		updatePatient(patient);
-		return findById(patient.getPatientId());
-	}
+        // 檢查手機是否已存在與格式
+        if (patient.getPhone() != null && !patient.getPhone().isEmpty()) {
 
-	@Override
-	public List<Patient> clinicSearch(String name, String birthday, String phone) {
+            if (!patient.getPhone().matches("^09\\d{8}$")) {
+                patient.setMessage("電話格式錯誤");
+                patient.setSuccessful(false);
+                return patient;
+            }
 
-		if (birthday != null && (phone == null || phone.isEmpty())) {
-			return dao.searchedByNameAndBirthday(name, birthday);
-		} else if ((birthday == null || birthday.isEmpty()) && phone != null) {
-			return dao.searchedByNameAndPhone(name, phone);
-		} else if (birthday != null && phone != null) {
-			return dao.searchedByNameAndBirthdayAndPhone(name, birthday, phone); // 生日和電話條件
-		} else {
-			throw new IllegalArgumentException("查詢條件不足");
-		}
-	}
+            Patient existsByPhone = dao.findByPhone(patient.getPhone());
+            if (existsByPhone != null) {
+                patient.setMessage("此電話已被註冊");
+                patient.setSuccessful(false);
+                return patient;
+            }
+        }
+        dao.insert(patient);
+        patient.setMessage("成功註冊");
+        patient.setSuccessful(true);
+        return patient;
+    }
 
-	public Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page,
-			int pageSize) {
-		int offset = (page - 1) * pageSize;
-		List<Patient> patients = dao.findReservedPatientsByKeyword(keyword, offset, pageSize, clinicId);
-		long total = dao.countReservedPatientsByKeyword(keyword, clinicId);
+    @Override
+    public Patient login(Patient patient) {
+        String email = patient.getEmail();
+        String password = patient.getPassword();
+        if (email == null && password == null) {
+            patient.setMessage("使用者信箱或密碼不得為空");
+            patient.setSuccessful(false);
+            return patient;
+        }
+        patient = dao.selectForLogin(email, password);
+        if (patient == null) {
+            Patient errorPatient = new Patient();
+            errorPatient.setMessage("信箱或密碼錯誤");
+            errorPatient.setSuccessful(false);
+            return errorPatient;
+        }
+        patient.setMessage("成功登入");
+        patient.setSuccessful(true);
+        return patient;
+    }
 
-		List<Map<String, Object>> result = new ArrayList<>();
-		for (Patient p : patients) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", p.getPatientId());
-			map.put("name", p.getName());
-			map.put("phone", p.getPhone());
-			result.add(map);
-		}
+    @Override
+    public Patient findById(int patientId) {
+        return dao.findById(patientId);
+    }
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("patients", result);
-		response.put("totalPages", (int) Math.ceil((double) total / pageSize));
-		return response;
-	}
+    @Override
+    public void updatePatient(Patient patient) {
+        dao.update(patient);
+    }
 
-	@Override
-	public Patient findByPhone(String phone) {
-		return dao.findByPhone(phone);
-	}
+    @Override
+    public Patient edit(Patient patient) {
+        updatePatient(patient);
+        return findById(patient.getPatientId());
+    }
 
-	@Override
-	public boolean checkIn(Patient patient, String code) {
-		Objects.requireNonNull(code, "QR code 不可為 null");
+    @Override
+    public List<Patient> clinicSearch(String name, String birthday, String phone) {
 
-		String date = code.substring(0, 8);
-		String agencyId = code.substring(8, 18);
-		int timePeriod = Integer.parseInt(code.substring(18));
+        if (birthday != null && (phone == null || phone.isEmpty())) {
+            return dao.searchedByNameAndBirthday(name, birthday);
+        } else if ((birthday == null || birthday.isEmpty()) && phone != null) {
+            return dao.searchedByNameAndPhone(name, phone);
+        } else if (birthday != null && phone != null) {
+            return dao.searchedByNameAndBirthdayAndPhone(name, birthday, phone); // 生日和電話條件
+        } else {
+            throw new IllegalArgumentException("查詢條件不足");
+        }
+    }
 
-		Date appointmentDate;
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			sdf.setLenient(false);
-			appointmentDate = new java.sql.Date(sdf.parse(date).getTime());
-		} catch (ParseException e) {
-			throw new RuntimeException("Invalid QR code date format: " + date, e);
-		}
+    public Map<String, Object> getReservedPatientsWithKeyword(Integer clinicId, String keyword, int page,
+            int pageSize) {
+        int offset = (page - 1) * pageSize;
+        List<Patient> patients = dao.findReservedPatientsByKeyword(keyword, offset, pageSize, clinicId);
+        long total = dao.countReservedPatientsByKeyword(keyword, clinicId);
 
-		Integer clinicId = clinicDAO.findClinicIdByAgencyId(agencyId);
-		if (clinicId == null)
-			throw new IllegalArgumentException("找不到對應診所");
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Patient p : patients) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", p.getPatientId());
+            map.put("name", p.getName());
+            map.put("phone", p.getPhone());
+            result.add(map);
+        }
 
-		Appointment appointment = appointmentDAO.findByClinicIdPatientIdDateTimePeriod(clinicId, patient.getPatientId(),
-				appointmentDate, timePeriod);
-		if (appointment == null) {
-		    log.info("報到失敗：查無預約，clinicId={}, patientId={}, date={}, timePeriod={}",
-		        clinicId, patient.getPatientId(), appointmentDate, timePeriod);
-		} else {
-		    log.info("查到預約：appointmentId={}, status={}", appointment.getAppointmentId(), appointment.getStatus());
+        Map<String, Object> response = new HashMap<>();
+        response.put("patients", result);
+        response.put("totalPages", (int) Math.ceil((double) total / pageSize));
+        return response;
+    }
 
-		    if (appointment.getStatus() != 0) {
-		        log.info("報到失敗：該預約已經是 status={}, 無法報到", appointment.getStatus());
-		    }
-		}
+    @Override
+    public Patient findByPhone(String phone) {
+        return dao.findByPhone(phone);
+    }
 
-		if (appointment != null && appointment.getStatus() == 0) {
-			appointment.setStatus(1);
-			appointmentDAO.update(appointment);
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean checkIn(Patient patient, String code) {
+        Objects.requireNonNull(code, "QR code 不可為 null");
 
-	public int clinicEditPatientNotes(int patientId, String newNotes) {
-		return dao.updateNotes(patientId, newNotes);
-	}
+        String date = code.substring(0, 8);
+        String agencyId = code.substring(8, 18);
+        int timePeriod = Integer.parseInt(code.substring(18));
+
+        Date appointmentDate;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            sdf.setLenient(false);
+            appointmentDate = new java.sql.Date(sdf.parse(date).getTime());
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid QR code date format: " + date, e);
+        }
+
+        Integer clinicId = clinicDAO.findClinicIdByAgencyId(agencyId);
+        if (clinicId == null) {
+            throw new IllegalArgumentException("找不到對應診所");
+        }
+
+        Appointment appointment = appointmentDAO.findByClinicIdPatientIdDateTimePeriod(clinicId, patient.getPatientId(),
+                appointmentDate, timePeriod);
+        if (appointment == null) {
+            log.info("報到失敗：查無預約，clinicId={}, patientId={}, date={}, timePeriod={}",
+                    clinicId, patient.getPatientId(), appointmentDate, timePeriod);
+        } else {
+            log.info("查到預約：appointmentId={}, status={}", appointment.getAppointmentId(), appointment.getStatus());
+
+            if (appointment.getStatus() != 0) {
+                log.info("報到失敗：該預約已經是 status={}, 無法報到", appointment.getStatus());
+            }
+        }
+
+        if (appointment != null && appointment.getStatus() == 0) {
+            appointment.setStatus(1);
+            appointmentDAO.update(appointment);
+            return true;
+        }
+        return false;
+    }
+
+    public int clinicEditPatientNotes(int patientId, String newNotes) {
+        return dao.updateNotes(patientId, newNotes);
+    }
 }
