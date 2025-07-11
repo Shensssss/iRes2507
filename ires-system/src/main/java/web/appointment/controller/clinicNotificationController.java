@@ -8,10 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import web.appointment.entity.Notification;
 import web.appointment.service.clinicNotificationService;
 import web.clinic.entity.Clinic;
 import web.clinic.service.ClinicService;
@@ -57,6 +55,15 @@ public class clinicNotificationController {
 		}
 
 		return listNotifications;
+	}
+
+	@PostMapping("/updateReadStatus")
+	@ResponseBody
+	public int updateReadStatus(@RequestBody Map<String, Object> payload) {
+		String appointment_id = (String) payload.get("appointment_id");
+		System.out.println("Appointment ID: " + appointment_id);
+
+		return service.updateReadStatus(appointment_id);
 	}
 
 }
