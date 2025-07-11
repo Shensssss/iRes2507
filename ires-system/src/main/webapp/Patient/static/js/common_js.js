@@ -354,6 +354,20 @@ $(document).ready(function () {
   });
 
   clinicLinks();
+  // 登出功能
+});
+$(".logout-link").on("click", function (e) {
+  e.preventDefault();
+  if (confirm("確定要登出嗎？")) {
+    $.post("/ires-system/patient/logout")
+      .done(function () {
+        sessionStorage.removeItem("patient");
+        window.location.href = "./index.html";
+      })
+      .fail(function () {
+        alert("登出失敗，請稍後再試！");
+      });
+  }
 });
 function clinicLinks() {
   const today = new Date();
